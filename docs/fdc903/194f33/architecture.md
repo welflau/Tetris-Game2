@@ -6,9 +6,9 @@ MVC + 游戏循环架构
 ## 技术栈
 
 - **language**: JavaScript/TypeScript
-- **framework**: HTML5 Canvas + 原生JavaScript
+- **framework**: HTML5 Canvas + 原生JS
 - **database**: LocalStorage（游戏状态持久化）
-- **others**: requestAnimationFrame, Web Audio API, CSS3
+- **others**: requestAnimationFrame, 事件监听器, 定时器
 
 ## 模块设计
 
@@ -21,50 +21,54 @@ MVC + 游戏循环架构
 - setFPS(fps)
 
 ### Renderer
-职责: 负责所有游戏元素的渲染，包括网格、方块、UI界面
+职责: 负责所有游戏元素的绘制和视觉效果
 - render(gameState)
 - drawGrid()
 - drawBlock(block)
-- drawUI(score, level)
+- drawUI()
+- clear()
 
 ### InputManager
-职责: 处理键盘输入，转换为游戏指令
+职责: 处理键盘输入事件并转换为游戏指令
 - bindEvents()
+- handleKeyDown(event)
+- handleKeyUp(event)
 - getInputState()
-- onKeyDown(key)
-- onKeyUp(key)
 
-### GameEngine
-职责: 整合所有游戏逻辑，管理游戏状态更新
+### GameController
+职责: 协调各模块，管理游戏状态流转
+- init()
 - update(deltaTime)
-- handleInput(input)
-- getGameState()
+- handleInput()
+- onGameOver()
 - reset()
 
 ### TimeManager
 职责: 管理游戏时间，控制方块下落速度和动画
 - getDeltaTime()
-- getGameTime()
-- setDropInterval(interval)
+- updateDropTimer()
+- shouldDrop()
+- setDropSpeed(speed)
 
-### PerformanceMonitor
-职责: 监控游戏性能，确保60fps稳定运行
-- getFPS()
-- getFrameTime()
-- isPerformanceGood()
+### AnimationSystem
+职责: 处理行消除动画、方块移动过渡效果
+- playLineAnimation(lines)
+- playDropAnimation()
+- update(deltaTime)
+- isPlaying()
 
 ## 数据流
-InputManager捕获用户输入 -> GameEngine处理输入并更新游戏状态 -> TimeManager提供时间增量 -> GameEngine执行逻辑更新（方块移动、碰撞检测、行消除） -> Renderer根据最新游戏状态进行渲染 -> PerformanceMonitor监控性能 -> GameLoop协调整个循环在60fps下运行
+InputManager捕获用户输入 -> GameController处理游戏逻辑更新 -> Game/Grid/Block模型状态变更 -> Renderer根据最新状态绘制画面 -> GameLoop通过requestAnimationFrame循环执行
 
 ## 风险点
-- requestAnimationFrame在不同浏览器的兼容性问题
-- 高频率更新可能导致性能瓶颈
-- 输入延迟影响游戏体验
-- Canvas渲染性能在低端设备上的表现
+- 60fps性能优化挑战，需要避免频繁的DOM操作
+- 输入延迟可能影响游戏体验
+- 动画效果与游戏逻辑同步复杂度
+- 不同浏览器的requestAnimationFrame兼容性
 
 ## 关键决策
-- 使用requestAnimationFrame而非setInterval确保流畅动画
-- 采用双缓冲渲染避免闪烁
-- 实现固定时间步长的游戏逻辑更新
-- 使用对象池模式减少垃圾回收影响
-- 分离逻辑更新频率和渲染频率以优化性能
+- 使用requestAnimationFrame而非setInterval确保流畅渲染
+- 采用双缓冲技术避免画面闪烁
+- 输入事件采用状态机模式处理连续按键
+- 游戏逻辑与渲染分离，支持可变时间步长
+- 使用Canvas 2D API而非WebGL降低复杂度
