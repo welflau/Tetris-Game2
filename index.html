@@ -70,7 +70,6 @@
             border: 1px solid rgba(255, 255, 255, 0.2);
             max-width: 800px;
             width: 100%;
-            position: relative;
         }
 
         /* 游戏画布 */
@@ -82,103 +81,133 @@
             margin: 0 auto 1rem;
         }
 
-        /* 控制按钮 */
+        /* 控制面板 */
         .controls {
             display: flex;
             justify-content: center;
             gap: 1rem;
-            flex-wrap: wrap;
             margin-bottom: 1rem;
+            flex-wrap: wrap;
         }
 
         .btn {
-            padding: 0.8rem 1.5rem;
+            padding: 0.5rem 1rem;
             border: none;
-            border-radius: 25px;
-            background: linear-gradient(45deg, #667eea, #764ba2);
+            border-radius: 5px;
+            background: #667eea;
             color: white;
-            font-size: 1rem;
             cursor: pointer;
+            font-size: 0.9rem;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
         }
 
         .btn:hover {
+            background: #5a6fd8;
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
         }
 
-        .btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none;
+        .btn:active {
+            transform: translateY(0);
         }
 
-        .btn.danger {
-            background: linear-gradient(45deg, #ff6b6b, #ee5a52);
-        }
-
-        .btn.success {
-            background: linear-gradient(45deg, #51cf66, #40c057);
-        }
-
-        /* 状态显示 */
-        .status-display {
-            background: rgba(0, 0, 0, 0.1);
-            padding: 1rem;
+        /* 音频控制面板 */
+        .audio-controls {
+            background: rgba(102, 126, 234, 0.1);
             border-radius: 10px;
+            padding: 1rem;
             margin-bottom: 1rem;
         }
 
-        .status-item {
-            display: inline-block;
-            margin: 0 1rem;
-            font-weight: bold;
-        }
-
-        /* 遮罩层 */
-        .overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.8);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            border-radius: 20px;
-            z-index: 100;
-        }
-
-        .overlay.show {
-            display: flex;
-        }
-
-        .overlay-content {
-            background: white;
-            padding: 2rem;
-            border-radius: 15px;
-            text-align: center;
-            max-width: 400px;
-            width: 90%;
-        }
-
-        .overlay h2 {
-            margin-bottom: 1rem;
+        .audio-controls h3 {
+            margin-bottom: 0.5rem;
             color: #333;
         }
 
-        .overlay p {
-            margin-bottom: 1.5rem;
-            color: #666;
+        .volume-control {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
         }
 
-        /* 游戏对象样式 */
-        .game-object {
-            position: absolute;
+        .volume-slider {
+            flex: 1;
+            height: 5px;
+            border-radius: 5px;
+            background: #ddd;
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        .volume-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 15px;
             border-radius: 50%;
-            transition: all 0.1s ease;
+            background: #667eea;
+            cursor: pointer;
+        }
+
+        .volume-slider::-moz-range-thumb {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: #667eea;
+            cursor: pointer;
+            border: none;
+        }
+
+        /* 游戏信息 */
+        .game-info {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 1rem;
+            font-weight: bold;
+        }
+
+        .info-item {
+            text-align: center;
+        }
+
+        .info-label {
+            display: block;
+            font-size: 0.8rem;
+            color: #666;
+            margin-bottom: 0.2rem;
+        }
+
+        .info-value {
+            font-size: 1.2rem;
+            color: #333;
+        }
+
+        /* 状态指示器 */
+        .status-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-left: 0.5rem;
+        }
+
+        .status-loading {
+            background: orange;
+            animation: pulse 1s infinite;
+        }
+
+        .status-ready {
+            background: green;
+        }
+
+        .status-error {
+            background: red;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
         }
 
         /* 响应式设计 */
@@ -193,618 +222,727 @@
             }
 
             .controls {
-                gap: 0.5rem;
+                flex-direction: column;
+                align-items: center;
             }
 
             .btn {
-                padding: 0.6rem 1rem;
-                font-size: 0.9rem;
+                width: 100%;
+                max-width: 200px;
             }
         }
     </style>
 </head>
 <body>
     <header>
-        <h1>游戏状态管理系统</h1>
+        <h1>游戏音效系统演示</h1>
     </header>
 
     <main>
         <div class="game-container">
-            <!-- 状态显示 -->
-            <div class="status-display">
-                <div class="status-item">状态: <span id="currentState">MENU</span></div>
-                <div class="status-item">分数: <span id="score">0</span></div>
-                <div class="status-item">时间: <span id="gameTime">00:00</span></div>
+            <!-- 音频控制面板 -->
+            <div class="audio-controls">
+                <h3>音效控制 <span id="audioStatus" class="status-indicator status-loading"></span></h3>
+                <div class="volume-control">
+                    <label for="volumeSlider">音量:</label>
+                    <input type="range" id="volumeSlider" class="volume-slider" min="0" max="100" value="70">
+                    <span id="volumeValue">70%</span>
+                </div>
+                <div class="controls">
+                    <button id="muteBtn" class="btn">静音</button>
+                    <button id="testMoveBtn" class="btn">测试移动音效</button>
+                    <button id="testClearBtn" class="btn">测试消行音效</button>
+                    <button id="testGameOverBtn" class="btn">测试游戏结束音效</button>
+                </div>
             </div>
 
             <!-- 游戏画布 -->
-            <canvas id="gameCanvas" width="600" height="400"></canvas>
+            <canvas id="gameCanvas" width="400" height="600"></canvas>
 
-            <!-- 控制按钮 -->
+            <!-- 游戏信息 -->
+            <div class="game-info">
+                <div class="info-item">
+                    <span class="info-label">得分</span>
+                    <span id="score" class="info-value">0</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">等级</span>
+                    <span id="level" class="info-value">1</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">消行</span>
+                    <span id="lines" class="info-value">0</span>
+                </div>
+            </div>
+
+            <!-- 游戏控制 -->
             <div class="controls">
-                <button id="startBtn" class="btn success">开始游戏</button>
-                <button id="pauseBtn" class="btn" disabled>暂停</button>
-                <button id="resumeBtn" class="btn" disabled>继续</button>
-                <button id="endBtn" class="btn danger" disabled>结束游戏</button>
-                <button id="restartBtn" class="btn">重新开始</button>
-            </div>
-
-            <!-- 暂停遮罩 -->
-            <div id="pauseOverlay" class="overlay">
-                <div class="overlay-content">
-                    <h2>游戏已暂停</h2>
-                    <p>点击继续按钮恢复游戏</p>
-                    <button id="resumeFromOverlay" class="btn success">继续游戏</button>
-                </div>
-            </div>
-
-            <!-- 游戏结束遮罩 -->
-            <div id="gameOverOverlay" class="overlay">
-                <div class="overlay-content">
-                    <h2>游戏结束</h2>
-                    <p id="finalScore">最终分数: 0</p>
-                    <p id="gameTimeResult">游戏时间: 00:00</p>
-                    <div style="margin-top: 1rem;">
-                        <button id="restartFromOverlay" class="btn success">重新开始</button>
-                        <button id="backToMenu" class="btn">返回菜单</button>
-                    </div>
-                </div>
+                <button id="startBtn" class="btn">开始游戏</button>
+                <button id="pauseBtn" class="btn">暂停</button>
+                <button id="resetBtn" class="btn">重置</button>
             </div>
         </div>
     </main>
 
     <script>
-        // 游戏状态枚举
-        const GameStates = {
-            MENU: 'MENU',
-            PLAYING: 'PLAYING',
-            PAUSED: 'PAUSED',
-            GAME_OVER: 'GAME_OVER'
-        };
+        // 音效类型定义
+        class SoundEffects {
+            static SOUND_TYPES = {
+                MOVE: 'move',
+                ROTATE: 'rotate',
+                DROP: 'drop',
+                CLEAR_LINE: 'clearLine',
+                CLEAR_TETRIS: 'clearTetris',
+                GAME_OVER: 'gameOver',
+                LEVEL_UP: 'levelUp',
+                PAUSE: 'pause'
+            };
 
-        // 游戏状态管理器
-        class GameStateManager {
-            constructor() {
-                this.currentState = GameStates.MENU;
-                this.observers = [];
-                this.stateTransitions = {
-                    [GameStates.MENU]: [GameStates.PLAYING],
-                    [GameStates.PLAYING]: [GameStates.PAUSED, GameStates.GAME_OVER, GameStates.MENU],
-                    [GameStates.PAUSED]: [GameStates.PLAYING, GameStates.GAME_OVER, GameStates.MENU],
-                    [GameStates.GAME_OVER]: [GameStates.MENU, GameStates.PLAYING]
+            static getSoundConfig(soundName) {
+                const configs = {
+                    [this.SOUND_TYPES.MOVE]: {
+                        frequency: 220,
+                        duration: 0.1,
+                        type: 'square',
+                        volume: 0.3
+                    },
+                    [this.SOUND_TYPES.ROTATE]: {
+                        frequency: 330,
+                        duration: 0.15,
+                        type: 'sine',
+                        volume: 0.4
+                    },
+                    [this.SOUND_TYPES.DROP]: {
+                        frequency: 110,
+                        duration: 0.2,
+                        type: 'triangle',
+                        volume: 0.5
+                    },
+                    [this.SOUND_TYPES.CLEAR_LINE]: {
+                        frequencies: [440, 554, 659, 880],
+                        duration: 0.5,
+                        type: 'sine',
+                        volume: 0.6
+                    },
+                    [this.SOUND_TYPES.CLEAR_TETRIS]: {
+                        frequencies: [440, 554, 659, 880, 1108],
+                        duration: 0.8,
+                        type: 'sine',
+                        volume: 0.7
+                    },
+                    [this.SOUND_TYPES.GAME_OVER]: {
+                        frequencies: [220, 196, 174, 146],
+                        duration: 1.0,
+                        type: 'sawtooth',
+                        volume: 0.8
+                    },
+                    [this.SOUND_TYPES.LEVEL_UP]: {
+                        frequencies: [523, 659, 784, 1047],
+                        duration: 0.6,
+                        type: 'sine',
+                        volume: 0.6
+                    },
+                    [this.SOUND_TYPES.PAUSE]: {
+                        frequency: 440,
+                        duration: 0.3,
+                        type: 'sine',
+                        volume: 0.4
+                    }
                 };
+                return configs[soundName] || null;
             }
 
-            setState(newState) {
-                if (this.canTransition(this.currentState, newState)) {
-                    const oldState = this.currentState;
-                    this.currentState = newState;
-                    this.notifyObservers(oldState, newState);
-                    return true;
-                }
-                return false;
-            }
-
-            getState() {
-                return this.currentState;
-            }
-
-            canTransition(fromState, toState) {
-                return this.stateTransitions[fromState]?.includes(toState) || false;
-            }
-
-            onStateChange(callback) {
-                this.observers.push(callback);
-            }
-
-            notifyObservers(oldState, newState) {
-                this.observers.forEach(callback => callback(oldState, newState));
+            static getAllSounds() {
+                return Object.values(this.SOUND_TYPES);
             }
         }
 
-        // 持久化管理器
-        class PersistenceManager {
+        // 音频设置管理
+        class AudioSettings {
             constructor() {
-                this.storageKey = 'gameState';
-                this.settingsKey = 'gameSettings';
-            }
-
-            saveGameState(state) {
-                try {
-                    localStorage.setItem(this.storageKey, JSON.stringify(state));
-                    return true;
-                } catch (error) {
-                    console.error('保存游戏状态失败:', error);
-                    return false;
-                }
-            }
-
-            loadGameState() {
-                try {
-                    const saved = localStorage.getItem(this.storageKey);
-                    return saved ? JSON.parse(saved) : null;
-                } catch (error) {
-                    console.error('加载游戏状态失败:', error);
-                    return null;
-                }
-            }
-
-            clearSavedState() {
-                try {
-                    localStorage.removeItem(this.storageKey);
-                    return true;
-                } catch (error) {
-                    console.error('清除保存状态失败:', error);
-                    return false;
-                }
+                this.defaultSettings = {
+                    volume: 0.7,
+                    muted: false,
+                    soundEnabled: true
+                };
             }
 
             saveSettings(settings) {
                 try {
-                    localStorage.setItem(this.settingsKey, JSON.stringify(settings));
-                    return true;
+                    localStorage.setItem('gameAudioSettings', JSON.stringify(settings));
                 } catch (error) {
-                    console.error('保存设置失败:', error);
-                    return false;
+                    console.warn('无法保存音频设置:', error);
                 }
+            }
+
+            loadSettings() {
+                try {
+                    const saved = localStorage.getItem('gameAudioSettings');
+                    return saved ? { ...this.defaultSettings, ...JSON.parse(saved) } : this.defaultSettings;
+                } catch (error) {
+                    console.warn('无法加载音频设置:', error);
+                    return this.defaultSettings;
+                }
+            }
+
+            resetToDefault() {
+                this.saveSettings(this.defaultSettings);
+                return this.defaultSettings;
+            }
+
+            updateSetting(key, value) {
+                const settings = this.loadSettings();
+                settings[key] = value;
+                this.saveSettings(settings);
+                return settings;
             }
         }
 
-        // 游戏循环管理器
-        class GameLoop {
+        // 音频加载器
+        class AudioLoader {
             constructor() {
-                this.isRunning = false;
-                this.animationId = null;
-                this.updateCallback = null;
-                this.lastTime = 0;
+                this.loadProgress = 0;
+                this.totalSounds = 0;
+                this.loadedSounds = 0;
+            }
+
+            async loadSingle(config) {
+                return new Promise((resolve) => {
+                    // 由于使用Web Audio API生成音效，这里直接返回配置
+                    setTimeout(() => {
+                        this.loadedSounds++;
+                        this.updateProgress();
+                        resolve(config);
+                    }, 100); // 模拟加载时间
+                });
+            }
+
+            async loadBatch(configMap) {
+                this.totalSounds = Object.keys(configMap).length;
+                this.loadedSounds = 0;
+                this.loadProgress = 0;
+
+                const loadPromises = Object.entries(configMap).map(async ([name, config]) => {
+                    const loadedConfig = await this.loadSingle(config);
+                    return [name, loadedConfig];
+                });
+
+                const results = await Promise.all(loadPromises);
+                return new Map(results);
+            }
+
+            updateProgress() {
+                this.loadProgress = this.totalSounds > 0 ? (this.loadedSounds / this.totalSounds) * 100 : 0;
+            }
+
+            getLoadProgress() {
+                return this.loadProgress;
+            }
+        }
+
+        // 音效管理器（单例模式）
+        class AudioManager {
+            constructor() {
+                if (AudioManager.instance) {
+                    return AudioManager.instance;
+                }
+
+                this.audioContext = null;
+                this.sounds = new Map();
+                this.settings = new AudioSettings();
+                this.loader = new AudioLoader();
+                this.masterVolume = 0.7;
+                this.muted = false;
+                this.initialized = false;
+
+                AudioManager.instance = this;
+            }
+
+            async init() {
+                if (this.initialized) return;
+
+                try {
+                    // 创建音频上下文
+                    this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                    
+                    // 加载设置
+                    const savedSettings = this.settings.loadSettings();
+                    this.masterVolume = savedSettings.volume;
+                    this.muted = savedSettings.muted;
+
+                    // 预加载所有音效
+                    await this.preloadAll();
+                    
+                    this.initialized = true;
+                    console.log('音效系统初始化完成');
+                } catch (error) {
+                    console.error('音效系统初始化失败:', error);
+                    throw error;
+                }
+            }
+
+            async preloadAll() {
+                const soundConfigs = {};
+                SoundEffects.getAllSounds().forEach(soundName => {
+                    soundConfigs[soundName] = SoundEffects.getSoundConfig(soundName);
+                });
+
+                this.sounds = await this.loader.loadBatch(soundConfigs);
+            }
+
+            createOscillator(frequency, type, duration, volume) {
+                if (!this.audioContext) return null;
+
+                const oscillator = this.audioContext.createOscillator();
+                const gainNode = this.audioContext.createGain();
+
+                oscillator.connect(gainNode);
+                gainNode.connect(this.audioContext.destination);
+
+                oscillator.frequency.setValueAtTime(frequency, this.audioContext.currentTime);
+                oscillator.type = type;
+
+                const finalVolume = this.muted ? 0 : volume * this.masterVolume;
+                gainNode.gain.setValueAtTime(finalVolume, this.audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.001, this.audioContext.currentTime + duration);
+
+                return { oscillator, gainNode, duration };
+            }
+
+            playSound(soundName, options = {}) {
+                if (!this.initialized || this.muted) return;
+
+                const config = this.sounds.get(soundName);
+                if (!config) {
+                    console.warn(`音效 ${soundName} 未找到`);
+                    return;
+                }
+
+                try {
+                    // 恢复音频上下文（处理浏览器自动播放策略）
+                    if (this.audioContext.state === 'suspended') {
+                        this.audioContext.resume();
+                    }
+
+                    if (config.frequencies) {
+                        // 播放多音符音效
+                        this.playMultiToneSound(config, options);
+                    } else {
+                        // 播放单音符音效
+                        this.playSingleToneSound(config, options);
+                    }
+                } catch (error) {
+                    console.error(`播放音效 ${soundName} 失败:`, error);
+                }
+            }
+
+            playSingleToneSound(config, options) {
+                const sound = this.createOscillator(
+                    config.frequency,
+                    config.type,
+                    config.duration,
+                    options.volume || config.volume
+                );
+
+                if (sound) {
+                    sound.oscillator.start(this.audioContext.currentTime);
+                    sound.oscillator.stop(this.audioContext.currentTime + sound.duration);
+                }
+            }
+
+            playMultiToneSound(config, options) {
+                const baseTime = this.audioContext.currentTime;
+                const noteDuration = config.duration / config.frequencies.length;
+
+                config.frequencies.forEach((frequency, index) => {
+                    const startTime = baseTime + (index * noteDuration * 0.8); // 轻微重叠
+                    const sound = this.createOscillator(
+                        frequency,
+                        config.type,
+                        noteDuration,
+                        options.volume || config.volume
+                    );
+
+                    if (sound) {
+                        sound.oscillator.start(startTime);
+                        sound.oscillator.stop(startTime + noteDuration);
+                    }
+                });
+            }
+
+            setVolume(volume) {
+                this.masterVolume = Math.max(0, Math.min(1, volume));
+                this.settings.updateSetting('volume', this.masterVolume);
+            }
+
+            mute() {
+                this.muted = true;
+                this.settings.updateSetting('muted', true);
+            }
+
+            unmute() {
+                this.muted = false;
+                this.settings.updateSetting('muted', false);
+            }
+
+            toggleMute() {
+                if (this.muted) {
+                    this.unmute();
+                } else {
+                    this.mute();
+                }
+                return this.muted;
+            }
+
+            getVolume() {
+                return this.masterVolume;
+            }
+
+            isMuted() {
+                return this.muted;
+            }
+        }
+
+        // 游戏音效控制器
+        class GameAudioController {
+            constructor() {
+                this.audioManager = new AudioManager();
+                this.eventListeners = new Map();
+                this.initialized = false;
+            }
+
+            async init() {
+                if (this.initialized) return;
+
+                try {
+                    await this.audioManager.init();
+                    this.bindGameEvents();
+                    this.initialized = true;
+                    console.log('游戏音效控制器初始化完成');
+                } catch (error) {
+                    console.error('游戏音效控制器初始化失败:', error);
+                    throw error;
+                }
+            }
+
+            bindGameEvents() {
+                // 绑定自定义游戏事件
+                const events = {
+                    'piece-move': () => this.audioManager.playSound(SoundEffects.SOUND_TYPES.MOVE),
+                    'piece-rotate': () => this.audioManager.playSound(SoundEffects.SOUND_TYPES.ROTATE),
+                    'piece-drop': () => this.audioManager.playSound(SoundEffects.SOUND_TYPES.DROP),
+                    'line-clear': (data) => {
+                        if (data && data.lines === 4) {
+                            this.audioManager.playSound(SoundEffects.SOUND_TYPES.CLEAR_TETRIS);
+                        } else {
+                            this.audioManager.playSound(SoundEffects.SOUND_TYPES.CLEAR_LINE);
+                        }
+                    },
+                    'game-over': () => this.audioManager.playSound(SoundEffects.SOUND_TYPES.GAME_OVER),
+                    'level-up': () => this.audioManager.playSound(SoundEffects.SOUND_TYPES.LEVEL_UP),
+                    'game-pause': () => this.audioManager.playSound(SoundEffects.SOUND_TYPES.PAUSE)
+                };
+
+                Object.entries(events).forEach(([eventType, handler]) => {
+                    const listener = (event) => handler(event.detail);
+                    document.addEventListener(eventType, listener);
+                    this.eventListeners.set(eventType, listener);
+                });
+            }
+
+            handleGameEvent(eventType, data) {
+                // 手动触发游戏事件
+                const event = new CustomEvent(eventType, { detail: data });
+                document.dispatchEvent(event);
+            }
+
+            destroy() {
+                // 清理事件监听器
+                this.eventListeners.forEach((listener, eventType) => {
+                    document.removeEventListener(eventType, listener);
+                });
+                this.eventListeners.clear();
+                this.initialized = false;
+            }
+        }
+
+        // 简单的俄罗斯方块游戏演示
+        class TetrisGame {
+            constructor(canvas) {
+                this.canvas = canvas;
+                this.ctx = canvas.getContext('2d');
+                this.audioController = new GameAudioController();
+                
+                this.blockSize = 20;
+                this.cols = 20;
+                this.rows = 30;
+                this.board = [];
+                this.score = 0;
+                this.level = 1;
+                this.lines = 0;
+                this.gameRunning = false;
+                this.gamePaused = false;
+                
+                this.currentPiece = null;
+                this.gameLoop = null;
+                
+                this.initBoard();
+            }
+
+            async init() {
+                await this.audioController.init();
+                this.bindControls();
+                console.log('游戏初始化完成');
+            }
+
+            initBoard() {
+                this.board = Array(this.rows).fill().map(() => Array(this.cols).fill(0));
+            }
+
+            bindControls() {
+                document.addEventListener('keydown', (e) => {
+                    if (!this.gameRunning || this.gamePaused) return;
+                    
+                    switch(e.key) {
+                        case 'ArrowLeft':
+                            this.audioController.handleGameEvent('piece-move');
+                            break;
+                        case 'ArrowRight':
+                            this.audioController.handleGameEvent('piece-move');
+                            break;
+                        case 'ArrowDown':
+                            this.audioController.handleGameEvent('piece-move');
+                            break;
+                        case 'ArrowUp':
+                            this.audioController.handleGameEvent('piece-rotate');
+                            break;
+                        case ' ':
+                            this.audioController.handleGameEvent('piece-drop');
+                            break;
+                    }
+                });
             }
 
             start() {
-                if (!this.isRunning) {
-                    this.isRunning = true;
-                    this.lastTime = performance.now();
-                    this.loop();
-                }
+                if (this.gameRunning) return;
+                
+                this.gameRunning = true;
+                this.gamePaused = false;
+                this.initBoard();
+                this.score = 0;
+                this.level = 1;
+                this.lines = 0;
+                this.updateUI();
+                
+                this.gameLoop = setInterval(() => {
+                    if (!this.gamePaused) {
+                        this.update();
+                        this.draw();
+                    }
+                }, 500);
             }
 
             pause() {
-                this.isRunning = false;
-                if (this.animationId) {
-                    cancelAnimationFrame(this.animationId);
-                    this.animationId = null;
-                }
-            }
-
-            resume() {
-                if (!this.isRunning) {
-                    this.isRunning = true;
-                    this.lastTime = performance.now();
-                    this.loop();
-                }
-            }
-
-            stop() {
-                this.pause();
-            }
-
-            setUpdateCallback(callback) {
-                this.updateCallback = callback;
-            }
-
-            loop() {
-                if (!this.isRunning) return;
-
-                const currentTime = performance.now();
-                const deltaTime = currentTime - this.lastTime;
-                this.lastTime = currentTime;
-
-                if (this.updateCallback) {
-                    this.updateCallback(deltaTime);
-                }
-
-                this.animationId = requestAnimationFrame(() => this.loop());
-            }
-        }
-
-        // UI状态渲染器
-        class UIStateRenderer {
-            constructor() {
-                this.elements = {
-                    currentState: document.getElementById('currentState'),
-                    score: document.getElementById('score'),
-                    gameTime: document.getElementById('gameTime'),
-                    startBtn: document.getElementById('startBtn'),
-                    pauseBtn: document.getElementById('pauseBtn'),
-                    resumeBtn: document.getElementById('resumeBtn'),
-                    endBtn: document.getElementById('endBtn'),
-                    restartBtn: document.getElementById('restartBtn'),
-                    pauseOverlay: document.getElementById('pauseOverlay'),
-                    gameOverOverlay: document.getElementById('gameOverOverlay'),
-                    finalScore: document.getElementById('finalScore'),
-                    gameTimeResult: document.getElementById('gameTimeResult')
-                };
-            }
-
-            renderState(state) {
-                this.elements.currentState.textContent = state;
-                this.updateButtonStates(state);
-                this.hideAllOverlays();
-
-                switch (state) {
-                    case GameStates.PAUSED:
-                        this.showPauseOverlay();
-                        break;
-                    case GameStates.GAME_OVER:
-                        this.showGameOverScreen();
-                        break;
-                }
-            }
-
-            updateButtonStates(state) {
-                const buttons = this.elements;
+                if (!this.gameRunning) return;
                 
-                // 重置所有按钮状态
-                Object.values(buttons).forEach(btn => {
-                    if (btn && btn.disabled !== undefined) {
-                        btn.disabled = false;
+                this.gamePaused = !this.gamePaused;
+                this.audioController.handleGameEvent('game-pause');
+            }
+
+            reset() {
+                this.gameRunning = false;
+                this.gamePaused = false;
+                if (this.gameLoop) {
+                    clearInterval(this.gameLoop);
+                    this.gameLoop = null;
+                }
+                this.initBoard();
+                this.score = 0;
+                this.level = 1;
+                this.lines = 0;
+                this.updateUI();
+                this.draw();
+            }
+
+            update() {
+                // 简化的游戏逻辑，主要用于演示音效
+                if (Math.random() < 0.1) {
+                    // 模拟消行
+                    const clearedLines = Math.floor(Math.random() * 4) + 1;
+                    this.lines += clearedLines;
+                    this.score += clearedLines * 100 * this.level;
+                    
+                    this.audioController.handleGameEvent('line-clear', { lines: clearedLines });
+                    
+                    // 检查升级
+                    const newLevel = Math.floor(this.lines / 10) + 1;
+                    if (newLevel > this.level) {
+                        this.level = newLevel;
+                        this.audioController.handleGameEvent('level-up');
                     }
-                });
-
-                switch (state) {
-                    case GameStates.MENU:
-                        buttons.pauseBtn.disabled = true;
-                        buttons.resumeBtn.disabled = true;
-                        buttons.endBtn.disabled = true;
-                        break;
-                    case GameStates.PLAYING:
-                        buttons.startBtn.disabled = true;
-                        buttons.resumeBtn.disabled = true;
-                        break;
-                    case GameStates.PAUSED:
-                        buttons.startBtn.disabled = true;
-                        buttons.pauseBtn.disabled = true;
-                        break;
-                    case GameStates.GAME_OVER:
-                        buttons.startBtn.disabled = true;
-                        buttons.pauseBtn.disabled = true;
-                        buttons.resumeBtn.disabled = true;
-                        buttons.endBtn.disabled = true;
-                        break;
+                    
+                    this.updateUI();
                 }
-            }
-
-            showPauseOverlay() {
-                this.elements.pauseOverlay.classList.add('show');
-            }
-
-            showGameOverScreen() {
-                this.elements.gameOverOverlay.classList.add('show');
-            }
-
-            hideAllOverlays() {
-                this.elements.pauseOverlay.classList.remove('show');
-                this.elements.gameOverOverlay.classList.remove('show');
-            }
-
-            updateScore(score) {
-                this.elements.score.textContent = score;
-            }
-
-            updateGameTime(time) {
-                const minutes = Math.floor(time / 60000);
-                const seconds = Math.floor((time % 60000) / 1000);
-                const timeString = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-                this.elements.gameTime.textContent = timeString;
-            }
-
-            updateFinalResults(score, time) {
-                this.elements.finalScore.textContent = `最终分数: ${score}`;
-                const minutes = Math.floor(time / 60000);
-                const seconds = Math.floor((time % 60000) / 1000);
-                const timeString = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-                this.elements.gameTimeResult.textContent = `游戏时间: ${timeString}`;
-            }
-        }
-
-        // 输入处理器
-        class InputHandler {
-            constructor(gameController) {
-                this.gameController = gameController;
-                this.enabled = true;
-                this.keyBindings = {
-                    [GameStates.MENU]: {
-                        'Enter': () => this.gameController.startGame(),
-                        ' ': () => this.gameController.startGame()
-                    },
-                    [GameStates.PLAYING]: {
-                        'Escape': () => this.gameController.pauseGame(),
-                        ' ': () => this.gameController.pauseGame()
-                    },
-                    [GameStates.PAUSED]: {
-                        'Escape': () => this.gameController.resumeGame(),
-                        ' ': () => this.gameController.resumeGame(),
-                        'Enter': () => this.gameController.resumeGame()
-                    },
-                    [GameStates.GAME_OVER]: {
-                        'Enter': () => this.gameController.restartGame(),
-                        ' ': () => this.gameController.restartGame(),
-                        'Escape': () => this.gameController.backToMenu()
-                    }
-                };
-
-                this.bindEvents();
-            }
-
-            bindEvents() {
-                document.addEventListener('keydown', (event) => {
-                    this.handleKeyPress(event.key, this.gameController.stateManager.getState());
-                });
-            }
-
-            handleKeyPress(key, currentState) {
-                if (!this.enabled) return;
-
-                const stateBindings = this.keyBindings[currentState];
-                if (stateBindings && stateBindings[key]) {
-                    event.preventDefault();
-                    stateBindings[key]();
-                }
-            }
-
-            enableInput() {
-                this.enabled = true;
-            }
-
-            disableInput() {
-                this.enabled = false;
-            }
-
-            bindStateSpecificControls(state) {
-                // 可以根据状态绑定特定的控制逻辑
-                console.log(`绑定状态 ${state} 的特定控制`);
-            }
-        }
-
-        // 简单的游戏对象
-        class GameObject {
-            constructor(x, y, size, color) {
-                this.x = x;
-                this.y = y;
-                this.size = size;
-                this.color = color;
-                this.vx = (Math.random() - 0.5) * 4;
-                this.vy = (Math.random() - 0.5) * 4;
-            }
-
-            update(deltaTime, canvasWidth, canvasHeight) {
-                this.x += this.vx;
-                this.y += this.vy;
-
-                // 边界碰撞检测
-                if (this.x <= this.size || this.x >= canvasWidth - this.size) {
-                    this.vx = -this.vx;
-                    this.x = Math.max(this.size, Math.min(canvasWidth - this.size, this.x));
-                }
-                if (this.y <= this.size || this.y >= canvasHeight - this.size) {
-                    this.vy = -this.vy;
-                    this.y = Math.max(this.size, Math.min(canvasHeight - this.size, this.y));
-                }
-            }
-
-            draw(ctx) {
-                ctx.fillStyle = this.color;
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                ctx.fill();
-            }
-        }
-
-        // 游戏控制器
-        class GameController {
-            constructor() {
-                this.stateManager = new GameStateManager();
-                this.persistenceManager = new PersistenceManager();
-                this.gameLoop = new GameLoop();
-                this.uiRenderer = new UIStateRenderer();
-                this.inputHandler = new InputHandler(this);
-
-                this.canvas = document.getElementById('gameCanvas');
-                this.ctx = this.canvas.getContext('2d');
                 
-                this.gameData = {
-                    score: 0,
-                    startTime: 0,
-                    gameTime: 0,
-                    objects: []
-                };
-
-                this.init();
+                // 模拟游戏结束
+                if (this.score > 5000) {
+                    this.gameOver();
+                }
             }
 
-            init() {
-                // 注册状态变化监听器
-                this.stateManager.onStateChange((oldState, newState) => {
-                    this.handleStateTransition(oldState, newState);
-                });
+            gameOver() {
+                this.gameRunning = false;
+                if (this.gameLoop) {
+                    clearInterval(this.gameLoop);
+                    this.gameLoop = null;
+                }
+                this.audioController.handleGameEvent('game-over');
+            }
 
-                // 设置游戏循环回调
-                this.gameLoop.setUpdateCallback((deltaTime) => {
-                    this.update(deltaTime);
-                    this.render();
-                });
+            draw() {
+                // 清空画布
+                this.ctx.fillStyle = '#000';
+                this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+                
+                // 绘制网格
+                this.ctx.strokeStyle = '#333';
+                this.ctx.lineWidth = 1;
+                
+                for (let x = 0; x <= this.canvas.width; x += this.blockSize) {
+                    this.ctx.beginPath();
+                    this.ctx.moveTo(x, 0);
+                    this.ctx.lineTo(x, this.canvas.height);
+                    this.ctx.stroke();
+                }
+                
+                for (let y = 0; y <= this.canvas.height; y += this.blockSize) {
+                    this.ctx.beginPath();
+                    this.ctx.moveTo(0, y);
+                    this.ctx.lineTo(this.canvas.width, y);
+                    this.ctx.stroke();
+                }
+                
+                // 绘制一些随机方块作为演示
+                this.ctx.fillStyle = '#667eea';
+                for (let i = 0; i < 10; i++) {
+                    const x = Math.floor(Math.random() * this.cols) * this.blockSize;
+                    const y = Math.floor(Math.random() * this.rows) * this.blockSize;
+                    this.ctx.fillRect(x, y, this.blockSize - 1, this.blockSize - 1);
+                }
+            }
 
-                // 绑定UI事件
-                this.bindUIEvents();
+            updateUI() {
+                document.getElementById('score').textContent = this.score;
+                document.getElementById('level').textContent = this.level;
+                document.getElementById('lines').textContent = this.lines;
+            }
+        }
 
-                // 初始化UI
-                this.uiRenderer.renderState(this.stateManager.getState());
+        // 应用程序初始化
+        class App {
+            constructor() {
+                this.game = null;
+                this.audioManager = null;
+            }
+
+            async init() {
+                try {
+                    // 初始化游戏
+                    const canvas = document.getElementById('gameCanvas');
+                    this.game = new TetrisGame(canvas);
+                    await this.game.init();
+                    
+                    // 获取音频管理器实例
+                    this.audioManager = new AudioManager();
+                    
+                    // 绑定UI事件
+                    this.bindUIEvents();
+                    
+                    // 初始化UI状态
+                    this.updateAudioStatus('ready');
+                    this.updateVolumeDisplay();
+                    
+                    // 绘制初始画面
+                    this.game.draw();
+                    
+                    console.log('应用程序初始化完成');
+                } catch (error) {
+                    console.error('应用程序初始化失败:', error);
+                    this.updateAudioStatus('error');
+                }
             }
 
             bindUIEvents() {
-                document.getElementById('startBtn').addEventListener('click', () => this.startGame());
-                document.getElementById('pauseBtn').addEventListener('click', () => this.pauseGame());
-                document.getElementById('resumeBtn').addEventListener('click', () => this.resumeGame());
-                document.getElementById('endBtn').addEventListener('click', () => this.endGame());
-                document.getElementById('restartBtn').addEventListener('click', () => this.restartGame());
-                document.getElementById('resumeFromOverlay').addEventListener('click', () => this.resumeGame());
-                document.getElementById('restartFromOverlay').addEventListener('click', () => this.restartGame());
-                document.getElementById('backToMenu').addEventListener('click', () => this.backToMenu());
-            }
-
-            startGame() {
-                if (this.stateManager.setState(GameStates.PLAYING)) {
-                    this.initializeGame();
-                    this.gameLoop.start();
-                }
-            }
-
-            pauseGame() {
-                if (this.stateManager.setState(GameStates.PAUSED)) {
-                    this.gameLoop.pause();
-                }
-            }
-
-            resumeGame() {
-                if (this.stateManager.setState(GameStates.PLAYING)) {
-                    this.gameLoop.resume();
-                }
-            }
-
-            endGame() {
-                if (this.stateManager.setState(GameStates.GAME_OVER)) {
-                    this.gameLoop.stop();
-                    this.uiRenderer.updateFinalResults(this.gameData.score, this.gameData.gameTime);
-                }
-            }
-
-            restartGame() {
-                this.stateManager.setState(GameStates.PLAYING);
-                this.initializeGame();
-                this.gameLoop.start();
-            }
-
-            backToMenu() {
-                this.stateManager.setState(GameStates.MENU);
-                this.gameLoop.stop();
-                this.clearCanvas();
-            }
-
-            handleStateTransition(oldState, newState) {
-                console.log(`状态转换: ${oldState} -> ${newState}`);
-                
-                // 更新UI
-                this.uiRenderer.renderState(newState);
-                
-                // 保存状态
-                this.persistenceManager.saveGameState({
-                    state: newState,
-                    gameData: this.gameData,
-                    timestamp: Date.now()
+                // 游戏控制按钮
+                document.getElementById('startBtn').addEventListener('click', () => {
+                    this.game.start();
                 });
-
-                // 状态特定逻辑
-                switch (newState) {
-                    case GameStates.PLAYING:
-                        this.inputHandler.enableInput();
-                        break;
-                    case GameStates.PAUSED:
-                        // 暂停时可以保持输入启用以便恢复
-                        break;
-                    case GameStates.GAME_OVER:
-                        this.inputHandler.enableInput();
-                        break;
-                    case GameStates.MENU:
-                        this.inputHandler.enableInput();
-                        this.resetGameData();
-                        break;
-                }
-            }
-
-            initializeGame() {
-                this.gameData.score = 0;
-                this.gameData.startTime = Date.now();
-                this.gameData.gameTime = 0;
-                this.gameData.objects = [];
-
-                // 创建一些游戏对象
-                const colors = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4', '#feca57'];
-                for (let i = 0; i < 5; i++) {
-                    this.gameData.objects.push(new GameObject(
-                        Math.random() * (this.canvas.width - 40) + 20,
-                        Math.random() * (this.canvas.height - 40) + 20,
-                        10 + Math.random() * 15,
-                        colors[i % colors.length]
-                    ));
-                }
-
-                this.uiRenderer.updateScore(this.gameData.score);
-                this.uiRenderer.updateGameTime(this.gameData.gameTime);
-            }
-
-            resetGameData() {
-                this.gameData = {
-                    score: 0,
-                    startTime: 0,
-                    gameTime: 0,
-                    objects: []
-                };
-                this.uiRenderer.updateScore(0);
-                this.uiRenderer.updateGameTime(0);
-            }
-
-            update(deltaTime) {
-                if (this.stateManager.getState() !== GameStates.PLAYING) return;
-
-                // 更新游戏时间
-                this.gameData.gameTime = Date.now() - this.gameData.startTime;
-                this.uiRenderer.updateGameTime(this.gameData.gameTime);
-
-                // 更新游戏对象
-                this.gameData.objects.forEach(obj => {
-                    obj.update(deltaTime, this.canvas.width, this.canvas.height);
+                
+                document.getElementById('pauseBtn').addEventListener('click', () => {
+                    this.game.pause();
                 });
-
-                // 简单的分数逻辑
-                this.gameData.score += Math.floor(deltaTime / 100);
-                this.uiRenderer.updateScore(this.gameData.score);
-
-                // 游戏结束条件（示例：30秒后自动结束）
-                if (this.gameData.gameTime > 30000) {
-                    this.endGame();
-                }
+                
+                document.getElementById('resetBtn').addEventListener('click', () => {
+                    this.game.reset();
+                });
+                
+                // 音频控制
+                const volumeSlider = document.getElementById('volumeSlider');
+                const volumeValue = document.getElementById('volumeValue');
+                
+                volumeSlider.addEventListener('input', (e) => {
+                    const volume = e.target.value / 100;
+                    this.audioManager.setVolume(volume);
+                    volumeValue.textContent = e.target.value + '%';
+                });
+                
+                document.getElementById('muteBtn').addEventListener('click', () => {
+                    const muted = this.audioManager.toggleMute();
+                    document.getElementById('muteBtn').textContent = muted ? '取消静音' : '静音';
+                });
+                
+                // 测试音效按钮
+                document.getElementById('testMoveBtn').addEventListener('click', () => {
+                    this.audioManager.playSound(SoundEffects.SOUND_TYPES.MOVE);
+                });
+                
+                document.getElementById('testClearBtn').addEventListener('click', () => {
+                    this.audioManager.playSound(SoundEffects.SOUND_TYPES.CLEAR_LINE);
+                });
+                
+                document.getElementById('testGameOverBtn').addEventListener('click', () => {
+                    this.audioManager.playSound(SoundEffects.SOUND_TYPES.GAME_OVER);
+                });
             }
 
-            render() {
-                this.clearCanvas();
-
-                if (this.stateManager.getState() === GameStates.MENU) {
-                    this.renderMenu();
-                } else if (this.gameData.objects.length > 0) {
-                    this.gameData.objects.forEach(obj => obj.draw(this.ctx));
-                }
+            updateAudioStatus(status) {
+                const statusElement = document.getElementById('audioStatus');
+                statusElement.className = `status-indicator status-${status}`;
             }
 
-            clearCanvas() {
-                this.ctx.fillStyle = '#000';
-                this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
-            }
-
-            renderMenu() {
-                this.ctx.fillStyle = '#fff';
-                this.ctx.font = '24px Arial';
-                this.ctx.textAlign = 'center';
-                this.ctx.fillText('欢迎来到游戏状态管理演示', this.canvas.width / 2, this.canvas.height / 2 - 50);
-                this.ctx.font = '16px Arial';
-                this.ctx.fillText('点击开始游戏或按空格键/回车键开始', this.canvas.width / 2, this.canvas.height / 2);
-                this.ctx.fillText('游戏中按ESC或空格键暂停', this.canvas.width / 2, this.canvas.height / 2 + 30);
+            updateVolumeDisplay() {
+                const volume = Math.round(this.audioManager.getVolume() * 100);
+                document.getElementById('volumeSlider').value = volume;
+                document.getElementById('volumeValue').textContent = volume + '%';
+                
+                const muted = this.audioManager.isMuted();
+                document.getElementById('muteBtn').textContent = muted ? '取消静音' : '静音';
             }
         }
 
-        // 初始化游戏
-        document.addEventListener('DOMContentLoaded', () => {
-            const game = new GameController();
-            window.game = game; // 用于调试
+        // 启动应用程序
+        document.addEventListener('DOMContentLoaded', async () => {
+            const app = new App();
+            await app.init();
         });
+
+        // 处理用户交互以启用音频上下文
+        document.addEventListener('click', () => {
+            const audioManager = new AudioManager();
+            if (audioManager.audioContext && audioManager.audioContext.state === 'suspended') {
+                audioManager.audioContext.resume();
+            }
+        }, { once: true });
     </script>
 </body>
 </html>
