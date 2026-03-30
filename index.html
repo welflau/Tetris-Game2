@@ -64,8 +64,8 @@
         header h1 {
             color: var(--text-light);
             font-size: 1.8rem;
-            font-weight: 600;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            font-weight: 700;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
         }
 
         /* 主要内容区域 */
@@ -75,36 +75,42 @@
             justify-content: center;
             align-items: center;
             padding: 2rem;
-            gap: 2rem;
+            position: relative;
         }
 
         /* 游戏容器 */
         .game-container {
             display: flex;
             gap: 2rem;
-            align-items: flex-start;
+            background: var(--bg-glass);
+            backdrop-filter: blur(15px);
+            padding: 2rem;
+            border-radius: var(--border-radius-large);
+            border: 1px solid var(--border-glass);
+            box-shadow: var(--shadow-heavy);
+            max-width: 1000px;
+            width: 100%;
         }
 
         /* 游戏区域 */
         .game-area {
-            background: var(--bg-glass);
-            backdrop-filter: blur(10px);
-            border: 2px solid var(--border-glass);
-            border-radius: var(--border-radius);
-            padding: 1rem;
-            box-shadow: var(--shadow-heavy);
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
-        /* Canvas样式 */
+        /* 游戏画布 */
         #gameCanvas {
-            display: block;
-            border: 2px solid var(--text-light);
+            border: 2px solid var(--border-glass);
             border-radius: var(--border-radius);
-            background: #000;
+            background: rgba(0, 0, 0, 0.3);
+            box-shadow: var(--shadow-light);
         }
 
         /* 侧边栏 */
         .sidebar {
+            width: 200px;
             display: flex;
             flex-direction: column;
             gap: 1rem;
@@ -114,48 +120,40 @@
         .info-panel {
             background: var(--bg-glass);
             backdrop-filter: blur(10px);
-            border: 1px solid var(--border-glass);
-            border-radius: var(--border-radius);
             padding: 1rem;
+            border-radius: var(--border-radius);
+            border: 1px solid var(--border-glass);
             color: var(--text-light);
-            min-width: 200px;
         }
 
         .info-panel h3 {
             margin-bottom: 0.5rem;
             color: var(--accent-color);
+            font-size: 1.1rem;
         }
 
-        .info-item {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 0.5rem;
+        .info-panel p {
+            margin-bottom: 0.3rem;
+            font-size: 0.9rem;
         }
 
-        /* 控制面板 */
-        .control-panel {
-            background: var(--bg-glass);
-            backdrop-filter: blur(10px);
-            border: 1px solid var(--border-glass);
-            border-radius: var(--border-radius);
-            padding: 1rem;
-        }
-
-        .control-buttons {
+        /* 控制按钮 */
+        .controls {
             display: flex;
             flex-direction: column;
             gap: 0.5rem;
         }
 
         .btn {
-            padding: 0.5rem 1rem;
+            padding: 0.8rem 1.2rem;
             border: none;
             border-radius: var(--border-radius);
-            cursor: pointer;
             font-size: 0.9rem;
-            font-weight: 500;
+            font-weight: 600;
+            cursor: pointer;
             transition: var(--transition);
             text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .btn-primary {
@@ -166,6 +164,7 @@
         .btn-primary:hover {
             background: #45a049;
             transform: translateY(-2px);
+            box-shadow: var(--shadow-light);
         }
 
         .btn-secondary {
@@ -176,6 +175,7 @@
         .btn-secondary:hover {
             background: #e68900;
             transform: translateY(-2px);
+            box-shadow: var(--shadow-light);
         }
 
         .btn-danger {
@@ -184,62 +184,93 @@
         }
 
         .btn-danger:hover {
-            background: #d32f2f;
+            background: #da190b;
             transform: translateY(-2px);
+            box-shadow: var(--shadow-light);
         }
 
-        /* 游戏结束遮罩 */
-        .game-over {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-        }
-
-        .game-over-content {
+        /* 操作提示 */
+        .controls-hint {
             background: var(--bg-glass);
             backdrop-filter: blur(10px);
-            border: 2px solid var(--border-glass);
-            border-radius: var(--border-radius-large);
-            padding: 2rem;
-            text-align: center;
+            padding: 1rem;
+            border-radius: var(--border-radius);
+            border: 1px solid var(--border-glass);
             color: var(--text-light);
+            font-size: 0.8rem;
+            line-height: 1.4;
         }
 
-        .game-over h2 {
-            color: var(--danger-color);
-            margin-bottom: 1rem;
-            font-size: 2rem;
+        .controls-hint h4 {
+            color: var(--accent-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .key-combo {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.3rem;
+        }
+
+        .key {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+            font-family: monospace;
+            font-weight: bold;
         }
 
         /* 响应式设计 */
         @media (max-width: 768px) {
-            main {
+            .game-container {
                 flex-direction: column;
                 padding: 1rem;
             }
 
-            .game-container {
-                flex-direction: column;
-                align-items: center;
-            }
-
             .sidebar {
-                flex-direction: row;
                 width: 100%;
-                justify-content: space-between;
+                flex-direction: row;
+                flex-wrap: wrap;
             }
 
-            .info-panel, .control-panel {
+            .info-panel {
                 flex: 1;
-                min-width: auto;
+                min-width: 150px;
             }
+
+            header h1 {
+                font-size: 1.5rem;
+            }
+
+            main {
+                padding: 1rem;
+            }
+        }
+
+        /* 输入状态指示器 */
+        .input-indicator {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--bg-glass);
+            backdrop-filter: blur(10px);
+            padding: 0.5rem 1rem;
+            border-radius: var(--border-radius);
+            border: 1px solid var(--border-glass);
+            color: var(--text-light);
+            font-size: 0.8rem;
+            z-index: 1000;
+            transition: var(--transition);
+        }
+
+        .input-indicator.active {
+            background: var(--accent-color);
+            transform: scale(1.05);
+        }
+
+        .input-indicator.disabled {
+            background: var(--danger-color);
+            opacity: 0.7;
         }
     </style>
 </head>
@@ -253,657 +284,514 @@
             <div class="game-area">
                 <canvas id="gameCanvas" width="300" height="600"></canvas>
             </div>
-
+            
             <div class="sidebar">
                 <div class="info-panel">
                     <h3>游戏信息</h3>
-                    <div class="info-item">
-                        <span>分数:</span>
-                        <span id="score">0</span>
-                    </div>
-                    <div class="info-item">
-                        <span>等级:</span>
-                        <span id="level">1</span>
-                    </div>
-                    <div class="info-item">
-                        <span>消除行数:</span>
-                        <span id="lines">0</span>
-                    </div>
+                    <p>分数: <span id="score">0</span></p>
+                    <p>等级: <span id="level">1</span></p>
+                    <p>行数: <span id="lines">0</span></p>
                 </div>
 
-                <div class="control-panel">
-                    <h3 style="color: #fff; margin-bottom: 1rem;">游戏控制</h3>
-                    <div class="control-buttons">
-                        <button id="startBtn" class="btn btn-primary">开始游戏</button>
-                        <button id="pauseBtn" class="btn btn-secondary">暂停</button>
-                        <button id="resetBtn" class="btn btn-danger">重新开始</button>
+                <div class="controls">
+                    <button class="btn btn-primary" id="startBtn">开始游戏</button>
+                    <button class="btn btn-secondary" id="pauseBtn">暂停</button>
+                    <button class="btn btn-danger" id="resetBtn">重置</button>
+                </div>
+
+                <div class="controls-hint">
+                    <h4>操作说明</h4>
+                    <div class="key-combo">
+                        <span>移动:</span>
+                        <span><span class="key">A/D</span> 或 <span class="key">←/→</span></span>
                     </div>
-                    <div style="margin-top: 1rem; color: #fff; font-size: 0.8rem;">
-                        <p><strong>控制说明:</strong></p>
-                        <p>← → : 左右移动</p>
-                        <p>↓ : 加速下落</p>
-                        <p>↑ : 旋转方块</p>
-                        <p>空格 : 瞬间下落</p>
+                    <div class="key-combo">
+                        <span>下降:</span>
+                        <span><span class="key">S</span> 或 <span class="key">↓</span></span>
+                    </div>
+                    <div class="key-combo">
+                        <span>旋转:</span>
+                        <span><span class="key">W</span> 或 <span class="key">↑</span></span>
+                    </div>
+                    <div class="key-combo">
+                        <span>暂停:</span>
+                        <span><span class="key">Space</span></span>
                     </div>
                 </div>
             </div>
         </div>
     </main>
 
-    <div id="gameOver" class="game-over">
-        <div class="game-over-content">
-            <h2>游戏结束</h2>
-            <p>最终分数: <span id="finalScore">0</span></p>
-            <p>等级: <span id="finalLevel">1</span></p>
-            <button id="restartBtn" class="btn btn-primary" style="margin-top: 1rem;">重新开始</button>
-        </div>
-    </div>
+    <!-- 输入状态指示器 -->
+    <div class="input-indicator" id="inputIndicator">输入已启用</div>
 
     <script>
-        // 游戏常量
-        const BOARD_WIDTH = 10;
-        const BOARD_HEIGHT = 20;
-        const CELL_SIZE = 30;
-        const COLORS = {
-            I: '#00f0f0',
-            O: '#f0f000',
-            T: '#a000f0',
-            S: '#00f000',
-            Z: '#f00000',
-            J: '#0000f0',
-            L: '#f0a000'
-        };
-
-        // 方块形状定义
-        const TETROMINOS = {
-            I: {
-                shape: [
-                    [[1, 1, 1, 1]],
-                    [[1], [1], [1], [1]]
-                ],
-                color: COLORS.I
-            },
-            O: {
-                shape: [
-                    [[1, 1], [1, 1]]
-                ],
-                color: COLORS.O
-            },
-            T: {
-                shape: [
-                    [[0, 1, 0], [1, 1, 1]],
-                    [[1, 0], [1, 1], [1, 0]],
-                    [[1, 1, 1], [0, 1, 0]],
-                    [[0, 1], [1, 1], [0, 1]]
-                ],
-                color: COLORS.T
-            },
-            S: {
-                shape: [
-                    [[0, 1, 1], [1, 1, 0]],
-                    [[1, 0], [1, 1], [0, 1]]
-                ],
-                color: COLORS.S
-            },
-            Z: {
-                shape: [
-                    [[1, 1, 0], [0, 1, 1]],
-                    [[0, 1], [1, 1], [1, 0]]
-                ],
-                color: COLORS.Z
-            },
-            J: {
-                shape: [
-                    [[1, 0, 0], [1, 1, 1]],
-                    [[1, 1], [1, 0], [1, 0]],
-                    [[1, 1, 1], [0, 0, 1]],
-                    [[0, 1], [0, 1], [1, 1]]
-                ],
-                color: COLORS.J
-            },
-            L: {
-                shape: [
-                    [[0, 0, 1], [1, 1, 1]],
-                    [[1, 0], [1, 0], [1, 1]],
-                    [[1, 1, 1], [1, 0, 0]],
-                    [[1, 1], [0, 1], [0, 1]]
-                ],
-                color: COLORS.L
-            }
-        };
-
-        // Tetromino类
-        class Tetromino {
-            constructor(type) {
-                this.type = type;
-                this.rotationIndex = 0;
-                this.shapes = TETROMINOS[type].shape;
-                this.color = TETROMINOS[type].color;
-            }
-
-            rotate() {
-                this.rotationIndex = (this.rotationIndex + 1) % this.shapes.length;
-            }
-
-            getShape() {
-                return this.shapes[this.rotationIndex];
-            }
-
-            getColor() {
-                return this.color;
-            }
-
-            clone() {
-                const clone = new Tetromino(this.type);
-                clone.rotationIndex = this.rotationIndex;
-                return clone;
-            }
-        }
-
-        // GameBoard类
-        class GameBoard {
+        // 键盘映射器类
+        class KeyMapper {
             constructor() {
-                this.board = Array(BOARD_HEIGHT).fill().map(() => Array(BOARD_WIDTH).fill(0));
+                this.keyMappings = new Map();
+                this.setDefaultMapping();
             }
 
-            getCell(x, y) {
-                if (x < 0 || x >= BOARD_WIDTH || y < 0 || y >= BOARD_HEIGHT) {
-                    return 1; // 边界视为已占用
-                }
-                return this.board[y][x];
+            // 设置默认键盘映射
+            setDefaultMapping() {
+                // WASD 控制
+                this.keyMappings.set('KeyW', 'rotate');
+                this.keyMappings.set('KeyA', 'moveLeft');
+                this.keyMappings.set('KeyS', 'moveDown');
+                this.keyMappings.set('KeyD', 'moveRight');
+                
+                // 方向键控制
+                this.keyMappings.set('ArrowUp', 'rotate');
+                this.keyMappings.set('ArrowLeft', 'moveLeft');
+                this.keyMappings.set('ArrowDown', 'moveDown');
+                this.keyMappings.set('ArrowRight', 'moveRight');
+                
+                // 其他控制键
+                this.keyMappings.set('Space', 'pause');
+                this.keyMappings.set('Enter', 'start');
+                this.keyMappings.set('Escape', 'reset');
             }
 
-            setCell(x, y, value) {
-                if (x >= 0 && x < BOARD_WIDTH && y >= 0 && y < BOARD_HEIGHT) {
-                    this.board[y][x] = value;
-                }
+            // 映射按键到动作
+            mapKey(keyCode, action) {
+                this.keyMappings.set(keyCode, action);
             }
 
-            clearLine(row) {
-                this.board.splice(row, 1);
-                this.board.unshift(Array(BOARD_WIDTH).fill(0));
+            // 获取按键对应的动作
+            getAction(keyCode) {
+                return this.keyMappings.get(keyCode) || null;
             }
 
-            checkFullLines() {
-                const fullLines = [];
-                for (let y = 0; y < BOARD_HEIGHT; y++) {
-                    if (this.board[y].every(cell => cell !== 0)) {
-                        fullLines.push(y);
-                    }
-                }
-                return fullLines;
-            }
-
-            isValidPosition(piece, x, y) {
-                const shape = piece.getShape();
-                for (let py = 0; py < shape.length; py++) {
-                    for (let px = 0; px < shape[py].length; px++) {
-                        if (shape[py][px] && this.getCell(x + px, y + py)) {
-                            return false;
-                        }
-                    }
-                }
-                return true;
-            }
-
-            placePiece(piece, x, y) {
-                const shape = piece.getShape();
-                const color = piece.getColor();
-                for (let py = 0; py < shape.length; py++) {
-                    for (let px = 0; px < shape[py].length; px++) {
-                        if (shape[py][px]) {
-                            this.setCell(x + px, y + py, color);
-                        }
-                    }
-                }
+            // 自定义映射
+            customizeMapping(mappings) {
+                Object.entries(mappings).forEach(([key, action]) => {
+                    this.mapKey(key, action);
+                });
             }
         }
 
-        // CollisionDetector类
-        class CollisionDetector {
-            constructor(board) {
-                this.board = board;
-            }
-
-            checkBoundary(piece, x, y) {
-                const shape = piece.getShape();
-                for (let py = 0; py < shape.length; py++) {
-                    for (let px = 0; px < shape[py].length; px++) {
-                        if (shape[py][px]) {
-                            const newX = x + px;
-                            const newY = y + py;
-                            if (newX < 0 || newX >= BOARD_WIDTH || newY >= BOARD_HEIGHT) {
-                                return false;
-                            }
-                        }
-                    }
-                }
-                return true;
-            }
-
-            checkOverlap(piece, x, y) {
-                const shape = piece.getShape();
-                for (let py = 0; py < shape.length; py++) {
-                    for (let px = 0; px < shape[py].length; px++) {
-                        if (shape[py][px]) {
-                            const newX = x + px;
-                            const newY = y + py;
-                            if (newY >= 0 && this.board.getCell(newX, newY)) {
-                                return false;
-                            }
-                        }
-                    }
-                }
-                return true;
-            }
-
-            canMove(piece, x, y) {
-                return this.checkBoundary(piece, x, y) && this.checkOverlap(piece, x, y);
-            }
-        }
-
-        // ScoreManager类
-        class ScoreManager {
+        // 输入防抖器类
+        class InputDebouncer {
             constructor() {
+                this.debounceTimers = new Map();
+                this.continuousKeys = new Set();
+                this.continuousInterval = null;
+                this.continuousDelay = 150; // 连续按键间隔
+            }
+
+            // 防抖处理
+            debounce(key, callback, delay = 50) {
+                if (this.debounceTimers.has(key)) {
+                    clearTimeout(this.debounceTimers.get(key));
+                }
+
+                const timer = setTimeout(() => {
+                    callback();
+                    this.debounceTimers.delete(key);
+                }, delay);
+
+                this.debounceTimers.set(key, timer);
+            }
+
+            // 处理连续按键
+            handleContinuousPress(key, callback) {
+                if (!this.continuousKeys.has(key)) {
+                    this.continuousKeys.add(key);
+                    callback(); // 立即执行一次
+                    
+                    // 如果还没有连续按键定时器，启动一个
+                    if (!this.continuousInterval) {
+                        this.continuousInterval = setInterval(() => {
+                            if (this.continuousKeys.size > 0) {
+                                this.continuousKeys.forEach(activeKey => {
+                                    if (activeKey === key) {
+                                        callback();
+                                    }
+                                });
+                            } else {
+                                this.stopContinuous();
+                            }
+                        }, this.continuousDelay);
+                    }
+                }
+            }
+
+            // 停止连续按键
+            stopContinuous(key = null) {
+                if (key) {
+                    this.continuousKeys.delete(key);
+                } else {
+                    this.continuousKeys.clear();
+                }
+
+                if (this.continuousKeys.size === 0 && this.continuousInterval) {
+                    clearInterval(this.continuousInterval);
+                    this.continuousInterval = null;
+                }
+            }
+
+            // 重置防抖
+            resetDebounce() {
+                this.debounceTimers.forEach(timer => clearTimeout(timer));
+                this.debounceTimers.clear();
+                this.stopContinuous();
+            }
+        }
+
+        // 动作分发器类
+        class ActionDispatcher {
+            constructor() {
+                this.handlers = new Map();
+            }
+
+            // 分发动作
+            dispatch(action, params = {}) {
+                const handler = this.handlers.get(action);
+                if (handler && typeof handler === 'function') {
+                    try {
+                        handler(params);
+                    } catch (error) {
+                        console.error(`Error dispatching action '${action}':`, error);
+                    }
+                } else {
+                    console.warn(`No handler registered for action: ${action}`);
+                }
+            }
+
+            // 注册处理器
+            registerHandler(action, handler) {
+                if (typeof handler !== 'function') {
+                    throw new Error('Handler must be a function');
+                }
+                this.handlers.set(action, handler);
+            }
+
+            // 注销处理器
+            unregisterHandler(action) {
+                return this.handlers.delete(action);
+            }
+
+            // 获取所有已注册的动作
+            getRegisteredActions() {
+                return Array.from(this.handlers.keys());
+            }
+        }
+
+        // 输入验证器类
+        class InputValidator {
+            constructor() {
+                this.gameState = 'menu'; // menu, playing, paused, gameOver
+                this.validActions = {
+                    menu: ['start'],
+                    playing: ['moveLeft', 'moveRight', 'moveDown', 'rotate', 'pause'],
+                    paused: ['pause', 'reset'],
+                    gameOver: ['start', 'reset']
+                };
+            }
+
+            // 设置游戏状态
+            setGameState(state) {
+                if (this.validActions.hasOwnProperty(state)) {
+                    this.gameState = state;
+                } else {
+                    console.warn(`Invalid game state: ${state}`);
+                }
+            }
+
+            // 验证输入
+            validateInput(action, gameState = null) {
+                const currentState = gameState || this.gameState;
+                const allowedActions = this.validActions[currentState] || [];
+                return allowedActions.includes(action);
+            }
+
+            // 检查动作是否被允许
+            isActionAllowed(action) {
+                return this.validateInput(action);
+            }
+
+            // 获取当前状态下的有效动作
+            getValidActions(gameState = null) {
+                const currentState = gameState || this.gameState;
+                return this.validActions[currentState] || [];
+            }
+        }
+
+        // 输入控制器主类
+        class InputController {
+            constructor() {
+                this.keyMapper = new KeyMapper();
+                this.debouncer = new InputDebouncer();
+                this.dispatcher = new ActionDispatcher();
+                this.validator = new InputValidator();
+                
+                this.isEnabled = true;
+                this.pressedKeys = new Set();
+                this.inputIndicator = document.getElementById('inputIndicator');
+                
+                this.bindEvents();
+                this.updateIndicator();
+            }
+
+            // 绑定事件
+            bindEvents() {
+                document.addEventListener('keydown', this.handleKeyDown.bind(this));
+                document.addEventListener('keyup', this.handleKeyUp.bind(this));
+                
+                // 防止页面滚动
+                document.addEventListener('keydown', (e) => {
+                    if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Space'].includes(e.code)) {
+                        e.preventDefault();
+                    }
+                });
+
+                // 窗口失焦时清除所有按键状态
+                window.addEventListener('blur', () => {
+                    this.pressedKeys.clear();
+                    this.debouncer.stopContinuous();
+                });
+            }
+
+            // 解绑事件
+            unbindEvents() {
+                document.removeEventListener('keydown', this.handleKeyDown.bind(this));
+                document.removeEventListener('keyup', this.handleKeyUp.bind(this));
+            }
+
+            // 处理按键按下
+            handleKeyDown(event) {
+                if (!this.isEnabled) return;
+
+                const keyCode = event.code;
+                const action = this.keyMapper.getAction(keyCode);
+                
+                if (!action) return;
+
+                // 防止重复触发
+                if (this.pressedKeys.has(keyCode)) return;
+                this.pressedKeys.add(keyCode);
+
+                // 验证输入
+                if (!this.validator.isActionAllowed(action)) {
+                    console.log(`Action '${action}' not allowed in current state: ${this.validator.gameState}`);
+                    return;
+                }
+
+                // 区分单次动作和连续动作
+                if (['moveLeft', 'moveRight', 'moveDown'].includes(action)) {
+                    // 连续动作
+                    this.debouncer.handleContinuousPress(keyCode, () => {
+                        this.dispatcher.dispatch(action, { keyCode, continuous: true });
+                    });
+                } else {
+                    // 单次动作（带防抖）
+                    this.debouncer.debounce(keyCode, () => {
+                        this.dispatcher.dispatch(action, { keyCode, continuous: false });
+                    }, 100);
+                }
+
+                this.updateIndicator(action);
+            }
+
+            // 处理按键释放
+            handleKeyUp(event) {
+                const keyCode = event.code;
+                this.pressedKeys.delete(keyCode);
+                this.debouncer.stopContinuous(keyCode);
+                this.updateIndicator();
+            }
+
+            // 设置键盘映射
+            setKeyMapping(mappings) {
+                this.keyMapper.customizeMapping(mappings);
+            }
+
+            // 启用输入
+            enableInput() {
+                this.isEnabled = true;
+                this.updateIndicator();
+            }
+
+            // 禁用输入
+            disableInput() {
+                this.isEnabled = false;
+                this.pressedKeys.clear();
+                this.debouncer.resetDebounce();
+                this.updateIndicator();
+            }
+
+            // 设置游戏状态
+            setGameState(state) {
+                this.validator.setGameState(state);
+                this.updateIndicator();
+            }
+
+            // 注册动作处理器
+            registerHandler(action, handler) {
+                this.dispatcher.registerHandler(action, handler);
+            }
+
+            // 更新输入指示器
+            updateIndicator(lastAction = null) {
+                if (!this.inputIndicator) return;
+
+                this.inputIndicator.className = 'input-indicator';
+                
+                if (!this.isEnabled) {
+                    this.inputIndicator.textContent = '输入已禁用';
+                    this.inputIndicator.classList.add('disabled');
+                } else if (lastAction) {
+                    this.inputIndicator.textContent = `动作: ${lastAction}`;
+                    this.inputIndicator.classList.add('active');
+                    
+                    // 短暂显示后恢复
+                    setTimeout(() => {
+                        this.inputIndicator.textContent = '输入已启用';
+                        this.inputIndicator.classList.remove('active');
+                    }, 500);
+                } else {
+                    this.inputIndicator.textContent = '输入已启用';
+                }
+            }
+        }
+
+        // 游戏主类（简化版，用于演示输入系统）
+        class TetrisGame {
+            constructor() {
+                this.canvas = document.getElementById('gameCanvas');
+                this.ctx = this.canvas.getContext('2d');
                 this.score = 0;
                 this.level = 1;
                 this.lines = 0;
-                this.lineScores = [0, 40, 100, 300, 1200]; // 0, 1, 2, 3, 4行的分数
+                this.gameState = 'menu';
+                
+                this.inputController = new InputController();
+                this.setupInputHandlers();
+                this.setupUI();
+                
+                this.render();
             }
 
-            addScore(linesCleared) {
-                if (linesCleared > 0) {
-                    this.lines += linesCleared;
-                    this.score += this.lineScores[linesCleared] * this.level;
-                    this.updateLevel();
+            // 设置输入处理器
+            setupInputHandlers() {
+                this.inputController.registerHandler('start', () => this.startGame());
+                this.inputController.registerHandler('pause', () => this.togglePause());
+                this.inputController.registerHandler('reset', () => this.resetGame());
+                this.inputController.registerHandler('moveLeft', () => this.moveLeft());
+                this.inputController.registerHandler('moveRight', () => this.moveRight());
+                this.inputController.registerHandler('moveDown', () => this.moveDown());
+                this.inputController.registerHandler('rotate', () => this.rotate());
+            }
+
+            // 设置UI事件
+            setupUI() {
+                document.getElementById('startBtn').addEventListener('click', () => this.startGame());
+                document.getElementById('pauseBtn').addEventListener('click', () => this.togglePause());
+                document.getElementById('resetBtn').addEventListener('click', () => this.resetGame());
+            }
+
+            // 开始游戏
+            startGame() {
+                this.gameState = 'playing';
+                this.inputController.setGameState('playing');
+                console.log('游戏开始');
+                this.updateUI();
+            }
+
+            // 切换暂停
+            togglePause() {
+                if (this.gameState === 'playing') {
+                    this.gameState = 'paused';
+                    this.inputController.setGameState('paused');
+                    console.log('游戏暂停');
+                } else if (this.gameState === 'paused') {
+                    this.gameState = 'playing';
+                    this.inputController.setGameState('playing');
+                    console.log('游戏继续');
                 }
+                this.updateUI();
             }
 
-            updateLevel() {
-                this.level = Math.floor(this.lines / 10) + 1;
-            }
-
-            getScore() {
-                return this.score;
-            }
-
-            getLevel() {
-                return this.level;
-            }
-
-            getLines() {
-                return this.lines;
-            }
-
-            getSpeed() {
-                return Math.max(50, 1000 - (this.level - 1) * 100);
-            }
-
-            reset() {
+            // 重置游戏
+            resetGame() {
+                this.gameState = 'menu';
+                this.inputController.setGameState('menu');
                 this.score = 0;
                 this.level = 1;
                 this.lines = 0;
-            }
-        }
-
-        // PieceController类
-        class PieceController {
-            constructor(board, collisionDetector) {
-                this.board = board;
-                this.collisionDetector = collisionDetector;
-                this.currentPiece = null;
-                this.currentX = 0;
-                this.currentY = 0;
-                this.generateNewPiece();
+                console.log('游戏重置');
+                this.updateUI();
             }
 
-            generateNewPiece() {
-                const types = Object.keys(TETROMINOS);
-                const randomType = types[Math.floor(Math.random() * types.length)];
-                this.currentPiece = new Tetromino(randomType);
-                this.currentX = Math.floor(BOARD_WIDTH / 2) - 1;
-                this.currentY = 0;
-            }
-
+            // 移动操作
             moveLeft() {
-                if (this.collisionDetector.canMove(this.currentPiece, this.currentX - 1, this.currentY)) {
-                    this.currentX--;
-                    return true;
-                }
-                return false;
+                console.log('向左移动');
             }
 
             moveRight() {
-                if (this.collisionDetector.canMove(this.currentPiece, this.currentX + 1, this.currentY)) {
-                    this.currentX++;
-                    return true;
-                }
-                return false;
+                console.log('向右移动');
             }
 
             moveDown() {
-                if (this.collisionDetector.canMove(this.currentPiece, this.currentX, this.currentY + 1)) {
-                    this.currentY++;
-                    return true;
-                }
-                return false;
+                console.log('向下移动');
             }
 
             rotate() {
-                const rotatedPiece = this.currentPiece.clone();
-                rotatedPiece.rotate();
-                if (this.collisionDetector.canMove(rotatedPiece, this.currentX, this.currentY)) {
-                    this.currentPiece.rotate();
-                    return true;
-                }
-                return false;
+                console.log('旋转');
             }
 
-            drop() {
-                while (this.moveDown()) {
-                    // 继续下落直到不能移动
-                }
+            // 更新UI
+            updateUI() {
+                document.getElementById('score').textContent = this.score;
+                document.getElementById('level').textContent = this.level;
+                document.getElementById('lines').textContent = this.lines;
             }
 
-            placePiece() {
-                this.board.placePiece(this.currentPiece, this.currentX, this.currentY);
-                this.generateNewPiece();
+            // 渲染游戏
+            render() {
+                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
                 
-                // 检查游戏是否结束
-                if (!this.collisionDetector.canMove(this.currentPiece, this.currentX, this.currentY)) {
-                    return false; // 游戏结束
-                }
-                return true;
-            }
-
-            getCurrentPiece() {
-                return this.currentPiece;
-            }
-
-            getCurrentPosition() {
-                return { x: this.currentX, y: this.currentY };
-            }
-        }
-
-        // Renderer类
-        class Renderer {
-            constructor(canvas) {
-                this.canvas = canvas;
-                this.ctx = canvas.getContext('2d');
-            }
-
-            clear() {
-                this.ctx.fillStyle = '#000';
-                this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
-            }
-
-            drawGrid() {
-                this.ctx.strokeStyle = '#333';
+                // 绘制网格
+                this.ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
                 this.ctx.lineWidth = 1;
                 
-                // 绘制垂直线
-                for (let x = 0; x <= BOARD_WIDTH; x++) {
+                const cellSize = 30;
+                for (let x = 0; x <= this.canvas.width; x += cellSize) {
                     this.ctx.beginPath();
-                    this.ctx.moveTo(x * CELL_SIZE, 0);
-                    this.ctx.lineTo(x * CELL_SIZE, BOARD_HEIGHT * CELL_SIZE);
+                    this.ctx.moveTo(x, 0);
+                    this.ctx.lineTo(x, this.canvas.height);
                     this.ctx.stroke();
                 }
                 
-                // 绘制水平线
-                for (let y = 0; y <= BOARD_HEIGHT; y++) {
+                for (let y = 0; y <= this.canvas.height; y += cellSize) {
                     this.ctx.beginPath();
-                    this.ctx.moveTo(0, y * CELL_SIZE);
-                    this.ctx.lineTo(BOARD_WIDTH * CELL_SIZE, y * CELL_SIZE);
+                    this.ctx.moveTo(0, y);
+                    this.ctx.lineTo(this.canvas.width, y);
                     this.ctx.stroke();
                 }
-            }
 
-            drawBoard(board) {
-                for (let y = 0; y < BOARD_HEIGHT; y++) {
-                    for (let x = 0; x < BOARD_WIDTH; x++) {
-                        const cell = board.getCell(x, y);
-                        if (cell) {
-                            this.drawCell(x, y, cell);
-                        }
-                    }
-                }
-            }
-
-            drawPiece(piece, x, y) {
-                const shape = piece.getShape();
-                const color = piece.getColor();
+                // 显示游戏状态
+                this.ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+                this.ctx.font = '24px Arial';
+                this.ctx.textAlign = 'center';
+                this.ctx.fillText(`状态: ${this.gameState}`, this.canvas.width / 2, this.canvas.height / 2);
                 
-                for (let py = 0; py < shape.length; py++) {
-                    for (let px = 0; px < shape[py].length; px++) {
-                        if (shape[py][px]) {
-                            this.drawCell(x + px, y + py, color);
-                        }
-                    }
-                }
-            }
-
-            drawCell(x, y, color) {
-                const pixelX = x * CELL_SIZE;
-                const pixelY = y * CELL_SIZE;
-                
-                // 绘制方块主体
-                this.ctx.fillStyle = color;
-                this.ctx.fillRect(pixelX, pixelY, CELL_SIZE, CELL_SIZE);
-                
-                // 绘制边框
-                this.ctx.strokeStyle = '#fff';
-                this.ctx.lineWidth = 2;
-                this.ctx.strokeRect(pixelX, pixelY, CELL_SIZE, CELL_SIZE);
-            }
-
-            drawUI() {
-                // UI绘制可以在这里扩展
-            }
-        }
-
-        // InputHandler类
-        class InputHandler {
-            constructor(pieceController) {
-                this.pieceController = pieceController;
-                this.enabled = false;
-                this.bindEvents();
-            }
-
-            bindEvents() {
-                document.addEventListener('keydown', (event) => this.handleKeyDown(event));
-            }
-
-            handleKeyDown(event) {
-                if (!this.enabled) return;
-                
-                switch (event.code) {
-                    case 'ArrowLeft':
-                    case 'KeyA':
-                        this.pieceController.moveLeft();
-                        event.preventDefault();
-                        break;
-                    case 'ArrowRight':
-                    case 'KeyD':
-                        this.pieceController.moveRight();
-                        event.preventDefault();
-                        break;
-                    case 'ArrowDown':
-                    case 'KeyS':
-                        this.pieceController.moveDown();
-                        event.preventDefault();
-                        break;
-                    case 'ArrowUp':
-                    case 'KeyW':
-                        this.pieceController.rotate();
-                        event.preventDefault();
-                        break;
-                    case 'Space':
-                        this.pieceController.drop();
-                        event.preventDefault();
-                        break;
-                }
-            }
-
-            enableInput() {
-                this.enabled = true;
-            }
-
-            disableInput() {
-                this.enabled = false;
-            }
-        }
-
-        // GameEngine类
-        class GameEngine {
-            constructor() {
-                this.canvas = document.getElementById('gameCanvas');
-                this.board = new GameBoard();
-                this.collisionDetector = new CollisionDetector(this.board);
-                this.pieceController = new PieceController(this.board, this.collisionDetector);
-                this.scoreManager = new ScoreManager();
-                this.renderer = new Renderer(this.canvas);
-                this.inputHandler = new InputHandler(this.pieceController);
-                
-                this.gameState = 'stopped'; // stopped, running, paused, gameOver
-                this.lastTime = 0;
-                this.dropTimer = 0;
-                
-                this.initUI();
-            }
-
-            initUI() {
-                document.getElementById('startBtn').addEventListener('click', () => this.start());
-                document.getElementById('pauseBtn').addEventListener('click', () => this.togglePause());
-                document.getElementById('resetBtn').addEventListener('click', () => this.reset());
-                document.getElementById('restartBtn').addEventListener('click', () => this.restart());
-            }
-
-            start() {
-                if (this.gameState === 'stopped' || this.gameState === 'gameOver') {
-                    this.gameState = 'running';
-                    this.inputHandler.enableInput();
-                    this.lastTime = performance.now();
-                    this.gameLoop();
-                    this.updateUI();
-                }
-            }
-
-            pause() {
-                if (this.gameState === 'running') {
-                    this.gameState = 'paused';
-                    this.inputHandler.disableInput();
-                }
-            }
-
-            resume() {
-                if (this.gameState === 'paused') {
-                    this.gameState = 'running';
-                    this.inputHandler.enableInput();
-                    this.lastTime = performance.now();
-                    this.gameLoop();
-                }
-            }
-
-            togglePause() {
-                if (this.gameState === 'running') {
-                    this.pause();
-                } else if (this.gameState === 'paused') {
-                    this.resume();
-                }
-            }
-
-            reset() {
-                this.gameState = 'stopped';
-                this.inputHandler.disableInput();
-                this.board = new GameBoard();
-                this.collisionDetector = new CollisionDetector(this.board);
-                this.pieceController = new PieceController(this.board, this.collisionDetector);
-                this.scoreManager.reset();
-                this.dropTimer = 0;
-                this.updateUI();
-                this.render();
-                document.getElementById('gameOver').style.display = 'none';
-            }
-
-            restart() {
-                this.reset();
-                this.start();
-            }
-
-            update(deltaTime) {
-                if (this.gameState !== 'running') return;
-                
-                this.dropTimer += deltaTime;
-                const dropInterval = this.scoreManager.getSpeed();
-                
-                if (this.dropTimer >= dropInterval) {
-                    if (!this.pieceController.moveDown()) {
-                        // 方块无法继续下落，放置方块
-                        if (!this.pieceController.placePiece()) {
-                            this.gameOver();
-                            return;
-                        }
-                        
-                        // 检查并清除满行
-                        const fullLines = this.board.checkFullLines();
-                        if (fullLines.length > 0) {
-                            fullLines.forEach(line => this.board.clearLine(line));
-                            this.scoreManager.addScore(fullLines.length);
-                            this.updateUI();
-                        }
-                    }
-                    this.dropTimer = 0;
-                }
-            }
-
-            render() {
-                this.renderer.clear();
-                this.renderer.drawGrid();
-                this.renderer.drawBoard(this.board);
-                
-                if (this.gameState === 'running' || this.gameState === 'paused') {
-                    const currentPiece = this.pieceController.getCurrentPiece();
-                    const position = this.pieceController.getCurrentPosition();
-                    this.renderer.drawPiece(currentPiece, position.x, position.y);
-                }
-            }
-
-            gameLoop() {
-                if (this.gameState !== 'running') return;
-                
-                const currentTime = performance.now();
-                const deltaTime = currentTime - this.lastTime;
-                this.lastTime = currentTime;
-                
-                this.update(deltaTime);
-                this.render();
-                
-                requestAnimationFrame(() => this.gameLoop());
-            }
-
-            gameOver() {
-                this.gameState = 'gameOver';
-                this.inputHandler.disableInput();
-                
-                // 显示游戏结束界面
-                document.getElementById('finalScore').textContent = this.scoreManager.getScore();
-                document.getElementById('finalLevel').textContent = this.scoreManager.getLevel();
-                document.getElementById('gameOver').style.display = 'flex';
-            }
-
-            updateUI() {
-                document.getElementById('score').textContent = this.scoreManager.getScore();
-                document.getElementById('level').textContent = this.scoreManager.getLevel();
-                document.getElementById('lines').textContent = this.scoreManager.getLines();
+                requestAnimationFrame(() => this.render());
             }
         }
 
         // 初始化游戏
-        let game;
-        
-        window.addEventListener('DOMContentLoaded', () => {
-            game = new GameEngine();
-            game.render(); // 初始渲染
+        document.addEventListener('DOMContentLoaded', () => {
+            const game = new TetrisGame();
+            
+            // 添加一些调试信息
+            console.log('俄罗斯方块游戏已初始化');
+            console.log('支持的控制键:');
+            console.log('- WASD 或 方向键: 移动和旋转');
+            console.log('- 空格键: 暂停/继续');
+            console.log('- 回车键: 开始游戏');
+            console.log('- ESC键: 重置游戏');
         });
     </script>
 </body>
