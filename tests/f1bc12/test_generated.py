@@ -2,89 +2,93 @@ import pytest
 from pathlib import Path
 import re
 
-class TestFrontendModule:
+class TestCanvasRenderingSystem:
     
     def test_index_html_file_exists(self):
         """测试 index.html 文件是否存在"""
-        frontend_dir = Path(__file__).parent / "frontend"
+        frontend_dir = Path("frontend")
         index_file = frontend_dir / "index.html"
-        assert index_file.exists(), f"index.html 文件不存在: {index_file}"
-        assert index_file.is_file(), f"index.html 不是一个有效文件: {index_file}"
+        assert index_file.exists(), f"index.html 文件不存在于 {frontend_dir} 目录中"
+        assert index_file.is_file(), "index.html 应该是一个文件而不是目录"
     
-    def test_index_html_contains_essential_elements(self):
-        """测试 index.html 文件包含游戏引擎必要的HTML元素"""
-        frontend_dir = Path(__file__).parent / "frontend"
+    def test_index_html_contains_canvas_element(self):
+        """测试 index.html 文件是否包含 Canvas 元素和相关渲染系统标签"""
+        frontend_dir = Path("frontend")
         index_file = frontend_dir / "index.html"
         
-        if not index_file.exists():
-            pytest.skip("index.html 文件不存在，跳过内容测试")
+        assert index_file.exists(), "index.html 文件不存在"
         
         content = index_file.read_text(encoding='utf-8')
         
-        # 检查基本HTML结构
-        assert re.search(r'<html[^>]*>', content, re.IGNORECASE), "缺少 <html> 标签"
-        assert re.search(r'<head[^>]*>', content, re.IGNORECASE), "缺少 <head> 标签"
-        assert re.search(r'<body[^>]*>', content, re.IGNORECASE), "缺少 <body> 标签"
+        # 检查是否包含 canvas 标签
+        assert '<canvas' in content.lower(), "HTML 文件应该包含 <canvas> 标签"
         
-        # 检查游戏引擎相关元素
-        canvas_pattern = r'<canvas[^>]*>'
-        script_pattern = r'<script[^>]*>'
+        # 检查是否包含基本的 HTML 结构
+        assert '<html' in content.lower(), "应该包含 <html> 标签"
+        assert '<head' in content.lower(), "应该包含 <head> 标签"
+        assert '<body' in content.lower(), "应该包含 <body> 标签"
         
-        assert re.search(canvas_pattern, content, re.IGNORECASE), "缺少游戏渲染用的 <canvas> 元素"
-        assert re.search(script_pattern, content, re.IGNORECASE), "缺少 <script> 标签加载游戏引擎"
+        # 检查是否包含 JavaScript 相关内容（Canvas 渲染通常需要 JS）
+        js_indicators = ['<script', 'javascript', '.js']
+        has_js = any(indicator in content.lower() for indicator in js_indicators)
+        assert has_js, "Canvas 渲染系统应该包含 JavaScript 代码或引用"
     
     def test_dev_notes_documentation_exists(self):
-        """测试开发文档是否存在并包含有效内容"""
-        docs_dir = Path(__file__).parent / "docs" / "f1bc12" / "a3798c"
-        dev_notes_file = docs_dir / "dev-notes.md"
+        """测试开发文档是否存在并包含项目相关信息"""
+        docs_path = Path("docs") / "f1bc12" / "cf550f" / "dev-notes.md"
         
-        assert dev_notes_file.exists(), f"开发文档不存在: {dev_notes_file}"
-        assert dev_notes_file.is_file(), f"dev-notes.md 不是一个有效文件: {dev_notes_file}"
+        assert docs_path.exists(), f"开发文档不存在于 {docs_path}"
+        assert docs_path.is_file(), "dev-notes.md 应该是一个文件"
         
-        content = dev_notes_file.read_text(encoding='utf-8')
-        assert len(content.strip()) > 0, "开发文档内容为空"
+        content = docs_path.read_text(encoding='utf-8')
+        assert len(content.strip()) > 0, "开发文档不应该为空"
         
-        # 检查是否包含游戏引擎开发相关关键词
-        engine_keywords = ['游戏引擎', 'game engine', '核心架构', 'core', 'frontend', '前端']
+        # 检查是否包含与 Canvas 渲染系统相关的关键词
+        canvas_keywords = ['canvas', 'render', '渲染', 'frontend', '前端']
         content_lower = content.lower()
         
-        has_relevant_content = any(keyword.lower() in content_lower for keyword in engine_keywords)
-        assert has_relevant_content, "开发文档缺少游戏引擎相关内容描述"
+        has_relevant_content = any(keyword in content_lower for keyword in canvas_keywords)
+        assert has_relevant_content, "开发文档应该包含与 Canvas 渲染系统相关的内容"
     
-    def test_frontend_directory_structure(self):
-        """测试前端目录结构的完整性"""
-        frontend_dir = Path(__file__).parent / "frontend"
-        docs_dir = Path(__file__).parent / "docs"
-        
-        assert frontend_dir.exists(), f"frontend 目录不存在: {frontend_dir}"
-        assert docs_dir.exists(), f"docs 目录不存在: {docs_dir}"
-        
-        # 检查关键文件
-        required_files = [
-            frontend_dir / "index.html",
-            docs_dir / "f1bc12" / "a3798c" / "dev-notes.md"
-        ]
-        
-        for file_path in required_files:
-            assert file_path.exists(), f"必需文件缺失: {file_path}"
-    
-    def test_html_file_encoding_and_syntax(self):
-        """测试HTML文件编码正确且语法基本有效"""
-        frontend_dir = Path(__file__).parent / "frontend"
+    def test_html_canvas_attributes_and_structure(self):
+        """测试 HTML 中 Canvas 元素的属性配置是否合理"""
+        frontend_dir = Path("frontend")
         index_file = frontend_dir / "index.html"
         
-        if not index_file.exists():
-            pytest.skip("index.html 文件不存在，跳过语法测试")
+        content = index_file.read_text(encoding='utf-8')
         
-        # 测试文件可以用UTF-8编码正确读取
-        try:
-            content = index_file.read_text(encoding='utf-8')
-        except UnicodeDecodeError:
-            pytest.fail("HTML文件编码不是UTF-8或包含无效字符")
+        # 使用正则表达式查找 canvas 标签
+        canvas_pattern = r'<canvas[^>]*>'
+        canvas_matches = re.findall(canvas_pattern, content, re.IGNORECASE)
         
-        # 基本语法检查：标签配对
-        open_tags = len(re.findall(r'<html[^>]*>', content, re.IGNORECASE))
-        close_tags = len(re.findall(r'</html>', content, re.IGNORECASE))
+        assert len(canvas_matches) > 0, "应该至少包含一个 canvas 元素"
         
-        if open_tags > 0:
-            assert open_tags == close_tags, "HTML标签未正确闭合"
+        canvas_tag = canvas_matches[0].lower()
+        
+        # 检查 canvas 是否有基本属性（width, height, id 等）
+        recommended_attrs = ['width', 'height', 'id']
+        has_attrs = any(attr in canvas_tag for attr in recommended_attrs)
+        assert has_attrs, "Canvas 元素应该包含 width、height 或 id 等基本属性"
+    
+    def test_project_structure_integrity(self):
+        """测试项目结构的完整性"""
+        # 检查 frontend 目录存在
+        frontend_dir = Path("frontend")
+        assert frontend_dir.exists(), "frontend 目录应该存在"
+        assert frontend_dir.is_dir(), "frontend 应该是一个目录"
+        
+        # 检查 docs 目录结构存在
+        docs_dir = Path("docs")
+        assert docs_dir.exists(), "docs 目录应该存在"
+        
+        nested_docs_dir = docs_dir / "f1bc12" / "cf550f"
+        assert nested_docs_dir.exists(), "嵌套的文档目录结构应该存在"
+        
+        # 检查关键文件都存在
+        key_files = [
+            frontend_dir / "index.html",
+            nested_docs_dir / "dev-notes.md"
+        ]
+        
+        for file_path in key_files:
+            assert file_path.exists(), f"关键文件 {file_path} 应该存在"
