@@ -17,9 +17,8 @@
 
 ## 问题列表
 - CSS代码被截断，.welcome-btn样式定义不完整
-- HTML结构不完整，缺少完整的页面内容
-- 缺少JavaScript交互功能
-- 代码文件不完整，无法正常运行
-- CSS中使用了linear-grad但应该是linear-gradient
-- 缺少必要的HTML元素如main、container等对应的标签
+- 文件内容不完整，可能影响页面正常显示和功能
+- 缺少完整的HTML结构，无法验证页面完整性
+- CSS中使用了linear-grad但未完成gradient定义
+- 无法确认JavaScript交互功能是否正常实现
 - 暂无测试用例
