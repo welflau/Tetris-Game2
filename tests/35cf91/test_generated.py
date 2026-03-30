@@ -1,98 +1,108 @@
 import pytest
+import json
 from pathlib import Path
-import re
+from bs4 import BeautifulSoup
 
-class TestProjectStructure:
-    """测试投影方块视觉方案项目结构"""
+class TestCrossBrowserCompatibility:
     
-    def test_html_file_exists(self):
-        """测试主页HTML文件是否存在"""
-        html_file = Path("design/index.html")
-        assert html_file.exists(), f"HTML文件不存在: {html_file}"
-        assert html_file.is_file(), f"路径不是文件: {html_file}"
+    def test_index_html_file_exists(self):
+        """测试 index.html 文件是否存在"""
+        index_file = Path("index.html")
+        assert index_file.exists(), "index.html 文件不存在"
+        assert index_file.is_file(), "index.html 不是一个有效的文件"
     
-    def test_dev_notes_file_exists(self):
-        """测试开发文档文件是否存在"""
-        dev_notes_file = Path("design/docs/35cf91/e37eae/dev-notes.md")
-        assert dev_notes_file.exists(), f"开发文档文件不存在: {dev_notes_file}"
-        assert dev_notes_file.is_file(), f"路径不是文件: {dev_notes_file}"
-    
-    def test_html_contains_projection_elements(self):
-        """测试HTML文件包含投影方块相关的关键元素"""
-        html_file = Path("design/index.html")
+    def test_index_html_contains_essential_elements(self):
+        """测试 index.html 文件包含跨浏览器测试必需的关键元素"""
+        index_file = Path("index.html")
+        assert index_file.exists(), "index.html 文件不存在"
         
-        if not html_file.exists():
-            pytest.skip("HTML文件不存在，跳过内容测试")
+        with open(index_file, 'r', encoding='utf-8') as f:
+            content = f.read()
         
-        content = html_file.read_text(encoding='utf-8')
+        soup = BeautifulSoup(content, 'html.parser')
         
         # 检查基本HTML结构
-        assert '<html' in content.lower(), "HTML文件缺少html标签"
-        assert '<head>' in content.lower(), "HTML文件缺少head标签"
-        assert '<body>' in content.lower(), "HTML文件缺少body标签"
+        assert soup.find('html'), "HTML文档缺少html标签"
+        assert soup.find('head'), "HTML文档缺少head标签"
+        assert soup.find('body'), "HTML文档缺少body标签"
         
-        # 检查投影方块相关关键词
-        projection_keywords = ['投影', '方块', 'projection', 'cube', 'block']
+        # 检查跨浏览器兼容性相关元素
+        assert soup.find('meta', {'charset': True}), "缺少字符编码声明"
+        
+        # 检查是否包含viewport元数据（移动端兼容性）
+        viewport_meta = soup.find('meta', {'name': 'viewport'})
+        assert viewport_meta is not None, "缺少viewport元数据标签"
+        
+        # 检查是否有标题
+        assert soup.find('title'), "HTML文档缺少title标签"
+    
+    def test_config_file_structure_and_browser_settings(self):
+        """测试配置文件结构和浏览器设置的有效性"""
+        config_file = Path("test-config.json")
+        assert config_file.exists(), "test-config.json 配置文件不存在"
+        
+        with open(config_file, 'r', encoding='utf-8') as f:
+            config_data = json.load(f)
+        
+        # 检查配置文件基本结构
+        assert isinstance(config_data, dict), "配置文件应该是一个JSON对象"
+        
+        # 检查浏览器配置
+        if 'browsers' in config_data:
+            browsers = config_data['browsers']
+            assert isinstance(browsers, list), "browsers配置应该是一个数组"
+            
+            # 验证常见浏览器配置
+            browser_names = [browser.get('name', '').lower() for browser in browsers if isinstance(browser, dict)]
+            expected_browsers = ['chrome', 'firefox', 'safari', 'edge']
+            
+            # 至少应该包含两种主流浏览器
+            common_browsers_count = sum(1 for browser in expected_browsers if browser in str(browser_names).lower())
+            assert common_browsers_count >= 2, f"配置文件应包含至少2种主流浏览器，当前只有: {browser_names}"
+        
+        # 检查测试环境配置
+        if 'testEnvironments' in config_data:
+            test_envs = config_data['testEnvironments']
+            assert isinstance(test_envs, list), "testEnvironments应该是一个数组"
+    
+    def test_documentation_file_exists_and_content(self):
+        """测试开发文档是否存在并包含有效内容"""
+        doc_file = Path("docs/35cf91/64891c/dev-notes.md")
+        assert doc_file.exists(), "开发文档 dev-notes.md 不存在"
+        assert doc_file.is_file(), "dev-notes.md 不是一个有效的文件"
+        
+        with open(doc_file, 'r', encoding='utf-8') as f:
+            content = f.read()
+        
+        # 检查文档内容不为空
+        assert len(content.strip()) > 0, "开发文档内容为空"
+        
+        # 检查是否包含跨浏览器测试相关关键词
         content_lower = content.lower()
-        found_keywords = [keyword for keyword in projection_keywords if keyword in content_lower]
-        assert len(found_keywords) > 0, f"HTML内容中未找到投影方块相关关键词: {projection_keywords}"
-
-class TestDesignModule:
-    """测试设计模块功能"""
+        compatibility_keywords = ['browser', 'compatibility', 'test', '浏览器', '兼容', '测试']
+        
+        keyword_found = any(keyword in content_lower for keyword in compatibility_keywords)
+        assert keyword_found, f"开发文档应包含跨浏览器兼容性测试相关内容，期望关键词: {compatibility_keywords}"
     
-    def test_design_directory_structure(self):
-        """测试设计模块目录结构是否正确"""
-        design_dir = Path("design")
-        assert design_dir.exists(), "design目录不存在"
-        assert design_dir.is_dir(), "design路径不是目录"
+    def test_project_structure_completeness(self):
+        """测试项目结构的完整性"""
+        required_files = [
+            Path("index.html"),
+            Path("test-config.json"),
+            Path("docs/35cf91/64891c/dev-notes.md")
+        ]
         
-        # 检查docs子目录结构
-        docs_dir = design_dir / "docs"
-        if docs_dir.exists():
-            assert docs_dir.is_dir(), "docs路径不是目录"
-    
-    def test_html_file_content_structure(self):
-        """测试HTML文件内容结构完整性"""
-        html_file = Path("design/index.html")
+        missing_files = []
+        for file_path in required_files:
+            if not file_path.exists():
+                missing_files.append(str(file_path))
         
-        if not html_file.exists():
-            pytest.skip("HTML文件不存在，跳过结构测试")
+        assert len(missing_files) == 0, f"项目缺少必要文件: {missing_files}"
         
-        content = html_file.read_text(encoding='utf-8')
+        # 检查docs目录结构
+        docs_dir = Path("docs")
+        assert docs_dir.exists() and docs_dir.is_dir(), "docs目录不存在"
         
-        # 检查DOCTYPE声明
-        doctype_pattern = r'<!DOCTYPE\s+html>'
-        assert re.search(doctype_pattern, content, re.IGNORECASE), "HTML文件缺少DOCTYPE声明"
-        
-        # 检查title标签
-        title_pattern = r'<title>.*?</title>'
-        title_match = re.search(title_pattern, content, re.IGNORECASE | re.DOTALL)
-        assert title_match, "HTML文件缺少title标签"
-        
-        # 检查是否包含CSS或JavaScript引用
-        has_css = '<link' in content.lower() or '<style>' in content.lower()
-        has_js = '<script' in content.lower()
-        assert has_css or has_js, "HTML文件应该包含CSS样式或JavaScript脚本"
-    
-    def test_dev_notes_content_validity(self):
-        """测试开发文档内容有效性"""
-        dev_notes_file = Path("design/docs/35cf91/e37eae/dev-notes.md")
-        
-        if not dev_notes_file.exists():
-            pytest.skip("开发文档文件不存在，跳过内容测试")
-        
-        content = dev_notes_file.read_text(encoding='utf-8')
-        
-        # 检查Markdown文件不为空
-        assert len(content.strip()) > 0, "开发文档文件内容为空"
-        
-        # 检查是否包含Markdown标记
-        markdown_indicators = ['#', '##', '###', '*', '-', '`', '```']
-        has_markdown = any(indicator in content for indicator in markdown_indicators)
-        assert has_markdown, "开发文档文件应该包含Markdown格式标记"
-        
-        # 检查是否包含开发相关关键词
-        dev_keywords = ['开发', '设计', '方案', '投影', '方块', 'dev', 'design', 'projection']
-        content_lower = content.lower()
-        found_dev_keywords = [keyword for keyword in dev_keywords if keyword in content_lower]
-        assert len(found_dev_keywords) > 0, f"开发文档应该包含相关关键词: {dev_keywords}"
+        # 检查嵌套目录结构
+        nested_dir = Path("docs/35cf91/64891c")
+        assert nested_dir.exists() and nested_dir.is_dir(), "文档嵌套目录结构不完整"
