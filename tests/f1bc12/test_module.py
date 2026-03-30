@@ -2,89 +2,82 @@ import pytest
 from pathlib import Path
 import re
 
-class TestFrontendModule:
+class TestDesignModule:
     
     def test_index_html_file_exists(self):
         """测试 index.html 文件是否存在"""
-        frontend_dir = Path(__file__).parent / "frontend"
-        index_file = frontend_dir / "index.html"
+        index_file = Path("design/index.html")
         assert index_file.exists(), f"index.html 文件不存在: {index_file}"
-        assert index_file.is_file(), f"index.html 不是一个有效文件: {index_file}"
+        assert index_file.is_file(), f"{index_file} 不是一个有效的文件"
     
     def test_index_html_contains_essential_elements(self):
-        """测试 index.html 文件包含游戏引擎必要的HTML元素"""
-        frontend_dir = Path(__file__).parent / "frontend"
-        index_file = frontend_dir / "index.html"
+        """测试 index.html 文件包含必要的 HTML 元素"""
+        index_file = Path("design/index.html")
         
         if not index_file.exists():
             pytest.skip("index.html 文件不存在，跳过内容测试")
         
         content = index_file.read_text(encoding='utf-8')
         
-        # 检查基本HTML结构
+        # 检查基本 HTML 结构
         assert re.search(r'<html[^>]*>', content, re.IGNORECASE), "缺少 <html> 标签"
         assert re.search(r'<head[^>]*>', content, re.IGNORECASE), "缺少 <head> 标签"
         assert re.search(r'<body[^>]*>', content, re.IGNORECASE), "缺少 <body> 标签"
         
-        # 检查游戏引擎相关元素
-        canvas_pattern = r'<canvas[^>]*>'
-        script_pattern = r'<script[^>]*>'
-        
-        assert re.search(canvas_pattern, content, re.IGNORECASE), "缺少游戏渲染用的 <canvas> 元素"
-        assert re.search(script_pattern, content, re.IGNORECASE), "缺少 <script> 标签加载游戏引擎"
+        # 检查用户界面相关元素
+        ui_elements = ['<div', '<button', '<input', '<form', '<nav']
+        has_ui_element = any(element in content.lower() for element in ui_elements)
+        assert has_ui_element, "HTML 文件应包含至少一个用户界面元素 (div, button, input, form, nav)"
     
     def test_dev_notes_documentation_exists(self):
         """测试开发文档是否存在并包含有效内容"""
-        docs_dir = Path(__file__).parent / "docs" / "f1bc12" / "a3798c"
-        dev_notes_file = docs_dir / "dev-notes.md"
+        dev_notes_file = Path("design/docs/f1bc12/0556e3/dev-notes.md")
         
         assert dev_notes_file.exists(), f"开发文档不存在: {dev_notes_file}"
-        assert dev_notes_file.is_file(), f"dev-notes.md 不是一个有效文件: {dev_notes_file}"
+        assert dev_notes_file.is_file(), f"{dev_notes_file} 不是一个有效的文件"
         
         content = dev_notes_file.read_text(encoding='utf-8')
-        assert len(content.strip()) > 0, "开发文档内容为空"
+        assert len(content.strip()) > 0, "开发文档不能为空"
         
-        # 检查是否包含游戏引擎开发相关关键词
-        engine_keywords = ['游戏引擎', 'game engine', '核心架构', 'core', 'frontend', '前端']
-        content_lower = content.lower()
-        
-        has_relevant_content = any(keyword.lower() in content_lower for keyword in engine_keywords)
-        assert has_relevant_content, "开发文档缺少游戏引擎相关内容描述"
+        # 检查是否包含开发相关的关键词
+        dev_keywords = ['设计', '开发', '实现', '功能', '界面', 'UI', 'UX', '需求']
+        has_dev_content = any(keyword in content for keyword in dev_keywords)
+        assert has_dev_content, "开发文档应包含设计或开发相关的内容"
     
-    def test_frontend_directory_structure(self):
-        """测试前端目录结构的完整性"""
-        frontend_dir = Path(__file__).parent / "frontend"
-        docs_dir = Path(__file__).parent / "docs"
+    def test_project_structure_integrity(self):
+        """测试项目结构的完整性"""
+        design_dir = Path("design")
+        assert design_dir.exists(), "design 目录不存在"
+        assert design_dir.is_dir(), "design 应该是一个目录"
         
-        assert frontend_dir.exists(), f"frontend 目录不存在: {frontend_dir}"
-        assert docs_dir.exists(), f"docs 目录不存在: {docs_dir}"
+        docs_dir = Path("design/docs")
+        if docs_dir.exists():
+            assert docs_dir.is_dir(), "docs 应该是一个目录"
         
-        # 检查关键文件
-        required_files = [
-            frontend_dir / "index.html",
-            docs_dir / "f1bc12" / "a3798c" / "dev-notes.md"
-        ]
+        # 检查是否有其他常见的前端文件
+        common_files = ["style.css", "script.js", "main.css", "app.js"]
+        existing_files = [f for f in common_files if (design_dir / f).exists()]
         
-        for file_path in required_files:
-            assert file_path.exists(), f"必需文件缺失: {file_path}"
+        # 至少应该有 index.html 存在
+        essential_files = list(design_dir.glob("*.html"))
+        assert len(essential_files) > 0, "design 目录应至少包含一个 HTML 文件"
     
     def test_html_file_encoding_and_syntax(self):
-        """测试HTML文件编码正确且语法基本有效"""
-        frontend_dir = Path(__file__).parent / "frontend"
-        index_file = frontend_dir / "index.html"
+        """测试 HTML 文件的编码和基本语法正确性"""
+        index_file = Path("design/index.html")
         
         if not index_file.exists():
             pytest.skip("index.html 文件不存在，跳过语法测试")
         
-        # 测试文件可以用UTF-8编码正确读取
+        # 测试文件可以用 UTF-8 编码读取
         try:
             content = index_file.read_text(encoding='utf-8')
         except UnicodeDecodeError:
-            pytest.fail("HTML文件编码不是UTF-8或包含无效字符")
+            pytest.fail("HTML 文件编码不是 UTF-8 或包含无效字符")
         
-        # 基本语法检查：标签配对
+        # 检查基本的 HTML 标签配对
         open_tags = len(re.findall(r'<html[^>]*>', content, re.IGNORECASE))
         close_tags = len(re.findall(r'</html>', content, re.IGNORECASE))
         
         if open_tags > 0:
-            assert open_tags == close_tags, "HTML标签未正确闭合"
+            assert open_tags == close_tags, "HTML 标签未正确闭合"

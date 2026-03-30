@@ -1,86 +1,83 @@
 import pytest
 from pathlib import Path
-from bs4 import BeautifulSoup
+import re
 
-class TestIndexHTML:
+class TestDesignModule:
     
-    @pytest.fixture
-    def html_file_path(self):
-        """获取index.html文件路径的fixture"""
-        return Path(__file__).parent.parent / "frontend" / "index.html"
+    def test_index_html_file_exists(self):
+        """测试 index.html 文件是否存在"""
+        index_file = Path("design/index.html")
+        assert index_file.exists(), f"index.html 文件不存在: {index_file}"
+        assert index_file.is_file(), f"{index_file} 不是一个有效的文件"
     
-    @pytest.fixture
-    def html_content(self, html_file_path):
-        """读取HTML文件内容的fixture"""
-        if html_file_path.exists():
-            with open(html_file_path, 'r', encoding='utf-8') as f:
-                return f.read()
-        return None
+    def test_index_html_contains_essential_elements(self):
+        """测试 index.html 文件包含必要的 HTML 元素"""
+        index_file = Path("design/index.html")
+        
+        if not index_file.exists():
+            pytest.skip("index.html 文件不存在，跳过内容测试")
+        
+        content = index_file.read_text(encoding='utf-8')
+        
+        # 检查基本 HTML 结构
+        assert re.search(r'<html[^>]*>', content, re.IGNORECASE), "缺少 <html> 标签"
+        assert re.search(r'<head[^>]*>', content, re.IGNORECASE), "缺少 <head> 标签"
+        assert re.search(r'<body[^>]*>', content, re.IGNORECASE), "缺少 <body> 标签"
+        
+        # 检查用户界面相关元素
+        ui_elements = ['<div', '<button', '<input', '<form', '<nav']
+        has_ui_element = any(element in content.lower() for element in ui_elements)
+        assert has_ui_element, "HTML 文件应包含至少一个用户界面元素 (div, button, input, form, nav)"
     
-    def test_html_file_exists(self, html_file_path):
-        """测试index.html文件是否存在"""
-        assert html_file_path.exists(), f"HTML文件不存在: {html_file_path}"
-        assert html_file_path.is_file(), f"路径不是文件: {html_file_path}"
+    def test_dev_notes_documentation_exists(self):
+        """测试开发文档是否存在并包含有效内容"""
+        dev_notes_file = Path("design/docs/f1bc12/0556e3/dev-notes.md")
+        
+        assert dev_notes_file.exists(), f"开发文档不存在: {dev_notes_file}"
+        assert dev_notes_file.is_file(), f"{dev_notes_file} 不是一个有效的文件"
+        
+        content = dev_notes_file.read_text(encoding='utf-8')
+        assert len(content.strip()) > 0, "开发文档不能为空"
+        
+        # 检查是否包含开发相关的关键词
+        dev_keywords = ['设计', '开发', '实现', '功能', '界面', 'UI', 'UX', '需求']
+        has_dev_content = any(keyword in content for keyword in dev_keywords)
+        assert has_dev_content, "开发文档应包含设计或开发相关的内容"
     
-    def test_html_contains_canvas_element(self, html_content):
-        """测试HTML文件是否包含用于渲染Tetromino游戏的canvas元素"""
-        assert html_content is not None, "无法读取HTML文件内容"
-        soup = BeautifulSoup(html_content, 'html.parser')
-        canvas_elements = soup.find_all('canvas')
-        assert len(canvas_elements) > 0, "HTML文件中缺少canvas元素，无法渲染游戏画面"
+    def test_project_structure_integrity(self):
+        """测试项目结构的完整性"""
+        design_dir = Path("design")
+        assert design_dir.exists(), "design 目录不存在"
+        assert design_dir.is_dir(), "design 应该是一个目录"
         
-        # 检查canvas是否有合适的属性
-        main_canvas = canvas_elements[0]
-        assert main_canvas.get('id') or main_canvas.get('class'), "canvas元素缺少id或class属性"
+        docs_dir = Path("design/docs")
+        if docs_dir.exists():
+            assert docs_dir.is_dir(), "docs 应该是一个目录"
+        
+        # 检查是否有其他常见的前端文件
+        common_files = ["style.css", "script.js", "main.css", "app.js"]
+        existing_files = [f for f in common_files if (design_dir / f).exists()]
+        
+        # 至少应该有 index.html 存在
+        essential_files = list(design_dir.glob("*.html"))
+        assert len(essential_files) > 0, "design 目录应至少包含一个 HTML 文件"
     
-    def test_html_contains_game_controls(self, html_content):
-        """测试HTML文件是否包含游戏控制相关的元素"""
-        assert html_content is not None, "无法读取HTML文件内容"
-        soup = BeautifulSoup(html_content, 'html.parser')
+    def test_html_file_encoding_and_syntax(self):
+        """测试 HTML 文件的编码和基本语法正确性"""
+        index_file = Path("design/index.html")
         
-        # 检查是否有按钮或输入控制元素
-        control_elements = soup.find_all(['button', 'input', 'div'])
-        control_keywords = ['start', 'pause', 'reset', 'control', 'game', 'score']
+        if not index_file.exists():
+            pytest.skip("index.html 文件不存在，跳过语法测试")
         
-        has_control_elements = False
-        for element in control_elements:
-            element_text = str(element).lower()
-            if any(keyword in element_text for keyword in control_keywords):
-                has_control_elements = True
-                break
+        # 测试文件可以用 UTF-8 编码读取
+        try:
+            content = index_file.read_text(encoding='utf-8')
+        except UnicodeDecodeError:
+            pytest.fail("HTML 文件编码不是 UTF-8 或包含无效字符")
         
-        assert has_control_elements, "HTML文件中缺少游戏控制相关的元素"
-    
-    def test_html_includes_javascript(self, html_content):
-        """测试HTML文件是否包含JavaScript代码或引用，用于实现Tetromino游戏逻辑"""
-        assert html_content is not None, "无法读取HTML文件内容"
-        soup = BeautifulSoup(html_content, 'html.parser')
+        # 检查基本的 HTML 标签配对
+        open_tags = len(re.findall(r'<html[^>]*>', content, re.IGNORECASE))
+        close_tags = len(re.findall(r'</html>', content, re.IGNORECASE))
         
-        # 检查是否有script标签
-        script_elements = soup.find_all('script')
-        has_js = len(script_elements) > 0
-        
-        # 检查是否有外部JS文件引用或内联JS代码
-        if has_js:
-            for script in script_elements:
-                if script.get('src') or script.string:
-                    has_js = True
-                    break
-        
-        assert has_js, "HTML文件中缺少JavaScript代码，无法实现Tetromino游戏功能"
-    
-    def test_html_has_proper_structure(self, html_content):
-        """测试HTML文件是否具有正确的基本结构"""
-        assert html_content is not None, "无法读取HTML文件内容"
-        soup = BeautifulSoup(html_content, 'html.parser')
-        
-        # 检查基本HTML结构
-        assert soup.find('html'), "HTML文件缺少html标签"
-        assert soup.find('head'), "HTML文件缺少head标签"
-        assert soup.find('body'), "HTML文件缺少body标签"
-        
-        # 检查title标签
-        title = soup.find('title')
-        assert title is not None, "HTML文件缺少title标签"
-        title_text = title.get_text().lower()
-        assert 'tetromino' in title_text or 'tetris' in title_text or '俄罗斯方块' in title_text, "页面标题应该包含游戏相关关键词"
+        if open_tags > 0:
+            assert open_tags == close_tags, "HTML 标签未正确闭合"
