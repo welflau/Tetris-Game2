@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="投影方块轮廓线样式渲染器">
-    <meta name="keywords" content="投影方块, 轮廓线, Canvas渲染">
+    <meta name="description" content="俄罗斯方块 - 投影方块透明度调整">
+    <meta name="keywords" content="俄罗斯方块, 游戏, 投影方块">
     <meta name="author" content="AI开发系统">
-    <title>投影方块轮廓线渲染器</title>
+    <title>俄罗斯方块 - 投影方块透明度调整</title>
     <style>
         /* 重置样式 */
         * {
@@ -25,7 +25,7 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             line-height: 1.6;
             color: #333;
-            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
@@ -57,39 +57,29 @@
             gap: 2rem;
         }
 
-        /* Canvas容器 */
-        .canvas-container {
+        /* 游戏容器 */
+        .game-container {
             background: rgba(255, 255, 255, 0.95);
             border-radius: 20px;
             padding: 2rem;
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        /* Canvas样式 */
-        #gameCanvas {
-            border: 2px solid #34495e;
-            border-radius: 10px;
-            background: #ecf0f1;
-            display: block;
         }
 
         /* 控制面板 */
         .control-panel {
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 20px;
-            padding: 2rem;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            min-width: 300px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            padding: 1.5rem;
+            min-width: 250px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
         }
 
-        .control-panel h2 {
-            color: #2c3e50;
-            margin-bottom: 1.5rem;
-            font-size: 1.2rem;
+        .control-panel h3 {
+            margin-bottom: 1rem;
+            color: #333;
+            font-size: 1.1rem;
         }
 
         .control-group {
@@ -99,497 +89,583 @@
         .control-group label {
             display: block;
             margin-bottom: 0.5rem;
-            color: #34495e;
             font-weight: 500;
+            color: #555;
         }
 
-        .control-group input[type="range"] {
+        .slider {
             width: 100%;
-            margin-bottom: 0.5rem;
+            height: 6px;
+            border-radius: 3px;
+            background: #ddd;
+            outline: none;
+            -webkit-appearance: none;
         }
 
-        .control-group input[type="color"] {
-            width: 100%;
-            height: 40px;
-            border: none;
-            border-radius: 5px;
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #667eea;
             cursor: pointer;
         }
 
-        .control-group select {
-            width: 100%;
-            padding: 0.5rem;
-            border: 1px solid #bdc3c7;
-            border-radius: 5px;
-            background: white;
+        .slider::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #667eea;
+            cursor: pointer;
+            border: none;
         }
 
         .value-display {
-            font-size: 0.9rem;
-            color: #7f8c8d;
-            text-align: right;
+            text-align: center;
+            margin-top: 0.5rem;
+            font-weight: bold;
+            color: #667eea;
         }
 
-        .demo-button {
+        select {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background: white;
+            font-size: 1rem;
+        }
+
+        button {
             width: 100%;
             padding: 0.8rem;
-            background: #3498db;
+            background: #667eea;
             color: white;
             border: none;
             border-radius: 5px;
-            cursor: pointer;
             font-size: 1rem;
-            margin-top: 1rem;
+            cursor: pointer;
             transition: background 0.3s ease;
         }
 
-        .demo-button:hover {
-            background: #2980b9;
+        button:hover {
+            background: #5a6fd8;
         }
 
-        /* 响应式设计 */
-        @media (max-width: 768px) {
-            main {
-                flex-direction: column;
-                padding: 1rem;
-            }
-            
-            .control-panel {
-                min-width: auto;
-                width: 100%;
-            }
+        /* 游戏画布 */
+        #gameCanvas {
+            border: 2px solid #333;
+            border-radius: 10px;
+            background: #000;
+        }
+
+        /* 信息显示 */
+        .info-panel {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            color: #333;
+        }
+
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
         }
     </style>
 </head>
 <body>
     <header>
-        <h1>投影方块轮廓线渲染器</h1>
+        <h1>俄罗斯方块 - 投影方块透明度调整</h1>
     </header>
-    
+
     <main>
-        <div class="canvas-container">
-            <canvas id="gameCanvas" width="400" height="600"></canvas>
+        <div class="game-container">
+            <canvas id="gameCanvas" width="300" height="600"></canvas>
+            <div class="info-panel">
+                <div class="info-item">
+                    <span>得分:</span>
+                    <span id="score">0</span>
+                </div>
+                <div class="info-item">
+                    <span>等级:</span>
+                    <span id="level">1</span>
+                </div>
+                <div class="info-item">
+                    <span>消除行数:</span>
+                    <span id="lines">0</span>
+                </div>
+            </div>
         </div>
-        
+
         <div class="control-panel">
-            <h2>渲染控制</h2>
+            <h3>投影方块设置</h3>
             
             <div class="control-group">
-                <label for="renderMode">渲染模式</label>
-                <select id="renderMode">
-                    <option value="outline">轮廓线</option>
-                    <option value="fill">填充</option>
-                    <option value="mixed">混合</option>
+                <label for="opacitySlider">透明度:</label>
+                <input type="range" id="opacitySlider" class="slider" min="0" max="100" value="30">
+                <div class="value-display" id="opacityValue">30%</div>
+            </div>
+
+            <div class="control-group">
+                <label for="styleSelect">投影样式:</label>
+                <select id="styleSelect">
+                    <option value="outline">轮廓</option>
+                    <option value="filled">填充</option>
+                    <option value="dotted">点状</option>
+                    <option value="dashed">虚线</option>
                 </select>
             </div>
-            
+
             <div class="control-group">
-                <label for="lineWidth">线宽</label>
-                <input type="range" id="lineWidth" min="1" max="10" value="2" step="1">
-                <div class="value-display" id="lineWidthValue">2px</div>
+                <label for="colorSelect">投影颜色:</label>
+                <select id="colorSelect">
+                    <option value="white">白色</option>
+                    <option value="gray">灰色</option>
+                    <option value="auto">自动</option>
+                </select>
             </div>
-            
+
             <div class="control-group">
-                <label for="transparency">透明度</label>
-                <input type="range" id="transparency" min="0.1" max="1" value="0.6" step="0.1">
-                <div class="value-display" id="transparencyValue">0.6</div>
+                <button id="resetBtn">重置为默认</button>
             </div>
-            
+
             <div class="control-group">
-                <label for="ghostColor">投影颜色</label>
-                <input type="color" id="ghostColor" value="#e74c3c">
+                <button id="startBtn">开始游戏</button>
             </div>
-            
-            <div class="control-group">
-                <label for="backgroundColor">背景颜色</label>
-                <input type="color" id="backgroundColor" value="#ecf0f1">
-            </div>
-            
-            <button class="demo-button" id="demoButton">切换演示方块</button>
         </div>
     </main>
 
     <script>
-        // StyleManager - 管理投影方块的视觉样式配置
-        class StyleManager {
+        // 配置管理器
+        class ConfigManager {
             constructor() {
-                this.styles = {
-                    renderMode: 'outline',
-                    lineWidth: 2,
-                    transparency: 0.6,
-                    ghostColor: '#e74c3c',
-                    backgroundColor: '#ecf0f1'
+                this.defaultConfig = {
+                    ghostOpacity: 0.3,
+                    ghostStyle: 'outline',
+                    ghostColor: 'white'
                 };
+                this.config = this.loadConfig();
             }
 
-            getGhostStyle() {
-                return { ...this.styles };
+            getGhostConfig() {
+                return { ...this.config };
             }
 
-            updateStyle(property, value) {
-                if (this.validateStyle(property, value)) {
-                    this.styles[property] = value;
-                    return true;
+            updateGhostConfig(newConfig) {
+                this.config = { ...this.config, ...newConfig };
+                this.saveConfig();
+            }
+
+            resetToDefault() {
+                this.config = { ...this.defaultConfig };
+                this.saveConfig();
+                return this.config;
+            }
+
+            loadConfig() {
+                try {
+                    const saved = localStorage.getItem('tetris_ghost_config');
+                    return saved ? JSON.parse(saved) : { ...this.defaultConfig };
+                } catch {
+                    return { ...this.defaultConfig };
                 }
-                return false;
             }
 
-            validateStyle(property, value) {
-                switch (property) {
-                    case 'renderMode':
-                        return ['outline', 'fill', 'mixed'].includes(value);
-                    case 'lineWidth':
-                        return value >= 1 && value <= 10;
-                    case 'transparency':
-                        return value >= 0.1 && value <= 1;
-                    case 'ghostColor':
-                    case 'backgroundColor':
-                        return /^#[0-9A-F]{6}$/i.test(value);
-                    default:
-                        return false;
-                }
+            saveConfig() {
+                localStorage.setItem('tetris_ghost_config', JSON.stringify(this.config));
             }
         }
 
-        // VisibilityTester - 测试投影方块在不同背景下的可见性
-        class VisibilityTester {
-            constructor() {
-                this.contrastThreshold = 0.3;
+        // 样式计算器
+        class StyleCalculator {
+            calculateOptimalOpacity(background) {
+                // 根据背景颜色计算最佳透明度
+                const brightness = this.getBrightness(background);
+                if (brightness < 0.3) {
+                    return 0.4; // 深色背景使用较高透明度
+                } else if (brightness > 0.7) {
+                    return 0.2; // 浅色背景使用较低透明度
+                } else {
+                    return 0.3; // 中等亮度使用默认透明度
+                }
             }
 
-            testVisibility(ghostColor, backgroundColor) {
-                const contrast = this.calculateContrast(ghostColor, backgroundColor);
-                return contrast >= this.contrastThreshold;
+            getBrightness(color) {
+                // 简化的亮度计算
+                if (typeof color === 'string') {
+                    if (color === '#000000' || color === 'black') return 0;
+                    if (color === '#ffffff' || color === 'white') return 1;
+                }
+                return 0.5; // 默认中等亮度
             }
 
-            calculateContrast(color1, color2) {
-                const rgb1 = this.hexToRgb(color1);
-                const rgb2 = this.hexToRgb(color2);
-                
-                const luminance1 = this.getLuminance(rgb1);
-                const luminance2 = this.getLuminance(rgb2);
-                
-                const lighter = Math.max(luminance1, luminance2);
-                const darker = Math.min(luminance1, luminance2);
-                
+            getContrastRatio(color1, color2) {
+                const brightness1 = this.getBrightness(color1);
+                const brightness2 = this.getBrightness(color2);
+                const lighter = Math.max(brightness1, brightness2);
+                const darker = Math.min(brightness1, brightness2);
                 return (lighter + 0.05) / (darker + 0.05);
             }
-
-            hexToRgb(hex) {
-                const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-                return result ? {
-                    r: parseInt(result[1], 16),
-                    g: parseInt(result[2], 16),
-                    b: parseInt(result[3], 16)
-                } : null;
-            }
-
-            getLuminance(rgb) {
-                const { r, g, b } = rgb;
-                const [rs, gs, bs] = [r, g, b].map(c => {
-                    c = c / 255;
-                    return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
-                });
-                return 0.2126 * rs + 0.7152 * gs + 0.0722 * bs;
-            }
-
-            adjustContrast(ghostColor, backgroundColor) {
-                if (this.testVisibility(ghostColor, backgroundColor)) {
-                    return ghostColor;
-                }
-                
-                // 如果对比度不够，自动调整颜色
-                const rgb = this.hexToRgb(ghostColor);
-                const bgRgb = this.hexToRgb(backgroundColor);
-                
-                // 简单的对比度调整策略
-                const avgBg = (bgRgb.r + bgRgb.g + bgRgb.b) / 3;
-                if (avgBg > 128) {
-                    // 背景较亮，使投影颜色更暗
-                    return this.rgbToHex({
-                        r: Math.max(0, rgb.r - 50),
-                        g: Math.max(0, rgb.g - 50),
-                        b: Math.max(0, rgb.b - 50)
-                    });
-                } else {
-                    // 背景较暗，使投影颜色更亮
-                    return this.rgbToHex({
-                        r: Math.min(255, rgb.r + 50),
-                        g: Math.min(255, rgb.g + 50),
-                        b: Math.min(255, rgb.b + 50)
-                    });
-                }
-            }
-
-            rgbToHex(rgb) {
-                return "#" + ((1 << 24) + (rgb.r << 16) + (rgb.g << 8) + rgb.b).toString(16).slice(1);
-            }
-
-            getOptimalStyle(ghostColor, backgroundColor) {
-                const adjustedColor = this.adjustContrast(ghostColor, backgroundColor);
-                return {
-                    color: adjustedColor,
-                    isAdjusted: adjustedColor !== ghostColor
-                };
-            }
         }
 
-        // GhostRenderer - 负责投影方块的渲染逻辑
+        // 投影渲染器
         class GhostRenderer {
-            constructor(canvas, styleManager, visibilityTester) {
-                this.canvas = canvas;
-                this.ctx = canvas.getContext('2d');
-                this.styleManager = styleManager;
-                this.visibilityTester = visibilityTester;
+            constructor(ctx, configManager, styleCalculator) {
+                this.ctx = ctx;
+                this.configManager = configManager;
+                this.styleCalculator = styleCalculator;
                 this.blockSize = 30;
             }
 
-            drawGhost(x, y, shape) {
-                const style = this.styleManager.getGhostStyle();
-                const optimalStyle = this.visibilityTester.getOptimalStyle(
-                    style.ghostColor, 
-                    style.backgroundColor
-                );
+            drawGhost(piece, position, gameBoard) {
+                if (!piece || !position) return;
 
+                const config = this.configManager.getGhostConfig();
+                const ghostPosition = this.calculateGhostPosition(piece, position, gameBoard);
+                
+                if (!ghostPosition) return;
+
+                // 保存当前绘图状态
                 this.ctx.save();
-                
+
                 // 设置透明度
-                this.ctx.globalAlpha = style.transparency;
-                
-                // 根据渲染模式绘制
-                switch (style.renderMode) {
-                    case 'outline':
-                        this.drawOutline(x, y, shape, optimalStyle.color, style.lineWidth);
-                        break;
-                    case 'fill':
-                        this.drawFill(x, y, shape, optimalStyle.color);
-                        break;
-                    case 'mixed':
-                        this.drawFill(x, y, shape, optimalStyle.color);
-                        this.ctx.globalAlpha = 1; // 轮廓线不透明
-                        this.drawOutline(x, y, shape, optimalStyle.color, style.lineWidth);
-                        break;
-                }
-                
+                this.ctx.globalAlpha = config.ghostOpacity;
+
+                // 根据样式绘制投影方块
+                this.renderGhostPiece(piece, ghostPosition, config);
+
+                // 恢复绘图状态
                 this.ctx.restore();
             }
 
-            drawOutline(x, y, shape, color, lineWidth) {
-                this.ctx.strokeStyle = color;
-                this.ctx.lineWidth = lineWidth;
-                this.ctx.lineCap = 'round';
-                this.ctx.lineJoin = 'round';
+            calculateGhostPosition(piece, position, gameBoard) {
+                let ghostY = position.y;
+                
+                // 向下移动直到碰撞
+                while (ghostY < 20 && this.canPlacePiece(piece, { x: position.x, y: ghostY + 1 }, gameBoard)) {
+                    ghostY++;
+                }
 
-                for (let row = 0; row < shape.length; row++) {
-                    for (let col = 0; col < shape[row].length; col++) {
-                        if (shape[row][col]) {
-                            const blockX = x + col * this.blockSize;
-                            const blockY = y + row * this.blockSize;
+                // 如果投影位置与当前位置相同，不显示投影
+                if (ghostY === position.y) {
+                    return null;
+                }
+
+                return { x: position.x, y: ghostY };
+            }
+
+            canPlacePiece(piece, position, gameBoard) {
+                for (let y = 0; y < piece.shape.length; y++) {
+                    for (let x = 0; x < piece.shape[y].length; x++) {
+                        if (piece.shape[y][x]) {
+                            const newX = position.x + x;
+                            const newY = position.y + y;
                             
-                            this.ctx.strokeRect(
-                                blockX + lineWidth/2, 
-                                blockY + lineWidth/2, 
-                                this.blockSize - lineWidth, 
-                                this.blockSize - lineWidth
+                            if (newX < 0 || newX >= 10 || newY >= 20) {
+                                return false;
+                            }
+                            
+                            if (newY >= 0 && gameBoard[newY] && gameBoard[newY][newX]) {
+                                return false;
+                            }
+                        }
+                    }
+                }
+                return true;
+            }
+
+            renderGhostPiece(piece, position, config) {
+                const color = this.getGhostColor(config.ghostColor, piece.color);
+                
+                for (let y = 0; y < piece.shape.length; y++) {
+                    for (let x = 0; x < piece.shape[y].length; x++) {
+                        if (piece.shape[y][x]) {
+                            const drawX = (position.x + x) * this.blockSize;
+                            const drawY = (position.y + y) * this.blockSize;
+                            
+                            this.drawGhostBlock(drawX, drawY, color, config.ghostStyle);
+                        }
+                    }
+                }
+            }
+
+            drawGhostBlock(x, y, color, style) {
+                this.ctx.strokeStyle = color;
+                this.ctx.fillStyle = color;
+                this.ctx.lineWidth = 2;
+
+                switch (style) {
+                    case 'outline':
+                        this.ctx.strokeRect(x + 1, y + 1, this.blockSize - 2, this.blockSize - 2);
+                        break;
+                    
+                    case 'filled':
+                        this.ctx.fillRect(x, y, this.blockSize, this.blockSize);
+                        break;
+                    
+                    case 'dotted':
+                        this.ctx.setLineDash([3, 3]);
+                        this.ctx.strokeRect(x + 1, y + 1, this.blockSize - 2, this.blockSize - 2);
+                        this.ctx.setLineDash([]);
+                        break;
+                    
+                    case 'dashed':
+                        this.ctx.setLineDash([8, 4]);
+                        this.ctx.strokeRect(x + 1, y + 1, this.blockSize - 2, this.blockSize - 2);
+                        this.ctx.setLineDash([]);
+                        break;
+                }
+            }
+
+            getGhostColor(colorSetting, pieceColor) {
+                switch (colorSetting) {
+                    case 'white':
+                        return '#ffffff';
+                    case 'gray':
+                        return '#888888';
+                    case 'auto':
+                        return this.getContrastColor(pieceColor);
+                    default:
+                        return '#ffffff';
+                }
+            }
+
+            getContrastColor(baseColor) {
+                // 简化的对比色计算
+                const darkColors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00'];
+                return darkColors.includes(baseColor) ? '#ffffff' : '#cccccc';
+            }
+
+            setGhostOpacity(opacity) {
+                this.configManager.updateGhostConfig({ ghostOpacity: opacity });
+            }
+
+            setGhostStyle(styleType) {
+                this.configManager.updateGhostConfig({ ghostStyle: styleType });
+            }
+        }
+
+        // 游戏主渲染器
+        class GameRenderer {
+            constructor(canvas) {
+                this.canvas = canvas;
+                this.ctx = canvas.getContext('2d');
+                this.configManager = new ConfigManager();
+                this.styleCalculator = new StyleCalculator();
+                this.ghostRenderer = new GhostRenderer(this.ctx, this.configManager, this.styleCalculator);
+                
+                this.blockSize = 30;
+                this.boardWidth = 10;
+                this.boardHeight = 20;
+                
+                this.initGame();
+            }
+
+            initGame() {
+                this.gameBoard = Array(this.boardHeight).fill().map(() => Array(this.boardWidth).fill(0));
+                this.currentPiece = this.generatePiece();
+                this.currentPosition = { x: 4, y: 0 };
+                this.score = 0;
+                this.level = 1;
+                this.lines = 0;
+                this.gameRunning = false;
+            }
+
+            generatePiece() {
+                const pieces = [
+                    { shape: [[1,1,1,1]], color: '#00ffff' }, // I
+                    { shape: [[1,1],[1,1]], color: '#ffff00' }, // O
+                    { shape: [[0,1,0],[1,1,1]], color: '#800080' }, // T
+                    { shape: [[0,1,1],[1,1,0]], color: '#00ff00' }, // S
+                    { shape: [[1,1,0],[0,1,1]], color: '#ff0000' }, // Z
+                    { shape: [[1,0,0],[1,1,1]], color: '#ff8000' }, // L
+                    { shape: [[0,0,1],[1,1,1]], color: '#0000ff' }  // J
+                ];
+                return pieces[Math.floor(Math.random() * pieces.length)];
+            }
+
+            render() {
+                // 清空画布
+                this.ctx.fillStyle = '#000000';
+                this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+
+                // 绘制游戏板
+                this.drawBoard();
+
+                // 绘制投影方块
+                if (this.currentPiece && this.gameRunning) {
+                    this.ghostRenderer.drawGhost(this.currentPiece, this.currentPosition, this.gameBoard);
+                }
+
+                // 绘制当前方块
+                if (this.currentPiece) {
+                    this.drawPiece(this.currentPiece, this.currentPosition);
+                }
+
+                // 绘制网格线
+                this.drawGrid();
+            }
+
+            drawBoard() {
+                for (let y = 0; y < this.boardHeight; y++) {
+                    for (let x = 0; x < this.boardWidth; x++) {
+                        if (this.gameBoard[y][x]) {
+                            this.ctx.fillStyle = this.gameBoard[y][x];
+                            this.ctx.fillRect(x * this.blockSize, y * this.blockSize, this.blockSize, this.blockSize);
+                        }
+                    }
+                }
+            }
+
+            drawPiece(piece, position) {
+                this.ctx.fillStyle = piece.color;
+                for (let y = 0; y < piece.shape.length; y++) {
+                    for (let x = 0; x < piece.shape[y].length; x++) {
+                        if (piece.shape[y][x]) {
+                            this.ctx.fillRect(
+                                (position.x + x) * this.blockSize,
+                                (position.y + y) * this.blockSize,
+                                this.blockSize,
+                                this.blockSize
                             );
                         }
                     }
                 }
             }
 
-            drawFill(x, y, shape, color) {
-                this.ctx.fillStyle = color;
-
-                for (let row = 0; row < shape.length; row++) {
-                    for (let col = 0; col < shape[row].length; col++) {
-                        if (shape[row][col]) {
-                            const blockX = x + col * this.blockSize;
-                            const blockY = y + row * this.blockSize;
-                            
-                            this.ctx.fillRect(blockX, blockY, this.blockSize, this.blockSize);
-                        }
-                    }
-                }
-            }
-
-            setRenderMode(mode) {
-                this.styleManager.updateStyle('renderMode', mode);
-            }
-
-            updateTransparency(transparency) {
-                this.styleManager.updateStyle('transparency', transparency);
-            }
-        }
-
-        // GameRenderer - 游戏主渲染器
-        class GameRenderer {
-            constructor(canvas) {
-                this.canvas = canvas;
-                this.ctx = canvas.getContext('2d');
-                this.styleManager = new StyleManager();
-                this.visibilityTester = new VisibilityTester();
-                this.ghostRenderer = new GhostRenderer(canvas, this.styleManager, this.visibilityTester);
-                
-                // 演示用的方块形状
-                this.demoShapes = [
-                    // T形
-                    [
-                        [0, 1, 0],
-                        [1, 1, 1]
-                    ],
-                    // L形
-                    [
-                        [1, 0],
-                        [1, 0],
-                        [1, 1]
-                    ],
-                    // 方形
-                    [
-                        [1, 1],
-                        [1, 1]
-                    ],
-                    // 直线
-                    [
-                        [1],
-                        [1],
-                        [1],
-                        [1]
-                    ]
-                ];
-                
-                this.currentShapeIndex = 0;
-                this.ghostPosition = { x: 100, y: 200 };
-            }
-
-            render() {
-                this.clearCanvas();
-                this.drawBackground();
-                this.drawGrid();
-                this.updateGhostPiece();
-            }
-
-            clearCanvas() {
-                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-            }
-
-            drawBackground() {
-                const style = this.styleManager.getGhostStyle();
-                this.ctx.fillStyle = style.backgroundColor;
-                this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
-            }
-
             drawGrid() {
-                this.ctx.strokeStyle = '#bdc3c7';
+                this.ctx.strokeStyle = '#333333';
                 this.ctx.lineWidth = 1;
-                this.ctx.globalAlpha = 0.3;
                 
-                // 绘制网格
-                for (let x = 0; x <= this.canvas.width; x += 30) {
+                for (let x = 0; x <= this.boardWidth; x++) {
                     this.ctx.beginPath();
-                    this.ctx.moveTo(x, 0);
-                    this.ctx.lineTo(x, this.canvas.height);
+                    this.ctx.moveTo(x * this.blockSize, 0);
+                    this.ctx.lineTo(x * this.blockSize, this.canvas.height);
                     this.ctx.stroke();
                 }
                 
-                for (let y = 0; y <= this.canvas.height; y += 30) {
+                for (let y = 0; y <= this.boardHeight; y++) {
                     this.ctx.beginPath();
-                    this.ctx.moveTo(0, y);
-                    this.ctx.lineTo(this.canvas.width, y);
+                    this.ctx.moveTo(0, y * this.blockSize);
+                    this.ctx.lineTo(this.canvas.width, y * this.blockSize);
                     this.ctx.stroke();
                 }
+            }
+
+            updateGhostDisplay() {
+                this.render();
+            }
+
+            startGame() {
+                this.gameRunning = true;
+                this.gameLoop();
+            }
+
+            gameLoop() {
+                if (!this.gameRunning) return;
                 
-                this.ctx.globalAlpha = 1;
-            }
-
-            updateGhostPiece() {
-                const currentShape = this.demoShapes[this.currentShapeIndex];
-                this.ghostRenderer.drawGhost(
-                    this.ghostPosition.x,
-                    this.ghostPosition.y,
-                    currentShape
-                );
-            }
-
-            refreshDisplay() {
                 this.render();
-            }
-
-            nextShape() {
-                this.currentShapeIndex = (this.currentShapeIndex + 1) % this.demoShapes.length;
-                this.render();
-            }
-
-            updateStyle(property, value) {
-                if (this.styleManager.updateStyle(property, value)) {
-                    if (property === 'backgroundColor') {
-                        this.canvas.style.background = value;
-                    }
-                    this.render();
-                    return true;
-                }
-                return false;
+                setTimeout(() => this.gameLoop(), 500);
             }
         }
 
-        // 初始化应用
+        // 初始化游戏
+        let gameRenderer;
+        
         document.addEventListener('DOMContentLoaded', function() {
             const canvas = document.getElementById('gameCanvas');
-            const gameRenderer = new GameRenderer(canvas);
-            
-            // 控制元素
-            const renderModeSelect = document.getElementById('renderMode');
-            const lineWidthSlider = document.getElementById('lineWidth');
-            const transparencySlider = document.getElementById('transparency');
-            const ghostColorPicker = document.getElementById('ghostColor');
-            const backgroundColorPicker = document.getElementById('backgroundColor');
-            const demoButton = document.getElementById('demoButton');
-            
-            // 值显示元素
-            const lineWidthValue = document.getElementById('lineWidthValue');
-            const transparencyValue = document.getElementById('transparencyValue');
-            
-            // 事件监听器
-            renderModeSelect.addEventListener('change', function() {
-                gameRenderer.updateStyle('renderMode', this.value);
-            });
-            
-            lineWidthSlider.addEventListener('input', function() {
-                const value = parseInt(this.value);
-                lineWidthValue.textContent = value + 'px';
-                gameRenderer.updateStyle('lineWidth', value);
-            });
-            
-            transparencySlider.addEventListener('input', function() {
-                const value = parseFloat(this.value);
-                transparencyValue.textContent = value;
-                gameRenderer.updateStyle('transparency', value);
-            });
-            
-            ghostColorPicker.addEventListener('change', function() {
-                gameRenderer.updateStyle('ghostColor', this.value);
-            });
-            
-            backgroundColorPicker.addEventListener('change', function() {
-                gameRenderer.updateStyle('backgroundColor', this.value);
-            });
-            
-            demoButton.addEventListener('click', function() {
-                gameRenderer.nextShape();
-            });
+            gameRenderer = new GameRenderer(canvas);
             
             // 初始渲染
             gameRenderer.render();
             
-            // 鼠标交互 - 移动投影方块
-            canvas.addEventListener('mousemove', function(e) {
-                const rect = canvas.getBoundingClientRect();
-                const x = Math.floor((e.clientX - rect.left) / 30) * 30;
-                const y = Math.floor((e.clientY - rect.top) / 30) * 30;
-                
-                gameRenderer.ghostPosition = { x, y };
-                gameRenderer.render();
-            });
+            // 设置控件事件监听
+            setupControls();
         });
+
+        function setupControls() {
+            const opacitySlider = document.getElementById('opacitySlider');
+            const opacityValue = document.getElementById('opacityValue');
+            const styleSelect = document.getElementById('styleSelect');
+            const colorSelect = document.getElementById('colorSelect');
+            const resetBtn = document.getElementById('resetBtn');
+            const startBtn = document.getElementById('startBtn');
+
+            // 加载当前配置
+            const config = gameRenderer.configManager.getGhostConfig();
+            opacitySlider.value = Math.round(config.ghostOpacity * 100);
+            opacityValue.textContent = Math.round(config.ghostOpacity * 100) + '%';
+            styleSelect.value = config.ghostStyle;
+            colorSelect.value = config.ghostColor;
+
+            // 透明度滑块
+            opacitySlider.addEventListener('input', function() {
+                const opacity = this.value / 100;
+                opacityValue.textContent = this.value + '%';
+                gameRenderer.ghostRenderer.setGhostOpacity(opacity);
+                gameRenderer.updateGhostDisplay();
+            });
+
+            // 样式选择
+            styleSelect.addEventListener('change', function() {
+                gameRenderer.ghostRenderer.setGhostStyle(this.value);
+                gameRenderer.updateGhostDisplay();
+            });
+
+            // 颜色选择
+            colorSelect.addEventListener('change', function() {
+                gameRenderer.configManager.updateGhostConfig({ ghostColor: this.value });
+                gameRenderer.updateGhostDisplay();
+            });
+
+            // 重置按钮
+            resetBtn.addEventListener('click', function() {
+                const defaultConfig = gameRenderer.configManager.resetToDefault();
+                opacitySlider.value = Math.round(defaultConfig.ghostOpacity * 100);
+                opacityValue.textContent = Math.round(defaultConfig.ghostOpacity * 100) + '%';
+                styleSelect.value = defaultConfig.ghostStyle;
+                colorSelect.value = defaultConfig.ghostColor;
+                gameRenderer.updateGhostDisplay();
+            });
+
+            // 开始游戏按钮
+            startBtn.addEventListener('click', function() {
+                if (!gameRenderer.gameRunning) {
+                    gameRenderer.startGame();
+                    this.textContent = '游戏进行中';
+                    this.disabled = true;
+                }
+            });
+
+            // 键盘控制
+            document.addEventListener('keydown', function(e) {
+                if (!gameRenderer.gameRunning) return;
+                
+                switch(e.key) {
+                    case 'ArrowLeft':
+                        if (gameRenderer.currentPosition.x > 0) {
+                            gameRenderer.currentPosition.x--;
+                            gameRenderer.updateGhostDisplay();
+                        }
+                        break;
+                    case 'ArrowRight':
+                        if (gameRenderer.currentPosition.x < gameRenderer.boardWidth - 1) {
+                            gameRenderer.currentPosition.x++;
+                            gameRenderer.updateGhostDisplay();
+                        }
+                        break;
+                    case 'ArrowDown':
+                        if (gameRenderer.currentPosition.y < gameRenderer.boardHeight - 1) {
+                            gameRenderer.currentPosition.y++;
+                            gameRenderer.updateGhostDisplay();
+                        }
+                        break;
+                }
+            });
+        }
     </script>
 </body>
 </html>
