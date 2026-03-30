@@ -83,60 +83,54 @@
             display: flex;
             gap: 2rem;
             align-items: flex-start;
+        }
+
+        /* 游戏面板 */
+        .game-board {
             background: var(--bg-glass);
             backdrop-filter: blur(10px);
-            border-radius: var(--border-radius-large);
-            padding: 2rem;
+            border: 2px solid var(--border-glass);
+            border-radius: var(--border-radius);
+            padding: 1rem;
             box-shadow: var(--shadow-heavy);
-            border: 1px solid var(--border-glass);
         }
 
-        /* 游戏画布区域 */
-        .game-area {
-            position: relative;
-        }
-
+        /* 游戏画布 */
         #gameCanvas {
+            display: block;
             border: 2px solid var(--border-glass);
             border-radius: var(--border-radius);
             background: rgba(0, 0, 0, 0.8);
-            box-shadow: var(--shadow-light);
         }
 
         /* 侧边栏 */
         .sidebar {
             display: flex;
             flex-direction: column;
-            gap: 1.5rem;
+            gap: 1rem;
             min-width: 200px;
         }
 
         /* 信息面板 */
         .info-panel {
             background: var(--bg-glass);
-            border-radius: var(--border-radius);
-            padding: 1.5rem;
+            backdrop-filter: blur(10px);
             border: 1px solid var(--border-glass);
-            backdrop-filter: blur(5px);
+            border-radius: var(--border-radius);
+            padding: 1rem;
+            color: var(--text-light);
+            box-shadow: var(--shadow-light);
         }
 
         .info-panel h3 {
-            color: var(--text-light);
-            margin-bottom: 1rem;
-            font-size: 1.1rem;
-            text-align: center;
-        }
-
-        .info-item {
-            display: flex;
-            justify-content: space-between;
             margin-bottom: 0.5rem;
-            color: var(--text-light);
+            color: var(--accent-color);
+            font-size: 1.1rem;
         }
 
-        .info-value {
-            font-weight: bold;
-            color: var(--accent-color);
+        .info-panel p {
+            margin-bottom: 0.3rem;
+            font-size: 0.9rem;
         }
 
         /* 预览区域 */
@@ -144,25 +138,25 @@
             text-align: center;
         }
 
-        #previewCanvas {
+        .preview-canvas {
             border: 1px solid var(--border-glass);
             border-radius: var(--border-radius);
             background: rgba(0, 0, 0, 0.6);
-            margin-top: 0.5rem;
+            margin: 0.5rem 0;
         }
 
         /* 控制按钮 */
         .controls {
             display: flex;
             flex-direction: column;
-            gap: 1rem;
+            gap: 0.5rem;
         }
 
         .btn {
             padding: 0.8rem 1.5rem;
             border: none;
             border-radius: var(--border-radius);
-            font-size: 1rem;
+            font-size: 0.9rem;
             font-weight: 600;
             cursor: pointer;
             transition: var(--transition);
@@ -203,45 +197,21 @@
             box-shadow: var(--shadow-light);
         }
 
-        /* 游戏状态 */
-        .game-status {
-            text-align: center;
-            padding: 1rem;
-            border-radius: var(--border-radius);
-            font-weight: bold;
-            font-size: 1.1rem;
-        }
-
-        .status-playing {
-            background: var(--accent-color);
-            color: var(--text-light);
-        }
-
-        .status-paused {
-            background: var(--warning-color);
-            color: var(--text-light);
-        }
-
-        .status-gameover {
-            background: var(--danger-color);
-            color: var(--text-light);
-        }
-
         /* 响应式设计 */
         @media (max-width: 768px) {
             main {
-                flex-direction: column;
                 padding: 1rem;
             }
 
             .game-container {
                 flex-direction: column;
-                padding: 1rem;
+                align-items: center;
             }
 
             .sidebar {
                 min-width: auto;
                 width: 100%;
+                max-width: 300px;
             }
 
             #gameCanvas {
@@ -249,6 +219,15 @@
                 height: auto;
             }
         }
+
+        /* 方块颜色定义 */
+        .tetromino-I { background-color: #00f0f0; }
+        .tetromino-O { background-color: #f0f000; }
+        .tetromino-T { background-color: #a000f0; }
+        .tetromino-S { background-color: #00f000; }
+        .tetromino-Z { background-color: #f00000; }
+        .tetromino-J { background-color: #0000f0; }
+        .tetromino-L { background-color: #f0a000; }
     </style>
 </head>
 <body>
@@ -258,631 +237,669 @@
 
     <main>
         <div class="game-container">
-            <div class="game-area">
+            <div class="game-board">
                 <canvas id="gameCanvas" width="300" height="600"></canvas>
             </div>
 
             <div class="sidebar">
                 <div class="info-panel">
                     <h3>游戏信息</h3>
-                    <div class="info-item">
-                        <span>分数:</span>
-                        <span class="info-value" id="score">0</span>
-                    </div>
-                    <div class="info-item">
-                        <span>等级:</span>
-                        <span class="info-value" id="level">1</span>
-                    </div>
-                    <div class="info-item">
-                        <span>行数:</span>
-                        <span class="info-value" id="lines">0</span>
-                    </div>
+                    <p>分数: <span id="score">0</span></p>
+                    <p>等级: <span id="level">1</span></p>
+                    <p>行数: <span id="lines">0</span></p>
                 </div>
 
                 <div class="info-panel preview-area">
                     <h3>下一个方块</h3>
-                    <canvas id="previewCanvas" width="120" height="120"></canvas>
+                    <canvas id="nextCanvas" class="preview-canvas" width="80" height="80"></canvas>
                 </div>
 
-                <div class="game-status status-playing" id="gameStatus">
-                    准备开始
+                <div class="info-panel preview-area">
+                    <h3>暂存方块</h3>
+                    <canvas id="holdCanvas" class="preview-canvas" width="80" height="80"></canvas>
                 </div>
 
-                <div class="controls">
-                    <button class="btn btn-primary" id="startBtn">开始游戏</button>
-                    <button class="btn btn-secondary" id="pauseBtn">暂停</button>
-                    <button class="btn btn-danger" id="resetBtn">重新开始</button>
+                <div class="info-panel controls">
+                    <button id="startBtn" class="btn btn-primary">开始游戏</button>
+                    <button id="pauseBtn" class="btn btn-secondary">暂停</button>
+                    <button id="resetBtn" class="btn btn-danger">重新开始</button>
+                </div>
+
+                <div class="info-panel">
+                    <h3>操作说明</h3>
+                    <p>← → : 左右移动</p>
+                    <p>↓ : 快速下降</p>
+                    <p>↑ : 旋转方块</p>
+                    <p>空格 : 瞬间下降</p>
+                    <p>C : 暂存方块</p>
                 </div>
             </div>
         </div>
     </main>
 
     <script>
-        // Canvas渲染引擎核心
-        class CanvasRenderer {
-            constructor() {
-                this.canvas = null;
-                this.ctx = null;
-                this.width = 0;
-                this.height = 0;
+        // Tetromino方块形状定义
+        class TetrominoShape {
+            constructor(type, matrix, color) {
+                this.type = type;
+                this.matrix = matrix;
+                this.color = color;
             }
 
-            init(canvasId, width, height) {
-                this.canvas = document.getElementById(canvasId);
-                if (!this.canvas) {
-                    throw new Error(`Canvas element with id '${canvasId}' not found`);
-                }
-                
-                this.ctx = this.canvas.getContext('2d');
-                this.width = width || this.canvas.width;
-                this.height = height || this.canvas.height;
-                
-                this.canvas.width = this.width;
-                this.canvas.height = this.height;
-                
-                // 设置默认样式
-                this.ctx.imageSmoothingEnabled = false;
-                this.ctx.textAlign = 'center';
-                this.ctx.textBaseline = 'middle';
-                
-                return this;
+            getMatrix() {
+                return this.matrix;
             }
 
-            clear() {
-                this.ctx.clearRect(0, 0, this.width, this.height);
+            getColor() {
+                return this.color;
             }
 
-            drawRect(x, y, width, height, color, stroke = false) {
-                this.ctx.fillStyle = color;
-                this.ctx.fillRect(x, y, width, height);
-                
-                if (stroke) {
-                    this.ctx.strokeStyle = stroke;
-                    this.ctx.lineWidth = 1;
-                    this.ctx.strokeRect(x, y, width, height);
-                }
+            getType() {
+                return this.type;
             }
 
-            drawText(text, x, y, style = {}) {
-                const {
-                    font = '16px Arial',
-                    color = '#ffffff',
-                    align = 'center',
-                    baseline = 'middle'
-                } = style;
-                
-                this.ctx.font = font;
-                this.ctx.fillStyle = color;
-                this.ctx.textAlign = align;
-                this.ctx.textBaseline = baseline;
-                this.ctx.fillText(text, x, y);
-            }
-
-            setTransform(matrix) {
-                this.ctx.setTransform(...matrix);
-            }
-
-            resetTransform() {
-                this.ctx.resetTransform();
-            }
-        }
-
-        // 游戏区域渲染器
-        class GameAreaRenderer {
-            constructor(renderer) {
-                this.renderer = renderer;
-                this.cellSize = 30;
-                this.gridWidth = 10;
-                this.gridHeight = 20;
-                this.offsetX = 0;
-                this.offsetY = 0;
-            }
-
-            drawGrid() {
-                const { ctx } = this.renderer;
-                
-                // 绘制网格线
-                ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
-                ctx.lineWidth = 1;
-                
-                // 垂直线
-                for (let x = 0; x <= this.gridWidth; x++) {
-                    const posX = this.offsetX + x * this.cellSize;
-                    ctx.beginPath();
-                    ctx.moveTo(posX, this.offsetY);
-                    ctx.lineTo(posX, this.offsetY + this.gridHeight * this.cellSize);
-                    ctx.stroke();
-                }
-                
-                // 水平线
-                for (let y = 0; y <= this.gridHeight; y++) {
-                    const posY = this.offsetY + y * this.cellSize;
-                    ctx.beginPath();
-                    ctx.moveTo(this.offsetX, posY);
-                    ctx.lineTo(this.offsetX + this.gridWidth * this.cellSize, posY);
-                    ctx.stroke();
-                }
-            }
-
-            drawBorder() {
-                const { ctx } = this.renderer;
-                const borderWidth = 2;
-                
-                ctx.strokeStyle = '#ffffff';
-                ctx.lineWidth = borderWidth;
-                ctx.strokeRect(
-                    this.offsetX - borderWidth,
-                    this.offsetY - borderWidth,
-                    this.gridWidth * this.cellSize + borderWidth * 2,
-                    this.gridHeight * this.cellSize + borderWidth * 2
-                );
-            }
-
-            drawBackground() {
-                this.renderer.drawRect(
-                    this.offsetX,
-                    this.offsetY,
-                    this.gridWidth * this.cellSize,
-                    this.gridHeight * this.cellSize,
-                    'rgba(0, 0, 0, 0.8)'
-                );
-            }
-
-            highlightCell(x, y, color) {
-                if (x < 0 || x >= this.gridWidth || y < 0 || y >= this.gridHeight) {
-                    return;
-                }
-                
-                this.renderer.drawRect(
-                    this.offsetX + x * this.cellSize,
-                    this.offsetY + y * this.cellSize,
-                    this.cellSize,
-                    this.cellSize,
-                    color
+            clone() {
+                return new TetrominoShape(
+                    this.type,
+                    this.matrix.map(row => [...row]),
+                    this.color
                 );
             }
         }
 
-        // 方块渲染器
-        class TetrominoRenderer {
-            constructor(renderer) {
-                this.renderer = renderer;
-                this.cellSize = 30;
-                this.colors = {
-                    I: '#00f0f0',
-                    O: '#f0f000',
-                    T: '#a000f0',
-                    S: '#00f000',
-                    Z: '#f00000',
-                    J: '#0000f0',
-                    L: '#f0a000'
-                };
-            }
-
-            drawTetromino(tetromino, offsetX = 0, offsetY = 0, cellSize = this.cellSize) {
-                if (!tetromino || !tetromino.shape) return;
-                
-                const color = this.colors[tetromino.type] || '#ffffff';
-                const shape = tetromino.shape;
-                
-                for (let y = 0; y < shape.length; y++) {
-                    for (let x = 0; x < shape[y].length; x++) {
-                        if (shape[y][x]) {
-                            const posX = offsetX + (tetromino.x + x) * cellSize;
-                            const posY = offsetY + (tetromino.y + y) * cellSize;
-                            
-                            // 绘制方块主体
-                            this.renderer.drawRect(posX, posY, cellSize, cellSize, color);
-                            
-                            // 绘制边框
-                            this.renderer.drawRect(posX, posY, cellSize, cellSize, 'transparent', 'rgba(255, 255, 255, 0.3)');
-                            
-                            // 绘制高光效果
-                            this.renderer.drawRect(posX + 2, posY + 2, cellSize - 4, cellSize - 4, 'rgba(255, 255, 255, 0.2)');
-                        }
-                    }
+        // Tetromino工厂类
+        class TetrominoFactory {
+            static SHAPES = {
+                I: {
+                    matrix: [
+                        [0, 0, 0, 0],
+                        [1, 1, 1, 1],
+                        [0, 0, 0, 0],
+                        [0, 0, 0, 0]
+                    ],
+                    color: '#00f0f0'
+                },
+                O: {
+                    matrix: [
+                        [1, 1],
+                        [1, 1]
+                    ],
+                    color: '#f0f000'
+                },
+                T: {
+                    matrix: [
+                        [0, 1, 0],
+                        [1, 1, 1],
+                        [0, 0, 0]
+                    ],
+                    color: '#a000f0'
+                },
+                S: {
+                    matrix: [
+                        [0, 1, 1],
+                        [1, 1, 0],
+                        [0, 0, 0]
+                    ],
+                    color: '#00f000'
+                },
+                Z: {
+                    matrix: [
+                        [1, 1, 0],
+                        [0, 1, 1],
+                        [0, 0, 0]
+                    ],
+                    color: '#f00000'
+                },
+                J: {
+                    matrix: [
+                        [1, 0, 0],
+                        [1, 1, 1],
+                        [0, 0, 0]
+                    ],
+                    color: '#0000f0'
+                },
+                L: {
+                    matrix: [
+                        [0, 0, 1],
+                        [1, 1, 1],
+                        [0, 0, 0]
+                    ],
+                    color: '#f0a000'
                 }
-            }
+            };
 
-            drawGhostPiece(tetromino, offsetX = 0, offsetY = 0) {
-                if (!tetromino || !tetromino.shape) return;
-                
-                const shape = tetromino.shape;
-                
-                for (let y = 0; y < shape.length; y++) {
-                    for (let x = 0; x < shape[y].length; x++) {
-                        if (shape[y][x]) {
-                            const posX = offsetX + (tetromino.x + x) * this.cellSize;
-                            const posY = offsetY + (tetromino.y + y) * this.cellSize;
-                            
-                            // 绘制半透明的幽灵方块
-                            this.renderer.drawRect(posX, posY, this.cellSize, this.cellSize, 'rgba(255, 255, 255, 0.3)', 'rgba(255, 255, 255, 0.5)');
-                        }
-                    }
+            static createTetromino(type) {
+                const shape = this.SHAPES[type];
+                if (!shape) {
+                    throw new Error(`Unknown tetromino type: ${type}`);
                 }
+                return new TetrominoShape(
+                    type,
+                    shape.matrix.map(row => [...row]),
+                    shape.color
+                );
             }
 
-            drawPreview(tetromino, canvas) {
-                if (!tetromino || !canvas) return;
-                
-                const ctx = canvas.getContext('2d');
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                
-                const color = this.colors[tetromino.type] || '#ffffff';
-                const shape = tetromino.shape;
-                const previewCellSize = 20;
-                
-                // 计算居中位置
-                const shapeWidth = shape[0].length * previewCellSize;
-                const shapeHeight = shape.length * previewCellSize;
-                const startX = (canvas.width - shapeWidth) / 2;
-                const startY = (canvas.height - shapeHeight) / 2;
-                
-                for (let y = 0; y < shape.length; y++) {
-                    for (let x = 0; x < shape[y].length; x++) {
-                        if (shape[y][x]) {
-                            const posX = startX + x * previewCellSize;
-                            const posY = startY + y * previewCellSize;
-                            
-                            ctx.fillStyle = color;
-                            ctx.fillRect(posX, posY, previewCellSize, previewCellSize);
-                            
-                            ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
-                            ctx.lineWidth = 1;
-                            ctx.strokeRect(posX, posY, previewCellSize, previewCellSize);
-                        }
-                    }
-                }
+            static getRandomTetromino() {
+                const types = this.getAllTypes();
+                const randomType = types[Math.floor(Math.random() * types.length)];
+                return this.createTetromino(randomType);
             }
 
-            animateLineClear(lines) {
-                // 简单的行清除动画
-                return new Promise(resolve => {
-                    let alpha = 1;
-                    const animate = () => {
-                        alpha -= 0.1;
-                        if (alpha <= 0) {
-                            resolve();
-                            return;
-                        }
-                        
-                        lines.forEach(lineY => {
-                            for (let x = 0; x < 10; x++) {
-                                this.renderer.drawRect(
-                                    x * this.cellSize,
-                                    lineY * this.cellSize,
-                                    this.cellSize,
-                                    this.cellSize,
-                                    `rgba(255, 255, 255, ${alpha})`
-                                );
-                            }
-                        });
-                        
-                        requestAnimationFrame(animate);
-                    };
-                    animate();
-                });
+            static getAllTypes() {
+                return Object.keys(this.SHAPES);
             }
         }
 
-        // 界面元素渲染器
-        class UIRenderer {
-            constructor() {
-                this.scoreElement = document.getElementById('score');
-                this.levelElement = document.getElementById('level');
-                this.linesElement = document.getElementById('lines');
-                this.statusElement = document.getElementById('gameStatus');
-                this.previewCanvas = document.getElementById('previewCanvas');
-            }
-
-            drawScore(score) {
-                if (this.scoreElement) {
-                    this.scoreElement.textContent = score.toLocaleString();
-                }
-            }
-
-            drawLevel(level) {
-                if (this.levelElement) {
-                    this.levelElement.textContent = level;
-                }
-            }
-
-            drawLines(lines) {
-                if (this.linesElement) {
-                    this.linesElement.textContent = lines;
-                }
-            }
-
-            drawNextPiece(tetromino) {
-                if (this.previewCanvas && tetromino) {
-                    const tetrominoRenderer = new TetrominoRenderer(null);
-                    tetrominoRenderer.drawPreview(tetromino, this.previewCanvas);
-                }
-            }
-
-            drawGameStatus(status) {
-                if (!this.statusElement) return;
+        // 旋转系统
+        class RotationSystem {
+            static rotateClockwise(matrix) {
+                const rows = matrix.length;
+                const cols = matrix[0].length;
+                const rotated = Array(cols).fill().map(() => Array(rows).fill(0));
                 
-                this.statusElement.className = 'game-status';
-                
-                switch (status) {
-                    case 'playing':
-                        this.statusElement.classList.add('status-playing');
-                        this.statusElement.textContent = '游戏进行中';
-                        break;
-                    case 'paused':
-                        this.statusElement.classList.add('status-paused');
-                        this.statusElement.textContent = '游戏暂停';
-                        break;
-                    case 'gameover':
-                        this.statusElement.classList.add('status-gameover');
-                        this.statusElement.textContent = '游戏结束';
-                        break;
-                    default:
-                        this.statusElement.classList.add('status-playing');
-                        this.statusElement.textContent = '准备开始';
-                }
-            }
-        }
-
-        // 渲染管理器
-        class RenderManager {
-            constructor() {
-                this.canvasRenderer = new CanvasRenderer();
-                this.gameAreaRenderer = null;
-                this.tetrominoRenderer = null;
-                this.uiRenderer = new UIRenderer();
-                this.isRunning = false;
-                this.fps = 60;
-                this.lastTime = 0;
-                this.animationId = null;
-            }
-
-            init() {
-                this.canvasRenderer.init('gameCanvas', 300, 600);
-                this.gameAreaRenderer = new GameAreaRenderer(this.canvasRenderer);
-                this.tetrominoRenderer = new TetrominoRenderer(this.canvasRenderer);
-                
-                return this;
-            }
-
-            render(gameState) {
-                // 清空画布
-                this.canvasRenderer.clear();
-                
-                // 绘制游戏区域
-                this.gameAreaRenderer.drawBackground();
-                this.gameAreaRenderer.drawGrid();
-                
-                // 绘制已放置的方块
-                if (gameState.board) {
-                    for (let y = 0; y < gameState.board.length; y++) {
-                        for (let x = 0; x < gameState.board[y].length; x++) {
-                            if (gameState.board[y][x]) {
-                                this.gameAreaRenderer.highlightCell(x, y, gameState.board[y][x]);
-                            }
-                        }
+                for (let i = 0; i < rows; i++) {
+                    for (let j = 0; j < cols; j++) {
+                        rotated[j][rows - 1 - i] = matrix[i][j];
                     }
                 }
                 
-                // 绘制当前方块的幽灵
-                if (gameState.currentPiece && gameState.ghostPiece) {
-                    this.tetrominoRenderer.drawGhostPiece(gameState.ghostPiece);
-                }
-                
-                // 绘制当前方块
-                if (gameState.currentPiece) {
-                    this.tetrominoRenderer.drawTetromino(gameState.currentPiece);
-                }
-                
-                this.gameAreaRenderer.drawBorder();
-                
-                // 更新UI
-                this.uiRenderer.drawScore(gameState.score || 0);
-                this.uiRenderer.drawLevel(gameState.level || 1);
-                this.uiRenderer.drawLines(gameState.lines || 0);
-                this.uiRenderer.drawGameStatus(gameState.status || 'ready');
-                
-                // 绘制下一个方块预览
-                if (gameState.nextPiece) {
-                    this.uiRenderer.drawNextPiece(gameState.nextPiece);
-                }
+                return rotated;
             }
 
-            startRenderLoop(gameState) {
-                if (this.isRunning) return;
+            static rotateCounterClockwise(matrix) {
+                const rows = matrix.length;
+                const cols = matrix[0].length;
+                const rotated = Array(cols).fill().map(() => Array(rows).fill(0));
                 
-                this.isRunning = true;
-                const targetFrameTime = 1000 / this.fps;
-                
-                const loop = (currentTime) => {
-                    if (!this.isRunning) return;
-                    
-                    if (currentTime - this.lastTime >= targetFrameTime) {
-                        this.render(gameState);
-                        this.lastTime = currentTime;
+                for (let i = 0; i < rows; i++) {
+                    for (let j = 0; j < cols; j++) {
+                        rotated[cols - 1 - j][i] = matrix[i][j];
                     }
-                    
-                    this.animationId = requestAnimationFrame(loop);
-                };
-                
-                this.animationId = requestAnimationFrame(loop);
-            }
-
-            stopRenderLoop() {
-                this.isRunning = false;
-                if (this.animationId) {
-                    cancelAnimationFrame(this.animationId);
-                    this.animationId = null;
                 }
-            }
-
-            setFPS(fps) {
-                this.fps = Math.max(1, Math.min(120, fps));
-            }
-        }
-
-        // Tetromino形状定义
-        const TETROMINO_SHAPES = {
-            I: [
-                [0, 0, 0, 0],
-                [1, 1, 1, 1],
-                [0, 0, 0, 0],
-                [0, 0, 0, 0]
-            ],
-            O: [
-                [1, 1],
-                [1, 1]
-            ],
-            T: [
-                [0, 1, 0],
-                [1, 1, 1],
-                [0, 0, 0]
-            ],
-            S: [
-                [0, 1, 1],
-                [1, 1, 0],
-                [0, 0, 0]
-            ],
-            Z: [
-                [1, 1, 0],
-                [0, 1, 1],
-                [0, 0, 0]
-            ],
-            J: [
-                [1, 0, 0],
-                [1, 1, 1],
-                [0, 0, 0]
-            ],
-            L: [
-                [0, 0, 1],
-                [1, 1, 1],
-                [0, 0, 0]
-            ]
-        };
-
-        // 简单的游戏状态管理
-        class GameState {
-            constructor() {
-                this.board = Array(20).fill().map(() => Array(10).fill(0));
-                this.currentPiece = null;
-                this.nextPiece = null;
-                this.ghostPiece = null;
-                this.score = 0;
-                this.level = 1;
-                this.lines = 0;
-                this.status = 'ready';
-            }
-
-            createTetromino(type) {
-                const types = Object.keys(TETROMINO_SHAPES);
-                const selectedType = type || types[Math.floor(Math.random() * types.length)];
                 
-                return {
-                    type: selectedType,
-                    shape: TETROMINO_SHAPES[selectedType],
-                    x: Math.floor((10 - TETROMINO_SHAPES[selectedType][0].length) / 2),
-                    y: 0
-                };
+                return rotated;
             }
 
-            generateNextPiece() {
-                this.nextPiece = this.createTetromino();
-            }
-
-            spawnNewPiece() {
-                this.currentPiece = this.nextPiece || this.createTetromino();
-                this.generateNextPiece();
-                this.updateGhostPiece();
-            }
-
-            updateGhostPiece() {
-                if (!this.currentPiece) return;
+            static getRotationStates(type) {
+                const shape = TetrominoFactory.SHAPES[type];
+                if (!shape) return [];
                 
-                this.ghostPiece = {
-                    ...this.currentPiece,
-                    y: this.getGhostY()
-                };
-            }
-
-            getGhostY() {
-                if (!this.currentPiece) return 0;
+                const states = [shape.matrix];
+                let current = shape.matrix;
                 
-                let ghostY = this.currentPiece.y;
-                while (this.isValidPosition(this.currentPiece.x, ghostY + 1, this.currentPiece.shape)) {
-                    ghostY++;
+                // 生成4个旋转状态
+                for (let i = 0; i < 3; i++) {
+                    current = this.rotateClockwise(current);
+                    states.push(current.map(row => [...row]));
                 }
-                return ghostY;
+                
+                return states;
             }
 
-            isValidPosition(x, y, shape) {
-                for (let py = 0; py < shape.length; py++) {
-                    for (let px = 0; px < shape[py].length; px++) {
-                        if (shape[py][px]) {
-                            const newX = x + px;
-                            const newY = y + py;
+            static validateRotation(matrix, position, gameBoard) {
+                const { x, y } = position;
+                const boardHeight = gameBoard.length;
+                const boardWidth = gameBoard[0].length;
+                
+                for (let i = 0; i < matrix.length; i++) {
+                    for (let j = 0; j < matrix[i].length; j++) {
+                        if (matrix[i][j]) {
+                            const newX = x + j;
+                            const newY = y + i;
                             
-                            if (newX < 0 || newX >= 10 || newY >= 20) {
+                            // 检查边界
+                            if (newX < 0 || newX >= boardWidth || newY >= boardHeight) {
                                 return false;
                             }
                             
-                            if (newY >= 0 && this.board[newY][newX]) {
+                            // 检查碰撞（不检查顶部边界，允许方块从顶部进入）
+                            if (newY >= 0 && gameBoard[newY][newX]) {
                                 return false;
                             }
                         }
                     }
                 }
+                
                 return true;
             }
         }
 
+        // Tetromino生成器（7-bag算法）
+        class TetrominoGenerator {
+            constructor() {
+                this.bag = [];
+                this.refillBag();
+            }
+
+            getNext() {
+                if (this.bag.length === 0) {
+                    this.refillBag();
+                }
+                return this.bag.shift();
+            }
+
+            peek(count = 1) {
+                const result = [];
+                let tempBag = [...this.bag];
+                
+                for (let i = 0; i < count; i++) {
+                    if (tempBag.length === 0) {
+                        tempBag = [...TetrominoFactory.getAllTypes()];
+                        this.shuffleArray(tempBag);
+                    }
+                    result.push(tempBag.shift());
+                }
+                
+                return result;
+            }
+
+            refillBag() {
+                this.bag = [...TetrominoFactory.getAllTypes()];
+                this.shuffleArray(this.bag);
+            }
+
+            shuffleArray(array) {
+                for (let i = array.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [array[i], array[j]] = [array[j], array[i]];
+                }
+            }
+
+            reset() {
+                this.bag = [];
+                this.refillBag();
+            }
+        }
+
+        // 游戏主类
+        class TetrisGame {
+            constructor() {
+                this.canvas = document.getElementById('gameCanvas');
+                this.ctx = this.canvas.getContext('2d');
+                this.nextCanvas = document.getElementById('nextCanvas');
+                this.nextCtx = this.nextCanvas.getContext('2d');
+                this.holdCanvas = document.getElementById('holdCanvas');
+                this.holdCtx = this.holdCanvas.getContext('2d');
+                
+                this.BOARD_WIDTH = 10;
+                this.BOARD_HEIGHT = 20;
+                this.CELL_SIZE = 30;
+                
+                this.board = Array(this.BOARD_HEIGHT).fill().map(() => Array(this.BOARD_WIDTH).fill(0));
+                this.generator = new TetrominoGenerator();
+                
+                this.currentPiece = null;
+                this.currentPosition = { x: 0, y: 0 };
+                this.nextPiece = null;
+                this.holdPiece = null;
+                this.canHold = true;
+                
+                this.score = 0;
+                this.level = 1;
+                this.lines = 0;
+                this.dropTime = 0;
+                this.dropInterval = 1000;
+                
+                this.isPlaying = false;
+                this.isPaused = false;
+                
+                this.init();
+            }
+
+            init() {
+                this.setupEventListeners();
+                this.spawnNewPiece();
+                this.updateDisplay();
+                this.draw();
+            }
+
+            setupEventListeners() {
+                document.getElementById('startBtn').addEventListener('click', () => this.start());
+                document.getElementById('pauseBtn').addEventListener('click', () => this.pause());
+                document.getElementById('resetBtn').addEventListener('click', () => this.reset());
+                
+                document.addEventListener('keydown', (e) => this.handleKeyPress(e));
+            }
+
+            handleKeyPress(e) {
+                if (!this.isPlaying || this.isPaused) return;
+                
+                switch(e.key) {
+                    case 'ArrowLeft':
+                        this.movePiece(-1, 0);
+                        break;
+                    case 'ArrowRight':
+                        this.movePiece(1, 0);
+                        break;
+                    case 'ArrowDown':
+                        this.movePiece(0, 1);
+                        break;
+                    case 'ArrowUp':
+                        this.rotatePiece();
+                        break;
+                    case ' ':
+                        e.preventDefault();
+                        this.hardDrop();
+                        break;
+                    case 'c':
+                    case 'C':
+                        this.holdCurrentPiece();
+                        break;
+                }
+            }
+
+            start() {
+                this.isPlaying = true;
+                this.isPaused = false;
+                this.gameLoop();
+            }
+
+            pause() {
+                this.isPaused = !this.isPaused;
+                if (!this.isPaused && this.isPlaying) {
+                    this.gameLoop();
+                }
+            }
+
+            reset() {
+                this.board = Array(this.BOARD_HEIGHT).fill().map(() => Array(this.BOARD_WIDTH).fill(0));
+                this.generator.reset();
+                this.currentPiece = null;
+                this.nextPiece = null;
+                this.holdPiece = null;
+                this.canHold = true;
+                this.score = 0;
+                this.level = 1;
+                this.lines = 0;
+                this.dropTime = 0;
+                this.isPlaying = false;
+                this.isPaused = false;
+                
+                this.spawnNewPiece();
+                this.updateDisplay();
+                this.draw();
+            }
+
+            spawnNewPiece() {
+                if (!this.nextPiece) {
+                    this.nextPiece = TetrominoFactory.createTetromino(this.generator.getNext());
+                }
+                
+                this.currentPiece = this.nextPiece;
+                this.nextPiece = TetrominoFactory.createTetromino(this.generator.getNext());
+                
+                this.currentPosition = {
+                    x: Math.floor((this.BOARD_WIDTH - this.currentPiece.getMatrix()[0].length) / 2),
+                    y: 0
+                };
+                
+                this.canHold = true;
+                
+                // 检查游戏结束
+                if (!this.isValidPosition(this.currentPiece.getMatrix(), this.currentPosition)) {
+                    this.gameOver();
+                }
+            }
+
+            movePiece(dx, dy) {
+                const newPosition = {
+                    x: this.currentPosition.x + dx,
+                    y: this.currentPosition.y + dy
+                };
+                
+                if (this.isValidPosition(this.currentPiece.getMatrix(), newPosition)) {
+                    this.currentPosition = newPosition;
+                    this.draw();
+                    return true;
+                }
+                
+                // 如果向下移动失败，则固定方块
+                if (dy > 0) {
+                    this.placePiece();
+                }
+                
+                return false;
+            }
+
+            rotatePiece() {
+                const rotatedMatrix = RotationSystem.rotateClockwise(this.currentPiece.getMatrix());
+                
+                if (RotationSystem.validateRotation(rotatedMatrix, this.currentPosition, this.board)) {
+                    this.currentPiece.matrix = rotatedMatrix;
+                    this.draw();
+                }
+            }
+
+            hardDrop() {
+                while (this.movePiece(0, 1)) {
+                    // 继续下降直到不能移动
+                }
+            }
+
+            holdCurrentPiece() {
+                if (!this.canHold) return;
+                
+                if (this.holdPiece) {
+                    // 交换当前方块和暂存方块
+                    const temp = this.currentPiece;
+                    this.currentPiece = this.holdPiece;
+                    this.holdPiece = temp;
+                    
+                    this.currentPosition = {
+                        x: Math.floor((this.BOARD_WIDTH - this.currentPiece.getMatrix()[0].length) / 2),
+                        y: 0
+                    };
+                } else {
+                    // 暂存当前方块，生成新方块
+                    this.holdPiece = this.currentPiece;
+                    this.spawnNewPiece();
+                }
+                
+                this.canHold = false;
+                this.draw();
+            }
+
+            isValidPosition(matrix, position) {
+                return RotationSystem.validateRotation(matrix, position, this.board);
+            }
+
+            placePiece() {
+                const matrix = this.currentPiece.getMatrix();
+                const { x, y } = this.currentPosition;
+                
+                // 将方块放置到游戏板上
+                for (let i = 0; i < matrix.length; i++) {
+                    for (let j = 0; j < matrix[i].length; j++) {
+                        if (matrix[i][j] && y + i >= 0) {
+                            this.board[y + i][x + j] = this.currentPiece.getColor();
+                        }
+                    }
+                }
+                
+                // 检查并清除完整的行
+                this.clearLines();
+                
+                // 生成新方块
+                this.spawnNewPiece();
+                
+                this.draw();
+            }
+
+            clearLines() {
+                let linesCleared = 0;
+                
+                for (let i = this.BOARD_HEIGHT - 1; i >= 0; i--) {
+                    if (this.board[i].every(cell => cell !== 0)) {
+                        this.board.splice(i, 1);
+                        this.board.unshift(Array(this.BOARD_WIDTH).fill(0));
+                        linesCleared++;
+                        i++; // 重新检查同一行
+                    }
+                }
+                
+                if (linesCleared > 0) {
+                    this.lines += linesCleared;
+                    this.score += this.calculateScore(linesCleared);
+                    this.level = Math.floor(this.lines / 10) + 1;
+                    this.dropInterval = Math.max(50, 1000 - (this.level - 1) * 50);
+                    this.updateDisplay();
+                }
+            }
+
+            calculateScore(linesCleared) {
+                const baseScores = [0, 100, 300, 500, 800];
+                return baseScores[linesCleared] * this.level;
+            }
+
+            gameOver() {
+                this.isPlaying = false;
+                alert(`游戏结束！\n最终分数: ${this.score}\n清除行数: ${this.lines}\n等级: ${this.level}`);
+            }
+
+            gameLoop() {
+                if (!this.isPlaying || this.isPaused) return;
+                
+                const now = Date.now();
+                if (now - this.dropTime > this.dropInterval) {
+                    this.movePiece(0, 1);
+                    this.dropTime = now;
+                }
+                
+                requestAnimationFrame(() => this.gameLoop());
+            }
+
+            draw() {
+                this.drawBoard();
+                this.drawCurrentPiece();
+                this.drawNextPiece();
+                this.drawHoldPiece();
+            }
+
+            drawBoard() {
+                this.ctx.fillStyle = '#000';
+                this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+                
+                // 绘制已放置的方块
+                for (let i = 0; i < this.BOARD_HEIGHT; i++) {
+                    for (let j = 0; j < this.BOARD_WIDTH; j++) {
+                        if (this.board[i][j]) {
+                            this.ctx.fillStyle = this.board[i][j];
+                            this.ctx.fillRect(
+                                j * this.CELL_SIZE,
+                                i * this.CELL_SIZE,
+                                this.CELL_SIZE - 1,
+                                this.CELL_SIZE - 1
+                            );
+                        }
+                    }
+                }
+                
+                // 绘制网格
+                this.ctx.strokeStyle = '#333';
+                this.ctx.lineWidth = 1;
+                for (let i = 0; i <= this.BOARD_HEIGHT; i++) {
+                    this.ctx.beginPath();
+                    this.ctx.moveTo(0, i * this.CELL_SIZE);
+                    this.ctx.lineTo(this.BOARD_WIDTH * this.CELL_SIZE, i * this.CELL_SIZE);
+                    this.ctx.stroke();
+                }
+                for (let j = 0; j <= this.BOARD_WIDTH; j++) {
+                    this.ctx.beginPath();
+                    this.ctx.moveTo(j * this.CELL_SIZE, 0);
+                    this.ctx.lineTo(j * this.CELL_SIZE, this.BOARD_HEIGHT * this.CELL_SIZE);
+                    this.ctx.stroke();
+                }
+            }
+
+            drawCurrentPiece() {
+                if (!this.currentPiece) return;
+                
+                const matrix = this.currentPiece.getMatrix();
+                const { x, y } = this.currentPosition;
+                
+                this.ctx.fillStyle = this.currentPiece.getColor();
+                
+                for (let i = 0; i < matrix.length; i++) {
+                    for (let j = 0; j < matrix[i].length; j++) {
+                        if (matrix[i][j]) {
+                            this.ctx.fillRect(
+                                (x + j) * this.CELL_SIZE,
+                                (y + i) * this.CELL_SIZE,
+                                this.CELL_SIZE - 1,
+                                this.CELL_SIZE - 1
+                            );
+                        }
+                    }
+                }
+            }
+
+            drawNextPiece() {
+                this.nextCtx.fillStyle = '#000';
+                this.nextCtx.fillRect(0, 0, this.nextCanvas.width, this.nextCanvas.height);
+                
+                if (!this.nextPiece) return;
+                
+                const matrix = this.nextPiece.getMatrix();
+                const cellSize = 16;
+                const offsetX = (this.nextCanvas.width - matrix[0].length * cellSize) / 2;
+                const offsetY = (this.nextCanvas.height - matrix.length * cellSize) / 2;
+                
+                this.nextCtx.fillStyle = this.nextPiece.getColor();
+                
+                for (let i = 0; i < matrix.length; i++) {
+                    for (let j = 0; j < matrix[i].length; j++) {
+                        if (matrix[i][j]) {
+                            this.nextCtx.fillRect(
+                                offsetX + j * cellSize,
+                                offsetY + i * cellSize,
+                                cellSize - 1,
+                                cellSize - 1
+                            );
+                        }
+                    }
+                }
+            }
+
+            drawHoldPiece() {
+                this.holdCtx.fillStyle = '#000';
+                this.holdCtx.fillRect(0, 0, this.holdCanvas.width, this.holdCanvas.height);
+                
+                if (!this.holdPiece) return;
+                
+                const matrix = this.holdPiece.getMatrix();
+                const cellSize = 16;
+                const offsetX = (this.holdCanvas.width - matrix[0].length * cellSize) / 2;
+                const offsetY = (this.holdCanvas.height - matrix.length * cellSize) / 2;
+                
+                this.holdCtx.fillStyle = this.holdPiece.getColor();
+                
+                for (let i = 0; i < matrix.length; i++) {
+                    for (let j = 0; j < matrix[i].length; j++) {
+                        if (matrix[i][j]) {
+                            this.holdCtx.fillRect(
+                                offsetX + j * cellSize,
+                                offsetY + i * cellSize,
+                                cellSize - 1,
+                                cellSize - 1
+                            );
+                        }
+                    }
+                }
+            }
+
+            updateDisplay() {
+                document.getElementById('score').textContent = this.score;
+                document.getElementById('level').textContent = this.level;
+                document.getElementById('lines').textContent = this.lines;
+            }
+        }
+
         // 初始化游戏
-        let renderManager;
-        let gameState;
-
-        function initGame() {
-            renderManager = new RenderManager().init();
-            gameState = new GameState();
-            
-            // 生成第一个方块
-            gameState.generateNextPiece();
-            gameState.spawnNewPiece();
-            
-            // 开始渲染循环
-            renderManager.startRenderLoop(gameState);
-            
-            // 绑定按钮事件
-            bindEvents();
-        }
-
-        function bindEvents() {
-            const startBtn = document.getElementById('startBtn');
-            const pauseBtn = document.getElementById('pauseBtn');
-            const resetBtn = document.getElementById('resetBtn');
-            
-            if (startBtn) {
-                startBtn.addEventListener('click', () => {
-                    gameState.status = 'playing';
-                });
-            }
-            
-            if (pauseBtn) {
-                pauseBtn.addEventListener('click', () => {
-                    gameState.status = gameState.status === 'paused' ? 'playing' : 'paused';
-                });
-            }
-            
-            if (resetBtn) {
-                resetBtn.addEventListener('click', () => {
-                    gameState = new GameState();
-                    gameState.generateNextPiece();
-                    gameState.spawnNewPiece();
-                });
-            }
-        }
-
-        // 页面加载完成后初始化
-        document.addEventListener('DOMContentLoaded', initGame);
+        let game;
+        window.addEventListener('load', () => {
+            game = new TetrisGame();
+        });
     </script>
 </body>
 </html>
