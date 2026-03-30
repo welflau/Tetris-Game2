@@ -1,0 +1,67 @@
+{
+  "browsers": [
+    {
+      "name": "Chrome",
+      "version": "latest",
+      "platform": "Windows 10"
+    },
+    {
+      "name": "Firefox",
+      "version": "latest",
+      "platform": "Windows 10"
+    },
+    {
+      "name": "Safari",
+      "version": "latest",
+      "platform": "macOS"
+    },
+    {
+      "name": "Edge",
+      "version": "latest",
+      "platform": "Windows 10"
+    }
+  ],
+  "devices": [
+    {
+      "name": "Desktop",
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "name": "Tablet",
+      "width": 768,
+      "height": 1024
+    },
+    {
+      "name": "Mobile",
+      "width": 375,
+      "height": 667
+    }
+  ],
+  "testSuites": {
+    "visual": {
+      "enabled": true,
+      "tolerance": 0.1,
+      "captureScreenshots": true
+    },
+    "performance": {
+      "enabled": true,
+      "minFPS": 30,
+      "maxRenderTime": 16
+    },
+    "compatibility": {
+      "enabled": true,
+      "features": [
+        "canvas",
+        "alpha-transparency",
+        "css3-transforms",
+        "backdrop-filter"
+      ]
+    }
+  },
+  "ghostPiece": {
+    "transparencyLevels": [0.1, 0.3, 0.5, 0.7, 0.9],
+    "renderModes": ["alpha", "outline", "dashed"],
+    "testDuration": 5000
+  }
+}
