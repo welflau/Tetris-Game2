@@ -13,63 +13,71 @@ MVC + 组件化架构
 ## 模块设计
 
 ### GameEngine
-职责: 游戏引擎核心，管理Canvas初始化、游戏循环、渲染管道
-- init()
+职责: 游戏引擎核心，负责Canvas初始化、游戏循环、渲染管理
+- init(canvasId, width, height)
 - start()
 - pause()
 - resume()
+- stop()
 - render()
 - update(deltaTime)
 
-### CanvasRenderer
-职责: Canvas渲染管理，处理所有绘制操作和视觉效果
-- initCanvas()
-- clear()
-- drawGrid()
-- drawBlock()
-- drawBackground()
-- setViewport()
-
 ### GameBoard
-职责: 游戏区域管理，维护10x20网格状态和边界检测
-- initBoard()
-- getCell(x, y)
-- setCell(x, y, value)
-- isValidPosition()
-- clearBoard()
+职责: 游戏区域管理，维护10x20网格状态，处理方块放置
+- initGrid()
+- isValidPosition(tetromino, x, y)
+- placeTetromino(tetromino, x, y)
+- clearLines()
+- getGrid()
+- reset()
 
-### TetrominoFactory
-职责: 方块工厂，创建和管理7种Tetromino类型
-- createTetromino(type)
-- getRandomType()
-- getTetrominoData(type)
+### Tetromino
+职责: 方块类型定义和操作，包括7种基础形状和旋转逻辑
+- constructor(type)
+- rotate(direction)
+- getShape()
+- getColor()
+- clone()
 
-### RenderPipeline
-职责: 渲染管道，优化绘制性能和动画效果
-- addToRenderQueue()
-- processRenderQueue()
-- optimizeRendering()
-- handleAnimations()
+### Renderer
+职责: Canvas渲染系统，负责绘制游戏区域、方块、UI元素
+- drawGrid()
+- drawTetromino(tetromino, x, y)
+- drawBoard(gameBoard)
+- drawUI(gameState)
+- clear()
+- setContext(canvas)
 
-### ViewportManager
-职责: 视口管理，处理响应式布局和Canvas缩放
-- updateViewport()
-- getScaleFactor()
-- convertCoordinates()
-- handleResize()
+### InputHandler
+职责: 输入事件处理，键盘事件监听和防抖处理
+- bindEvents()
+- unbindEvents()
+- onKeyDown(callback)
+- onKeyUp(callback)
+- debounce(func, delay)
+
+### GameState
+职责: 游戏状态管理，包括分数、等级、游戏状态等
+- getScore()
+- getLevel()
+- getLines()
+- updateScore(lines)
+- reset()
+- save()
+- load()
 
 ## 数据流
-GameEngine作为核心控制器，通过requestAnimationFrame驱动游戏循环。每帧调用update()更新游戏状态，然后调用CanvasRenderer进行渲染。GameBoard维护游戏区域状态，TetrominoFactory负责方块创建，RenderPipeline优化渲染性能，ViewportManager处理响应式适配。所有模块通过事件系统进行解耦通信。
+GameEngine作为核心控制器，通过游戏循环调用各模块：InputHandler捕获用户输入 -> GameBoard验证和更新游戏状态 -> Tetromino处理方块逻辑 -> GameState更新分数等级 -> Renderer渲染所有视觉元素到Canvas
 
 ## 风险点
-- Canvas性能优化复杂度较高
-- 不同设备的渲染兼容性问题
-- 高频率渲染可能导致性能瓶颈
-- 响应式适配在移动端的表现
+- Canvas性能优化可能需要额外调试时间
+- 不同浏览器的兼容性问题
+- requestAnimationFrame在低端设备上的性能表现
+- 键盘事件在不同操作系统下的差异
 
 ## 关键决策
-- 采用requestAnimationFrame替代setInterval确保流畅动画
-- 使用双缓冲技术减少Canvas闪烁
-- 实现渲染队列系统优化绘制性能
-- 采用组件化设计便于后续功能扩展
-- 使用事件驱动架构实现模块解耦
+- 采用MVC架构分离游戏逻辑和渲染，提高代码可维护性
+- 使用requestAnimationFrame替代setInterval实现流畅动画
+- 采用组件化设计，每个模块职责单一便于测试和扩展
+- 使用ES6+语法提高代码质量，采用模块化导入导出
+- Canvas采用双缓冲技术避免闪烁，优化渲染性能
