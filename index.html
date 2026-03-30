@@ -82,246 +82,138 @@
         .game-container {
             display: flex;
             gap: 2rem;
-            align-items: flex-start;
             background: var(--bg-glass);
             backdrop-filter: blur(10px);
             padding: 2rem;
             border-radius: var(--border-radius-large);
             border: 1px solid var(--border-glass);
             box-shadow: var(--shadow-heavy);
-            position: relative;
+            max-width: 800px;
+            width: 100%;
         }
 
-        /* 游戏画布区域 */
+        /* 游戏区域 */
         .game-area {
+            flex: 1;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 1rem;
         }
 
-        /* 画布样式 */
+        /* 游戏画布 */
         #gameCanvas {
             border: 2px solid var(--border-glass);
             border-radius: var(--border-radius);
-            background: rgba(0, 0, 0, 0.8);
+            background: rgba(0, 0, 0, 0.3);
             box-shadow: var(--shadow-light);
         }
 
-        /* 控制面板 */
-        .control-panel {
+        /* 侧边栏 */
+        .sidebar {
+            width: 200px;
             display: flex;
             flex-direction: column;
-            gap: 1.5rem;
-            min-width: 200px;
+            gap: 1rem;
         }
 
         /* 信息面板 */
         .info-panel {
             background: var(--bg-glass);
-            backdrop-filter: blur(5px);
-            padding: 1.5rem;
+            padding: 1rem;
             border-radius: var(--border-radius);
             border: 1px solid var(--border-glass);
             color: var(--text-light);
         }
 
         .info-panel h3 {
-            margin-bottom: 1rem;
+            margin-bottom: 0.5rem;
+            font-size: 1rem;
             color: var(--accent-color);
-            font-size: 1.1rem;
         }
 
-        .info-item {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 0.5rem;
+        .info-panel p {
+            margin-bottom: 0.3rem;
             font-size: 0.9rem;
         }
 
-        .info-item:last-child {
-            margin-bottom: 0;
+        /* 控制按钮 */
+        .controls {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
         }
 
-        /* 按钮样式 */
         .btn {
-            padding: 0.75rem 1.5rem;
+            padding: 0.8rem 1.2rem;
             border: none;
             border-radius: var(--border-radius);
-            font-size: 1rem;
-            font-weight: 500;
+            font-size: 0.9rem;
+            font-weight: 600;
             cursor: pointer;
             transition: var(--transition);
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .btn:before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-            transition: left 0.5s;
-        }
-
-        .btn:hover:before {
-            left: 100%;
         }
 
         .btn-primary {
             background: var(--accent-color);
             color: var(--text-light);
-            box-shadow: var(--shadow-light);
         }
 
         .btn-primary:hover {
             background: #45a049;
             transform: translateY(-2px);
-            box-shadow: var(--shadow-heavy);
+            box-shadow: var(--shadow-light);
         }
 
         .btn-secondary {
             background: var(--warning-color);
             color: var(--text-light);
-            box-shadow: var(--shadow-light);
         }
 
         .btn-secondary:hover {
-            background: #e68900;
+            background: #f57c00;
             transform: translateY(-2px);
-            box-shadow: var(--shadow-heavy);
+            box-shadow: var(--shadow-light);
         }
 
         .btn-danger {
             background: var(--danger-color);
             color: var(--text-light);
-            box-shadow: var(--shadow-light);
         }
 
         .btn-danger:hover {
-            background: #da190b;
+            background: #d32f2f;
             transform: translateY(-2px);
-            box-shadow: var(--shadow-heavy);
-        }
-
-        .btn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        .btn:disabled:hover {
-            transform: none;
             box-shadow: var(--shadow-light);
         }
 
-        /* 按钮组 */
-        .btn-group {
-            display: flex;
-            flex-direction: column;
-            gap: 0.75rem;
-        }
-
-        /* 暂停遮罩 */
-        .pause-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(5px);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-            border-radius: var(--border-radius-large);
-        }
-
-        .pause-overlay.active {
-            display: flex;
-        }
-
-        .pause-content {
+        /* 设置面板 */
+        .settings-panel {
             background: var(--bg-glass);
-            backdrop-filter: blur(10px);
-            padding: 3rem;
-            border-radius: var(--border-radius-large);
-            border: 1px solid var(--border-glass);
-            text-align: center;
-            color: var(--text-light);
-            box-shadow: var(--shadow-heavy);
-            animation: fadeInScale 0.3s ease;
-        }
-
-        .pause-content h2 {
-            font-size: 2rem;
-            margin-bottom: 1.5rem;
-            color: var(--accent-color);
-        }
-
-        .pause-content p {
-            margin-bottom: 2rem;
-            font-size: 1.1rem;
-            opacity: 0.9;
-        }
-
-        /* 游戏状态指示器 */
-        .game-status {
-            position: absolute;
-            top: 1rem;
-            right: 1rem;
-            padding: 0.5rem 1rem;
+            padding: 1rem;
             border-radius: var(--border-radius);
+            border: 1px solid var(--border-glass);
+            color: var(--text-light);
+        }
+
+        .setting-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.8rem;
+        }
+
+        .setting-item label {
             font-size: 0.9rem;
-            font-weight: 500;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
         }
 
-        .game-status.running {
-            background: var(--accent-color);
-            color: var(--text-light);
+        .setting-item input[type="range"] {
+            width: 80px;
         }
 
-        .game-status.paused {
-            background: var(--warning-color);
-            color: var(--text-light);
-        }
-
-        .game-status.ended {
-            background: var(--danger-color);
-            color: var(--text-light);
-        }
-
-        /* 动画效果 */
-        @keyframes fadeInScale {
-            from {
-                opacity: 0;
-                transform: scale(0.8);
-            }
-            to {
-                opacity: 1;
-                transform: scale(1);
-            }
-        }
-
-        @keyframes pulse {
-            0%, 100% {
-                transform: scale(1);
-            }
-            50% {
-                transform: scale(1.05);
-            }
-        }
-
-        .pulse {
-            animation: pulse 2s infinite;
+        .setting-item input[type="checkbox"] {
+            transform: scale(1.2);
         }
 
         /* 响应式设计 */
@@ -332,49 +224,65 @@
                 gap: 1rem;
             }
 
-            .control-panel {
-                min-width: auto;
+            .sidebar {
                 width: 100%;
             }
 
-            .btn-group {
-                flex-direction: row;
-                flex-wrap: wrap;
-            }
-
-            .btn {
-                flex: 1;
-                min-width: 120px;
-            }
-
-            header h1 {
-                font-size: 1.5rem;
-            }
-
-            main {
-                padding: 1rem;
+            #gameCanvas {
+                width: 100%;
+                max-width: 300px;
             }
         }
 
-        @media (max-width: 480px) {
-            html {
-                font-size: 14px;
-            }
+        /* 加载动画 */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--accent-color);
+            animation: spin 1s ease-in-out infinite;
+        }
 
-            .pause-content {
-                padding: 2rem;
-            }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
 
-            .pause-content h2 {
-                font-size: 1.5rem;
-            }
+        /* 通知样式 */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 1rem 1.5rem;
+            border-radius: var(--border-radius);
+            color: var(--text-light);
+            font-weight: 600;
+            z-index: 1000;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification.success {
+            background: var(--accent-color);
+        }
+
+        .notification.error {
+            background: var(--danger-color);
+        }
+
+        .notification.warning {
+            background: var(--warning-color);
         }
     </style>
 </head>
 <body>
     <header>
         <h1>俄罗斯方块</h1>
-        <div class="game-status" id="gameStatus">准备开始</div>
     </header>
 
     <main>
@@ -383,62 +291,44 @@
                 <canvas id="gameCanvas" width="300" height="600"></canvas>
             </div>
 
-            <div class="control-panel">
+            <div class="sidebar">
                 <div class="info-panel">
                     <h3>游戏信息</h3>
-                    <div class="info-item">
-                        <span>得分:</span>
-                        <span id="score">0</span>
-                    </div>
-                    <div class="info-item">
-                        <span>等级:</span>
-                        <span id="level">1</span>
-                    </div>
-                    <div class="info-item">
-                        <span>行数:</span>
-                        <span id="lines">0</span>
-                    </div>
-                    <div class="info-item">
-                        <span>状态:</span>
-                        <span id="gameState">准备</span>
-                    </div>
+                    <p>分数: <span id="score">0</span></p>
+                    <p>等级: <span id="level">1</span></p>
+                    <p>行数: <span id="lines">0</span></p>
+                    <p>最高分: <span id="highScore">0</span></p>
                 </div>
 
-                <div class="btn-group">
-                    <button class="btn btn-primary" id="startBtn">开始游戏</button>
-                    <button class="btn btn-secondary" id="pauseBtn" disabled>暂停</button>
-                    <button class="btn btn-danger" id="restartBtn" disabled>重新开始</button>
+                <div class="controls">
+                    <button id="startBtn" class="btn btn-primary">开始游戏</button>
+                    <button id="pauseBtn" class="btn btn-secondary">暂停</button>
+                    <button id="resetBtn" class="btn btn-danger">重置</button>
+                    <button id="saveBtn" class="btn btn-primary">保存游戏</button>
+                    <button id="loadBtn" class="btn btn-secondary">加载游戏</button>
+                </div>
+
+                <div class="settings-panel">
+                    <h3>设置</h3>
+                    <div class="setting-item">
+                        <label>音效</label>
+                        <input type="checkbox" id="soundEnabled" checked>
+                    </div>
+                    <div class="setting-item">
+                        <label>音量</label>
+                        <input type="range" id="volumeSlider" min="0" max="100" value="50">
+                    </div>
+                    <div class="setting-item">
+                        <label>自动保存</label>
+                        <input type="checkbox" id="autoSave" checked>
+                    </div>
+                    <button id="resetSettingsBtn" class="btn btn-danger" style="margin-top: 1rem;">重置设置</button>
                 </div>
 
                 <div class="info-panel">
-                    <h3>操作说明</h3>
-                    <div class="info-item">
-                        <span>移动:</span>
-                        <span>← →</span>
-                    </div>
-                    <div class="info-item">
-                        <span>旋转:</span>
-                        <span>↑</span>
-                    </div>
-                    <div class="info-item">
-                        <span>加速:</span>
-                        <span>↓</span>
-                    </div>
-                    <div class="info-item">
-                        <span>暂停:</span>
-                        <span>空格</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 暂停遮罩 -->
-            <div class="pause-overlay" id="pauseOverlay">
-                <div class="pause-content">
-                    <h2>游戏暂停</h2>
-                    <p>按空格键或点击继续按钮恢复游戏</p>
-                    <div class="btn-group">
-                        <button class="btn btn-primary" id="resumeBtn">继续游戏</button>
-                        <button class="btn btn-danger" id="exitBtn">退出游戏</button>
+                    <h3>排行榜</h3>
+                    <div id="highScoresList">
+                        <p>暂无记录</p>
                     </div>
                 </div>
             </div>
@@ -446,543 +336,544 @@
     </main>
 
     <script>
-        // 游戏状态枚举
-        const GameStates = {
-            MENU: 'menu',
-            RUNNING: 'running',
-            PAUSED: 'paused',
-            ENDED: 'ended',
-            LOADING: 'loading'
-        };
-
-        // 状态事件分发器
-        class StateEventDispatcher {
+        // 数据持久化系统
+        class StorageManager {
             constructor() {
-                this.listeners = new Map();
+                this.prefix = 'tetris_';
             }
 
-            subscribe(event, callback) {
-                if (!this.listeners.has(event)) {
-                    this.listeners.set(event, []);
-                }
-                this.listeners.get(event).push(callback);
-            }
-
-            unsubscribe(event, callback) {
-                if (this.listeners.has(event)) {
-                    const callbacks = this.listeners.get(event);
-                    const index = callbacks.indexOf(callback);
-                    if (index > -1) {
-                        callbacks.splice(index, 1);
-                    }
+            save(key, data) {
+                try {
+                    const serializedData = JSON.stringify(data);
+                    localStorage.setItem(this.prefix + key, serializedData);
+                    return true;
+                } catch (error) {
+                    console.error('存储数据失败:', error);
+                    return false;
                 }
             }
 
-            dispatch(event, data) {
-                if (this.listeners.has(event)) {
-                    this.listeners.get(event).forEach(callback => {
-                        try {
-                            callback(data);
-                        } catch (error) {
-                            console.error(`Error in event listener for ${event}:`, error);
-                        }
-                    });
+            load(key) {
+                try {
+                    const data = localStorage.getItem(this.prefix + key);
+                    return data ? JSON.parse(data) : null;
+                } catch (error) {
+                    console.error('加载数据失败:', error);
+                    return null;
                 }
+            }
+
+            remove(key) {
+                try {
+                    localStorage.removeItem(this.prefix + key);
+                    return true;
+                } catch (error) {
+                    console.error('删除数据失败:', error);
+                    return false;
+                }
+            }
+
+            clear() {
+                try {
+                    const keys = Object.keys(localStorage).filter(key => key.startsWith(this.prefix));
+                    keys.forEach(key => localStorage.removeItem(key));
+                    return true;
+                } catch (error) {
+                    console.error('清空数据失败:', error);
+                    return false;
+                }
+            }
+
+            exists(key) {
+                return localStorage.getItem(this.prefix + key) !== null;
             }
         }
 
-        // 游戏状态管理器
-        class GameStateManager {
-            constructor() {
-                this.currentState = GameStates.MENU;
-                this.previousState = null;
-                this.stateHistory = [];
-                this.eventDispatcher = new StateEventDispatcher();
+        class DataValidator {
+            static validateGameState(data) {
+                if (!data || typeof data !== 'object') return false;
                 
-                // 状态转换规则
-                this.transitions = new Map([
-                    [GameStates.MENU, [GameStates.RUNNING, GameStates.LOADING]],
-                    [GameStates.RUNNING, [GameStates.PAUSED, GameStates.ENDED, GameStates.MENU]],
-                    [GameStates.PAUSED, [GameStates.RUNNING, GameStates.ENDED, GameStates.MENU]],
-                    [GameStates.ENDED, [GameStates.MENU, GameStates.RUNNING]],
-                    [GameStates.LOADING, [GameStates.RUNNING, GameStates.MENU]]
-                ]);
+                const requiredFields = ['score', 'level', 'lines', 'board', 'currentPiece'];
+                return requiredFields.every(field => data.hasOwnProperty(field));
             }
 
-            setState(newState) {
-                if (!this.canTransition(this.currentState, newState)) {
-                    console.warn(`Invalid state transition from ${this.currentState} to ${newState}`);
+            static validateSettings(data) {
+                if (!data || typeof data !== 'object') return false;
+                
+                const validFields = {
+                    soundEnabled: 'boolean',
+                    volume: 'number',
+                    autoSave: 'boolean'
+                };
+
+                return Object.keys(validFields).every(field => {
+                    if (!data.hasOwnProperty(field)) return false;
+                    return typeof data[field] === validFields[field];
+                });
+            }
+
+            static validateScore(data) {
+                if (!data || typeof data !== 'object') return false;
+                
+                return data.hasOwnProperty('score') && 
+                       data.hasOwnProperty('date') && 
+                       typeof data.score === 'number' && 
+                       data.score >= 0;
+            }
+
+            static sanitizeData(data) {
+                if (!data || typeof data !== 'object') return null;
+                
+                // 深拷贝并清理数据
+                const sanitized = JSON.parse(JSON.stringify(data));
+                
+                // 移除可能的恶意属性
+                const dangerousKeys = ['__proto__', 'constructor', 'prototype'];
+                dangerousKeys.forEach(key => {
+                    if (sanitized.hasOwnProperty(key)) {
+                        delete sanitized[key];
+                    }
+                });
+                
+                return sanitized;
+            }
+        }
+
+        class StorageEventHandler {
+            constructor() {
+                this.callbacks = [];
+            }
+
+            subscribe(callback) {
+                this.callbacks.push(callback);
+            }
+
+            unsubscribe(callback) {
+                this.callbacks = this.callbacks.filter(cb => cb !== callback);
+            }
+
+            onDataSaved(key, data) {
+                this.notifyCallbacks('dataSaved', { key, data });
+            }
+
+            onDataLoaded(key, data) {
+                this.notifyCallbacks('dataLoaded', { key, data });
+            }
+
+            onStorageError(error) {
+                this.notifyCallbacks('storageError', { error });
+            }
+
+            notifyCallbacks(event, data) {
+                this.callbacks.forEach(callback => {
+                    try {
+                        callback(event, data);
+                    } catch (error) {
+                        console.error('事件回调执行失败:', error);
+                    }
+                });
+            }
+        }
+
+        class GameDataService {
+            constructor(storageManager, eventHandler) {
+                this.storage = storageManager;
+                this.eventHandler = eventHandler;
+            }
+
+            saveGameState(gameState) {
+                if (!DataValidator.validateGameState(gameState)) {
+                    this.eventHandler.onStorageError(new Error('游戏状态数据无效'));
                     return false;
                 }
 
-                this.previousState = this.currentState;
-                this.stateHistory.push(this.currentState);
-                this.currentState = newState;
-
-                // 限制历史记录长度
-                if (this.stateHistory.length > 10) {
-                    this.stateHistory.shift();
-                }
-
-                this.eventDispatcher.dispatch('stateChange', {
-                    from: this.previousState,
-                    to: this.currentState,
-                    timestamp: Date.now()
-                });
-
-                return true;
-            }
-
-            getState() {
-                return this.currentState;
-            }
-
-            getPreviousState() {
-                return this.previousState;
-            }
-
-            canTransition(fromState, toState) {
-                const allowedTransitions = this.transitions.get(fromState);
-                return allowedTransitions && allowedTransitions.includes(toState);
-            }
-
-            onStateChange(callback) {
-                this.eventDispatcher.subscribe('stateChange', callback);
-            }
-
-            isState(state) {
-                return this.currentState === state;
-            }
-
-            isAnyState(states) {
-                return states.includes(this.currentState);
-            }
-        }
-
-        // 暂停控制器
-        class PauseController {
-            constructor(stateManager) {
-                this.stateManager = stateManager;
-                this.savedGameState = null;
-                this.pauseTime = null;
-                this.totalPausedTime = 0;
-            }
-
-            pause() {
-                if (this.stateManager.isState(GameStates.RUNNING)) {
-                    this.pauseTime = Date.now();
-                    this.saveGameState();
-                    return this.stateManager.setState(GameStates.PAUSED);
-                }
-                return false;
-            }
-
-            resume() {
-                if (this.stateManager.isState(GameStates.PAUSED)) {
-                    if (this.pauseTime) {
-                        this.totalPausedTime += Date.now() - this.pauseTime;
-                        this.pauseTime = null;
-                    }
-                    return this.stateManager.setState(GameStates.RUNNING);
-                }
-                return false;
-            }
-
-            toggle() {
-                if (this.stateManager.isState(GameStates.RUNNING)) {
-                    return this.pause();
-                } else if (this.stateManager.isState(GameStates.PAUSED)) {
-                    return this.resume();
-                }
-                return false;
-            }
-
-            isPaused() {
-                return this.stateManager.isState(GameStates.PAUSED);
-            }
-
-            saveGameState() {
-                // 保存当前游戏状态到localStorage
-                const gameData = {
-                    score: parseInt(document.getElementById('score').textContent) || 0,
-                    level: parseInt(document.getElementById('level').textContent) || 1,
-                    lines: parseInt(document.getElementById('lines').textContent) || 0,
-                    timestamp: Date.now(),
-                    totalPausedTime: this.totalPausedTime
-                };
+                const sanitizedData = DataValidator.sanitizeData(gameState);
+                const success = this.storage.save('gameState', sanitizedData);
                 
-                try {
-                    localStorage.setItem('tetris_paused_state', JSON.stringify(gameData));
-                    this.savedGameState = gameData;
-                } catch (error) {
-                    console.error('Failed to save game state:', error);
+                if (success) {
+                    this.eventHandler.onDataSaved('gameState', sanitizedData);
+                } else {
+                    this.eventHandler.onStorageError(new Error('保存游戏状态失败'));
                 }
+                
+                return success;
             }
 
             loadGameState() {
-                try {
-                    const saved = localStorage.getItem('tetris_paused_state');
-                    if (saved) {
-                        this.savedGameState = JSON.parse(saved);
-                        return this.savedGameState;
-                    }
-                } catch (error) {
-                    console.error('Failed to load game state:', error);
+                const data = this.storage.load('gameState');
+                
+                if (data && DataValidator.validateGameState(data)) {
+                    this.eventHandler.onDataLoaded('gameState', data);
+                    return data;
                 }
+                
                 return null;
             }
 
-            clearSavedState() {
-                try {
-                    localStorage.removeItem('tetris_paused_state');
-                    this.savedGameState = null;
-                    this.totalPausedTime = 0;
-                } catch (error) {
-                    console.error('Failed to clear saved state:', error);
-                }
-            }
-        }
-
-        // 游戏生命周期管理器
-        class GameLifecycleManager {
-            constructor(stateManager, pauseController) {
-                this.stateManager = stateManager;
-                this.pauseController = pauseController;
-                this.gameStartTime = null;
-                this.gameEndTime = null;
-                this.gameStats = {
-                    gamesPlayed: 0,
-                    totalScore: 0,
-                    bestScore: 0,
-                    totalTime: 0
-                };
-                this.loadStats();
-            }
-
-            startGame() {
-                if (this.stateManager.canTransition(this.stateManager.getState(), GameStates.RUNNING)) {
-                    this.gameStartTime = Date.now();
-                    this.gameEndTime = null;
-                    this.pauseController.clearSavedState();
-                    this.resetGameUI();
-                    return this.stateManager.setState(GameStates.RUNNING);
-                }
-                return false;
-            }
-
-            restartGame() {
-                this.endGame();
-                setTimeout(() => {
-                    this.startGame();
-                }, 100);
-            }
-
-            endGame() {
-                if (this.stateManager.isAnyState([GameStates.RUNNING, GameStates.PAUSED])) {
-                    this.gameEndTime = Date.now();
-                    this.updateStats();
-                    this.pauseController.clearSavedState();
-                    return this.stateManager.setState(GameStates.ENDED);
-                }
-                return false;
-            }
-
-            resetGame() {
-                this.gameStartTime = null;
-                this.gameEndTime = null;
-                this.pauseController.clearSavedState();
-                this.resetGameUI();
-                return this.stateManager.setState(GameStates.MENU);
-            }
-
-            resetGameUI() {
-                document.getElementById('score').textContent = '0';
-                document.getElementById('level').textContent = '1';
-                document.getElementById('lines').textContent = '0';
-            }
-
-            updateStats() {
-                const currentScore = parseInt(document.getElementById('score').textContent) || 0;
-                const gameTime = this.gameEndTime - this.gameStartTime - this.pauseController.totalPausedTime;
+            saveProgress(progress) {
+                const success = this.storage.save('progress', progress);
                 
-                this.gameStats.gamesPlayed++;
-                this.gameStats.totalScore += currentScore;
-                this.gameStats.totalTime += gameTime;
-                
-                if (currentScore > this.gameStats.bestScore) {
-                    this.gameStats.bestScore = currentScore;
+                if (success) {
+                    this.eventHandler.onDataSaved('progress', progress);
                 }
                 
-                this.saveStats();
+                return success;
             }
 
-            saveStats() {
-                try {
-                    localStorage.setItem('tetris_stats', JSON.stringify(this.gameStats));
-                } catch (error) {
-                    console.error('Failed to save stats:', error);
+            loadProgress() {
+                const data = this.storage.load('progress');
+                
+                if (data) {
+                    this.eventHandler.onDataLoaded('progress', data);
                 }
+                
+                return data;
             }
 
-            loadStats() {
-                try {
-                    const saved = localStorage.getItem('tetris_stats');
-                    if (saved) {
-                        this.gameStats = { ...this.gameStats, ...JSON.parse(saved) };
+            clearGameData() {
+                const keys = ['gameState', 'progress'];
+                let success = true;
+                
+                keys.forEach(key => {
+                    if (!this.storage.remove(key)) {
+                        success = false;
                     }
-                } catch (error) {
-                    console.error('Failed to load stats:', error);
-                }
-            }
-
-            getStats() {
-                return { ...this.gameStats };
+                });
+                
+                return success;
             }
         }
 
-        // UI状态控制器
-        class UIStateController {
-            constructor(stateManager) {
-                this.stateManager = stateManager;
-                this.elements = {
-                    gameStatus: document.getElementById('gameStatus'),
-                    gameState: document.getElementById('gameState'),
-                    startBtn: document.getElementById('startBtn'),
-                    pauseBtn: document.getElementById('pauseBtn'),
-                    restartBtn: document.getElementById('restartBtn'),
-                    resumeBtn: document.getElementById('resumeBtn'),
-                    exitBtn: document.getElementById('exitBtn'),
-                    pauseOverlay: document.getElementById('pauseOverlay')
+        class SettingsService {
+            constructor(storageManager, eventHandler) {
+                this.storage = storageManager;
+                this.eventHandler = eventHandler;
+                this.defaultSettings = {
+                    soundEnabled: true,
+                    volume: 50,
+                    autoSave: true
                 };
-                
-                this.stateManager.onStateChange((data) => {
-                    this.updateUI(data.to);
-                });
             }
 
-            updateUI(state) {
-                this.updateGameStatus(state);
-                this.updateButtons(state);
-                this.updatePauseOverlay(state);
-                this.updateGameStateDisplay(state);
-            }
-
-            updateGameStatus(state) {
-                const statusElement = this.elements.gameStatus;
-                statusElement.className = 'game-status';
-                
-                switch (state) {
-                    case GameStates.MENU:
-                        statusElement.textContent = '准备开始';
-                        statusElement.classList.add('menu');
-                        break;
-                    case GameStates.RUNNING:
-                        statusElement.textContent = '游戏中';
-                        statusElement.classList.add('running');
-                        break;
-                    case GameStates.PAUSED:
-                        statusElement.textContent = '已暂停';
-                        statusElement.classList.add('paused');
-                        break;
-                    case GameStates.ENDED:
-                        statusElement.textContent = '游戏结束';
-                        statusElement.classList.add('ended');
-                        break;
-                    case GameStates.LOADING:
-                        statusElement.textContent = '加载中';
-                        statusElement.classList.add('loading');
-                        break;
+            saveSettings(settings) {
+                if (!DataValidator.validateSettings(settings)) {
+                    this.eventHandler.onStorageError(new Error('设置数据无效'));
+                    return false;
                 }
-            }
 
-            updateButtons(state) {
-                const { startBtn, pauseBtn, restartBtn } = this.elements;
+                const sanitizedData = DataValidator.sanitizeData(settings);
+                const success = this.storage.save('settings', sanitizedData);
                 
-                switch (state) {
-                    case GameStates.MENU:
-                        startBtn.disabled = false;
-                        startBtn.textContent = '开始游戏';
-                        pauseBtn.disabled = true;
-                        restartBtn.disabled = true;
-                        break;
-                    case GameStates.RUNNING:
-                        startBtn.disabled = true;
-                        pauseBtn.disabled = false;
-                        pauseBtn.textContent = '暂停';
-                        restartBtn.disabled = false;
-                        break;
-                    case GameStates.PAUSED:
-                        startBtn.disabled = true;
-                        pauseBtn.disabled = false;
-                        pauseBtn.textContent = '继续';
-                        restartBtn.disabled = false;
-                        break;
-                    case GameStates.ENDED:
-                        startBtn.disabled = false;
-                        startBtn.textContent = '重新开始';
-                        pauseBtn.disabled = true;
-                        restartBtn.disabled = false;
-                        break;
-                }
-            }
-
-            updatePauseOverlay(state) {
-                const overlay = this.elements.pauseOverlay;
-                if (state === GameStates.PAUSED) {
-                    this.showPauseOverlay();
+                if (success) {
+                    this.eventHandler.onDataSaved('settings', sanitizedData);
                 } else {
-                    this.hidePauseOverlay();
+                    this.eventHandler.onStorageError(new Error('保存设置失败'));
                 }
+                
+                return success;
             }
 
-            updateGameStateDisplay(state) {
-                const stateNames = {
-                    [GameStates.MENU]: '准备',
-                    [GameStates.RUNNING]: '运行中',
-                    [GameStates.PAUSED]: '暂停',
-                    [GameStates.ENDED]: '结束',
-                    [GameStates.LOADING]: '加载中'
+            loadSettings() {
+                const data = this.storage.load('settings');
+                
+                if (data && DataValidator.validateSettings(data)) {
+                    this.eventHandler.onDataLoaded('settings', data);
+                    return { ...this.defaultSettings, ...data };
+                }
+                
+                return this.defaultSettings;
+            }
+
+            updateSetting(key, value) {
+                const currentSettings = this.loadSettings();
+                currentSettings[key] = value;
+                return this.saveSettings(currentSettings);
+            }
+
+            resetSettings() {
+                return this.saveSettings(this.defaultSettings);
+            }
+        }
+
+        class ScoreService {
+            constructor(storageManager, eventHandler) {
+                this.storage = storageManager;
+                this.eventHandler = eventHandler;
+                this.maxHighScores = 10;
+            }
+
+            saveScore(score) {
+                const scoreData = {
+                    score: score,
+                    date: new Date().toISOString()
                 };
-                
-                this.elements.gameState.textContent = stateNames[state] || '未知';
-            }
 
-            showPauseOverlay() {
-                this.elements.pauseOverlay.classList.add('active');
-            }
+                if (!DataValidator.validateScore(scoreData)) {
+                    this.eventHandler.onStorageError(new Error('分数数据无效'));
+                    return false;
+                }
 
-            hidePauseOverlay() {
-                this.elements.pauseOverlay.classList.remove('active');
-            }
-        }
-
-        // 输入状态过滤器
-        class InputStateFilter {
-            constructor(stateManager) {
-                this.stateManager = stateManager;
-                this.inputEnabled = true;
-                this.stateInputHandlers = new Map();
-                this.setupDefaultHandlers();
-            }
-
-            setupDefaultHandlers() {
-                // 为不同状态设置默认输入处理器
-                this.registerStateInput(GameStates.RUNNING, (input) => {
-                    // 游戏运行时的输入处理
-                    return this.inputEnabled;
-                });
+                const success = this.storage.save('lastScore', scoreData);
                 
-                this.registerStateInput(GameStates.PAUSED, (input) => {
-                    // 暂停时只允许特定输入
-                    const allowedKeys = ['Space', 'Escape'];
-                    return allowedKeys.includes(input.code);
-                });
-                
-                this.registerStateInput(GameStates.MENU, (input) => {
-                    // 菜单状态下的输入处理
-                    return true;
-                });
-                
-                this.registerStateInput(GameStates.ENDED, (input) => {
-                    // 游戏结束时的输入处理
-                    return true;
-                });
-            }
-
-            filterInput(input, state = null) {
-                const currentState = state || this.stateManager.getState();
-                const handler = this.stateInputHandlers.get(currentState);
-                
-                if (handler) {
-                    return handler(input);
+                if (success) {
+                    this.eventHandler.onDataSaved('lastScore', scoreData);
+                    // 同时更新排行榜
+                    this.addHighScore(scoreData);
                 }
                 
-                return this.inputEnabled;
+                return success;
             }
 
-            enableInput() {
-                this.inputEnabled = true;
+            getHighScores() {
+                const data = this.storage.load('highScores');
+                return data || [];
             }
 
-            disableInput() {
-                this.inputEnabled = false;
+            addHighScore(scoreData) {
+                if (!DataValidator.validateScore(scoreData)) {
+                    return false;
+                }
+
+                let highScores = this.getHighScores();
+                highScores.push(scoreData);
+                
+                // 按分数降序排序
+                highScores.sort((a, b) => b.score - a.score);
+                
+                // 只保留前N名
+                highScores = highScores.slice(0, this.maxHighScores);
+                
+                const success = this.storage.save('highScores', highScores);
+                
+                if (success) {
+                    this.eventHandler.onDataSaved('highScores', highScores);
+                }
+                
+                return success;
             }
 
-            registerStateInput(state, handler) {
-                this.stateInputHandlers.set(state, handler);
+            clearScores() {
+                const keys = ['lastScore', 'highScores'];
+                let success = true;
+                
+                keys.forEach(key => {
+                    if (!this.storage.remove(key)) {
+                        success = false;
+                    }
+                });
+                
+                return success;
+            }
+
+            getHighestScore() {
+                const highScores = this.getHighScores();
+                return highScores.length > 0 ? highScores[0].score : 0;
             }
         }
 
-        // 简单的俄罗斯方块游戏逻辑（示例）
+        // 通知系统
+        class NotificationManager {
+            static show(message, type = 'success', duration = 3000) {
+                const notification = document.createElement('div');
+                notification.className = `notification ${type}`;
+                notification.textContent = message;
+                
+                document.body.appendChild(notification);
+                
+                // 显示动画
+                setTimeout(() => {
+                    notification.classList.add('show');
+                }, 100);
+                
+                // 自动隐藏
+                setTimeout(() => {
+                    notification.classList.remove('show');
+                    setTimeout(() => {
+                        document.body.removeChild(notification);
+                    }, 300);
+                }, duration);
+            }
+        }
+
+        // 简单的俄罗斯方块游戏逻辑
         class TetrisGame {
             constructor() {
                 this.canvas = document.getElementById('gameCanvas');
                 this.ctx = this.canvas.getContext('2d');
-                this.gameLoop = null;
-                this.lastTime = 0;
-                this.dropTime = 0;
-                this.dropInterval = 1000;
+                this.blockSize = 30;
+                this.cols = 10;
+                this.rows = 20;
                 
-                // 游戏数据
                 this.score = 0;
                 this.level = 1;
                 this.lines = 0;
+                this.board = this.createBoard();
+                this.currentPiece = null;
+                this.gameRunning = false;
+                this.gamePaused = false;
                 
-                // 游戏网格
-                this.grid = this.createGrid(10, 20);
+                this.initializeServices();
+                this.loadSettings();
+                this.updateDisplay();
             }
 
-            createGrid(width, height) {
-                const grid = [];
-                for (let y = 0; y < height; y++) {
-                    grid[y] = new Array(width).fill(0);
+            initializeServices() {
+                this.storageManager = new StorageManager();
+                this.eventHandler = new StorageEventHandler();
+                this.gameDataService = new GameDataService(this.storageManager, this.eventHandler);
+                this.settingsService = new SettingsService(this.storageManager, this.eventHandler);
+                this.scoreService = new ScoreService(this.storageManager, this.eventHandler);
+                
+                // 订阅存储事件
+                this.eventHandler.subscribe((event, data) => {
+                    switch (event) {
+                        case 'dataSaved':
+                            NotificationManager.show(`数据已保存: ${data.key}`, 'success');
+                            break;
+                        case 'dataLoaded':
+                            NotificationManager.show(`数据已加载: ${data.key}`, 'success');
+                            break;
+                        case 'storageError':
+                            NotificationManager.show(`存储错误: ${data.error.message}`, 'error');
+                            break;
+                    }
+                });
+            }
+
+            createBoard() {
+                return Array(this.rows).fill().map(() => Array(this.cols).fill(0));
+            }
+
+            loadSettings() {
+                const settings = this.settingsService.loadSettings();
+                
+                document.getElementById('soundEnabled').checked = settings.soundEnabled;
+                document.getElementById('volumeSlider').value = settings.volume;
+                document.getElementById('autoSave').checked = settings.autoSave;
+                
+                this.settings = settings;
+            }
+
+            saveSettings() {
+                const settings = {
+                    soundEnabled: document.getElementById('soundEnabled').checked,
+                    volume: parseInt(document.getElementById('volumeSlider').value),
+                    autoSave: document.getElementById('autoSave').checked
+                };
+                
+                this.settingsService.saveSettings(settings);
+                this.settings = settings;
+            }
+
+            saveGame() {
+                const gameState = {
+                    score: this.score,
+                    level: this.level,
+                    lines: this.lines,
+                    board: this.board,
+                    currentPiece: this.currentPiece,
+                    gameRunning: this.gameRunning,
+                    gamePaused: this.gamePaused
+                };
+                
+                return this.gameDataService.saveGameState(gameState);
+            }
+
+            loadGame() {
+                const gameState = this.gameDataService.loadGameState();
+                
+                if (gameState) {
+                    this.score = gameState.score || 0;
+                    this.level = gameState.level || 1;
+                    this.lines = gameState.lines || 0;
+                    this.board = gameState.board || this.createBoard();
+                    this.currentPiece = gameState.currentPiece;
+                    this.gameRunning = gameState.gameRunning || false;
+                    this.gamePaused = gameState.gamePaused || false;
+                    
+                    this.updateDisplay();
+                    this.draw();
+                    
+                    return true;
                 }
-                return grid;
+                
+                return false;
+            }
+
+            updateDisplay() {
+                document.getElementById('score').textContent = this.score;
+                document.getElementById('level').textContent = this.level;
+                document.getElementById('lines').textContent = this.lines;
+                document.getElementById('highScore').textContent = this.scoreService.getHighestScore();
+                
+                this.updateHighScoresList();
+            }
+
+            updateHighScoresList() {
+                const highScores = this.scoreService.getHighScores();
+                const listElement = document.getElementById('highScoresList');
+                
+                if (highScores.length === 0) {
+                    listElement.innerHTML = '<p>暂无记录</p>';
+                } else {
+                    listElement.innerHTML = highScores.slice(0, 5).map((score, index) => 
+                        `<p>${index + 1}. ${score.score}分</p>`
+                    ).join('');
+                }
             }
 
             start() {
-                this.reset();
-                this.gameLoop = requestAnimationFrame((time) => this.update(time));
-            }
-
-            stop() {
-                if (this.gameLoop) {
-                    cancelAnimationFrame(this.gameLoop);
-                    this.gameLoop = null;
+                this.gameRunning = true;
+                this.gamePaused = false;
+                this.draw();
+                
+                if (this.settings.autoSave) {
+                    this.autoSaveInterval = setInterval(() => {
+                        this.saveGame();
+                    }, 30000); // 每30秒自动保存
                 }
             }
 
             pause() {
-                this.stop();
-            }
-
-            resume() {
-                this.gameLoop = requestAnimationFrame((time) => this.update(time));
+                this.gamePaused = !this.gamePaused;
+                
+                if (this.gamePaused) {
+                    document.getElementById('pauseBtn').textContent = '继续';
+                } else {
+                    document.getElementById('pauseBtn').textContent = '暂停';
+                }
             }
 
             reset() {
                 this.score = 0;
                 this.level = 1;
                 this.lines = 0;
-                this.grid = this.createGrid(10, 20);
-                this.updateUI();
+                this.board = this.createBoard();
+                this.currentPiece = null;
+                this.gameRunning = false;
+                this.gamePaused = false;
+                
+                if (this.autoSaveInterval) {
+                    clearInterval(this.autoSaveInterval);
+                }
+                
+                document.getElementById('pauseBtn').textContent = '暂停';
+                this.updateDisplay();
+                this.draw();
             }
 
-            update(time) {
-                const deltaTime = time - this.lastTime;
-                this.lastTime = time;
+            gameOver() {
+                this.gameRunning = false;
                 
-                this.dropTime += deltaTime;
-                if (this.dropTime > this.dropInterval) {
-                    this.dropTime = 0;
-                    // 这里应该有方块下落逻辑
+                if (this.autoSaveInterval) {
+                    clearInterval(this.autoSaveInterval);
                 }
                 
-                this.draw();
+                // 保存分数
+                this.scoreService.saveScore(this.score);
+                this.updateDisplay();
                 
-                if (gameStateManager.isState(GameStates.RUNNING)) {
-                    this.gameLoop = requestAnimationFrame((time) => this.update(time));
-                }
+                NotificationManager.show(`游戏结束！得分: ${this.score}`, 'warning', 5000);
             }
 
             draw() {
@@ -991,197 +882,127 @@
                 this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
                 
                 // 绘制网格
-                this.drawGrid();
-                
-                // 这里应该绘制方块
-            }
-
-            drawGrid() {
-                const blockSize = 30;
                 this.ctx.strokeStyle = '#333';
                 this.ctx.lineWidth = 1;
                 
-                for (let x = 0; x <= 10; x++) {
+                for (let i = 0; i <= this.cols; i++) {
                     this.ctx.beginPath();
-                    this.ctx.moveTo(x * blockSize, 0);
-                    this.ctx.lineTo(x * blockSize, this.canvas.height);
+                    this.ctx.moveTo(i * this.blockSize, 0);
+                    this.ctx.lineTo(i * this.blockSize, this.canvas.height);
                     this.ctx.stroke();
                 }
                 
-                for (let y = 0; y <= 20; y++) {
+                for (let i = 0; i <= this.rows; i++) {
                     this.ctx.beginPath();
-                    this.ctx.moveTo(0, y * blockSize);
-                    this.ctx.lineTo(this.canvas.width, y * blockSize);
+                    this.ctx.moveTo(0, i * this.blockSize);
+                    this.ctx.lineTo(this.canvas.width, i * this.blockSize);
                     this.ctx.stroke();
                 }
-            }
-
-            updateUI() {
-                document.getElementById('score').textContent = this.score;
-                document.getElementById('level').textContent = this.level;
-                document.getElementById('lines').textContent = this.lines;
-            }
-
-            addScore(points) {
-                this.score += points;
-                this.updateUI();
-            }
-
-            addLines(count) {
-                this.lines += count;
-                this.level = Math.floor(this.lines / 10) + 1;
-                this.dropInterval = Math.max(100, 1000 - (this.level - 1) * 100);
-                this.updateUI();
+                
+                // 绘制已放置的方块
+                for (let row = 0; row < this.rows; row++) {
+                    for (let col = 0; col < this.cols; col++) {
+                        if (this.board[row][col]) {
+                            this.ctx.fillStyle = '#4CAF50';
+                            this.ctx.fillRect(
+                                col * this.blockSize + 1,
+                                row * this.blockSize + 1,
+                                this.blockSize - 2,
+                                this.blockSize - 2
+                            );
+                        }
+                    }
+                }
             }
         }
 
-        // 初始化游戏系统
-        const gameStateManager = new GameStateManager();
-        const pauseController = new PauseController(gameStateManager);
-        const lifecycleManager = new GameLifecycleManager(gameStateManager, pauseController);
-        const uiController = new UIStateController(gameStateManager);
-        const inputFilter = new InputStateFilter(gameStateManager);
-        const tetrisGame = new TetrisGame();
-
-        // 事件监听器设置
-        function setupEventListeners() {
-            // 按钮事件
+        // 初始化游戏和事件监听
+        document.addEventListener('DOMContentLoaded', function() {
+            const game = new TetrisGame();
+            
+            // 按钮事件监听
             document.getElementById('startBtn').addEventListener('click', () => {
-                if (gameStateManager.isState(GameStates.MENU)) {
-                    lifecycleManager.startGame();
-                    tetrisGame.start();
-                } else if (gameStateManager.isState(GameStates.ENDED)) {
-                    lifecycleManager.restartGame();
-                    tetrisGame.start();
-                }
+                game.start();
             });
-
+            
             document.getElementById('pauseBtn').addEventListener('click', () => {
-                if (gameStateManager.isState(GameStates.RUNNING)) {
-                    pauseController.pause();
-                    tetrisGame.pause();
-                } else if (gameStateManager.isState(GameStates.PAUSED)) {
-                    pauseController.resume();
-                    tetrisGame.resume();
+                game.pause();
+            });
+            
+            document.getElementById('resetBtn').addEventListener('click', () => {
+                if (confirm('确定要重置游戏吗？')) {
+                    game.reset();
                 }
             });
-
-            document.getElementById('restartBtn').addEventListener('click', () => {
-                lifecycleManager.restartGame();
-                tetrisGame.start();
+            
+            document.getElementById('saveBtn').addEventListener('click', () => {
+                game.saveGame();
             });
-
-            document.getElementById('resumeBtn').addEventListener('click', () => {
-                pauseController.resume();
-                tetrisGame.resume();
+            
+            document.getElementById('loadBtn').addEventListener('click', () => {
+                if (game.loadGame()) {
+                    NotificationManager.show('游戏加载成功！', 'success');
+                } else {
+                    NotificationManager.show('没有找到保存的游戏', 'warning');
+                }
             });
-
-            document.getElementById('exitBtn').addEventListener('click', () => {
-                lifecycleManager.resetGame();
-                tetrisGame.stop();
+            
+            document.getElementById('resetSettingsBtn').addEventListener('click', () => {
+                if (confirm('确定要重置所有设置吗？')) {
+                    game.settingsService.resetSettings();
+                    game.loadSettings();
+                    NotificationManager.show('设置已重置', 'success');
+                }
             });
-
-            // 键盘事件
+            
+            // 设置变更监听
+            document.getElementById('soundEnabled').addEventListener('change', () => {
+                game.saveSettings();
+            });
+            
+            document.getElementById('volumeSlider').addEventListener('input', () => {
+                game.saveSettings();
+            });
+            
+            document.getElementById('autoSave').addEventListener('change', () => {
+                game.saveSettings();
+            });
+            
+            // 键盘事件监听
             document.addEventListener('keydown', (e) => {
-                if (!inputFilter.filterInput(e)) {
-                    return;
-                }
-
-                switch (e.code) {
-                    case 'Space':
-                        e.preventDefault();
-                        if (gameStateManager.isState(GameStates.RUNNING)) {
-                            pauseController.pause();
-                            tetrisGame.pause();
-                        } else if (gameStateManager.isState(GameStates.PAUSED)) {
-                            pauseController.resume();
-                            tetrisGame.resume();
-                        }
-                        break;
-                    case 'Escape':
-                        e.preventDefault();
-                        if (gameStateManager.isAnyState([GameStates.RUNNING, GameStates.PAUSED])) {
-                            lifecycleManager.resetGame();
-                            tetrisGame.stop();
-                        }
-                        break;
+                if (!game.gameRunning || game.gamePaused) return;
+                
+                switch(e.key) {
                     case 'ArrowLeft':
+                        // 左移逻辑
+                        break;
                     case 'ArrowRight':
-                    case 'ArrowUp':
+                        // 右移逻辑
+                        break;
                     case 'ArrowDown':
-                        if (gameStateManager.isState(GameStates.RUNNING)) {
-                            e.preventDefault();
-                            // 这里应该处理游戏输入
-                        }
+                        // 下移逻辑
+                        break;
+                    case 'ArrowUp':
+                        // 旋转逻辑
+                        break;
+                    case ' ':
+                        // 快速下落
+                        e.preventDefault();
+                        break;
+                    case 'p':
+                    case 'P':
+                        game.pause();
                         break;
                 }
             });
-
-            // 窗口失焦时自动暂停
-            window.addEventListener('blur', () => {
-                if (gameStateManager.isState(GameStates.RUNNING)) {
-                    pauseController.pause();
-                    tetrisGame.pause();
+            
+            // 页面卸载时自动保存
+            window.addEventListener('beforeunload', () => {
+                if (game.gameRunning && game.settings.autoSave) {
+                    game.saveGame();
                 }
             });
-
-            // 页面可见性变化时的处理
-            document.addEventListener('visibilitychange', () => {
-                if (document.hidden && gameStateManager.isState(GameStates.RUNNING)) {
-                    pauseController.pause();
-                    tetrisGame.pause();
-                }
-            });
-        }
-
-        // 状态变化监听
-        gameStateManager.onStateChange((data) => {
-            console.log(`Game state changed from ${data.from} to ${data.to}`);
-            
-            // 根据状态变化执行相应操作
-            switch (data.to) {
-                case GameStates.RUNNING:
-                    console.log('Game started/resumed');
-                    break;
-                case GameStates.PAUSED:
-                    console.log('Game paused');
-                    break;
-                case GameStates.ENDED:
-                    console.log('Game ended');
-                    break;
-                case GameStates.MENU:
-                    console.log('Returned to menu');
-                    break;
-            }
         });
-
-        // 初始化
-        document.addEventListener('DOMContentLoaded', () => {
-            setupEventListeners();
-            
-            // 检查是否有保存的游戏状态
-            const savedState = pauseController.loadGameState();
-            if (savedState) {
-                console.log('Found saved game state:', savedState);
-                // 可以选择恢复游戏状态
-            }
-            
-            // 初始化UI
-            uiController.updateUI(gameStateManager.getState());
-            
-            console.log('Game system initialized');
-        });
-
-        // 导出全局对象供调试使用
-        window.GameSystem = {
-            stateManager: gameStateManager,
-            pauseController,
-            lifecycleManager,
-            uiController,
-            inputFilter,
-            tetrisGame,
-            GameStates
-        };
     </script>
 </body>
 </html>
