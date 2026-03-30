@@ -111,14 +111,16 @@
             font-size: 1rem;
             cursor: pointer;
             transition: all 0.3s ease;
-            text-transform: uppercase;
+            text-decoration: none;
+            display: inline-block;
+            font-weight: 500;
             letter-spacing: 1px;
-            font-weight: 600;
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
         }
 
         .welcome-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 15px 30px rgba(102, 126, 234, 0.4);
         }
 
         .welcome-btn:active {
@@ -139,201 +141,409 @@
             font-size: 0.9rem;
         }
 
-        /* 响应式设计 */
-        @media (max-width: 768px) {
+        /* 装饰元素 */
+        .decoration {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .decoration:nth-child(1) {
+            top: 10%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .decoration:nth-child(2) {
+            top: 20%;
+            right: 10%;
+            animation-delay: 2s;
+        }
+
+        .decoration:nth-child(3) {
+            bottom: 10%;
+            left: 20%;
+            animation-delay: 4s;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-20px);
+            }
+        }
+
+        /* 响应式设计 - 移动端优先 */
+        
+        /* 移动端基础样式 (320px+) */
+        @media screen and (max-width: 767px) {
             html {
                 font-size: 14px;
             }
-
-            .container {
-                margin: 1rem;
-                padding: 2rem 1.5rem;
+            
+            header {
+                padding: 0.75rem 0;
             }
-
+            
+            header h1 {
+                font-size: 1.25rem;
+                letter-spacing: 1px;
+            }
+            
+            main {
+                padding: 1rem;
+            }
+            
+            .container {
+                padding: 2rem 1.5rem;
+                border-radius: 15px;
+                margin: 0 0.5rem;
+            }
+            
+            .main-title {
+                font-size: 2rem;
+                margin-bottom: 0.75rem;
+            }
+            
+            .subtitle {
+                font-size: 1rem;
+                margin-bottom: 1.5rem;
+            }
+            
+            .description {
+                font-size: 0.9rem;
+                margin-bottom: 1.5rem;
+                line-height: 1.6;
+            }
+            
+            .welcome-btn {
+                padding: 0.875rem 1.75rem;
+                font-size: 0.9rem;
+                width: 100%;
+                max-width: 280px;
+            }
+            
+            footer p {
+                font-size: 0.8rem;
+                padding: 0 1rem;
+            }
+            
+            /* 隐藏装饰元素在小屏幕上 */
+            .decoration {
+                display: none;
+            }
+        }
+        
+        /* 平板端样式 (768px+) */
+        @media screen and (min-width: 768px) {
+            html {
+                font-size: 15px;
+            }
+            
+            header h1 {
+                font-size: 1.375rem;
+            }
+            
+            main {
+                padding: 1.5rem;
+            }
+            
+            .container {
+                padding: 2.5rem 2rem;
+                max-width: 500px;
+            }
+            
             .main-title {
                 font-size: 2.5rem;
             }
-
+            
             .subtitle {
                 font-size: 1.1rem;
             }
-
+            
+            .welcome-btn {
+                width: auto;
+            }
+        }
+        
+        /* 桌面端样式 (1024px+) */
+        @media screen and (min-width: 1024px) {
+            html {
+                font-size: 16px;
+            }
+            
             header h1 {
+                font-size: 1.5rem;
+            }
+            
+            main {
+                padding: 2rem;
+            }
+            
+            .container {
+                padding: 3rem 2rem;
+                max-width: 600px;
+            }
+            
+            .main-title {
+                font-size: 3rem;
+            }
+            
+            .subtitle {
+                font-size: 1.2rem;
+            }
+        }
+        
+        /* 大屏幕样式 (1200px+) */
+        @media screen and (min-width: 1200px) {
+            .container {
+                max-width: 700px;
+                padding: 3.5rem 2.5rem;
+            }
+            
+            .main-title {
+                font-size: 3.5rem;
+            }
+            
+            .subtitle {
                 font-size: 1.3rem;
             }
+            
+            .description {
+                font-size: 1.1rem;
+            }
         }
-
-        @media (max-width: 480px) {
-            html {
-                font-size: 12px;
-            }
-
-            .main-title {
-                font-size: 2rem;
-            }
-
+        
+        /* 超大屏幕样式 (1440px+) */
+        @media screen and (min-width: 1440px) {
             .container {
-                padding: 1.5rem 1rem;
+                max-width: 800px;
+                padding: 4rem 3rem;
             }
-
-            .welcome-btn {
-                padding: 0.8rem 1.5rem;
+        }
+        
+        /* 横屏移动设备优化 */
+        @media screen and (max-height: 500px) and (orientation: landscape) {
+            main {
+                padding: 1rem;
+            }
+            
+            .container {
+                padding: 1.5rem;
+            }
+            
+            .main-title {
+                font-size: 1.8rem;
+                margin-bottom: 0.5rem;
+            }
+            
+            .subtitle {
                 font-size: 0.9rem;
+                margin-bottom: 1rem;
+            }
+            
+            .description {
+                font-size: 0.8rem;
+                margin-bottom: 1rem;
+            }
+            
+            .welcome-btn {
+                padding: 0.75rem 1.5rem;
+                font-size: 0.85rem;
             }
         }
-
-        /* 动画效果 */
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
+        
+        /* 高分辨率屏幕优化 */
+        @media screen and (-webkit-min-device-pixel-ratio: 2), 
+               screen and (min-resolution: 192dpi) {
+            .container {
+                border: 0.5px solid rgba(255, 255, 255, 0.3);
             }
         }
-
-        .container {
-            animation: fadeInUp 0.8s ease-out;
+        
+        /* 触摸设备优化 */
+        @media (hover: none) and (pointer: coarse) {
+            .welcome-btn {
+                padding: 1rem 2rem;
+                min-height: 44px;
+                min-width: 44px;
+            }
+            
+            .container:hover {
+                transform: none;
+                box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            }
         }
-
-        /* 可访问性增强 */
+        
+        /* 打印样式 */
+        @media print {
+            body {
+                background: white;
+                color: black;
+            }
+            
+            header, footer {
+                background: none;
+                backdrop-filter: none;
+            }
+            
+            .container {
+                background: white;
+                box-shadow: none;
+                border: 1px solid #ccc;
+            }
+            
+            .welcome-btn {
+                display: none;
+            }
+            
+            .decoration {
+                display: none;
+            }
+        }
+        
+        /* 减少动画偏好设置 */
         @media (prefers-reduced-motion: reduce) {
             * {
                 animation-duration: 0.01ms !important;
                 animation-iteration-count: 1 !important;
                 transition-duration: 0.01ms !important;
             }
+            
+            .decoration {
+                animation: none;
+            }
         }
-
-        /* 高对比度模式支持 */
+        
+        /* 暗色主题支持 */
+        @media (prefers-color-scheme: dark) {
+            body {
+                background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            }
+            
+            .container {
+                background: rgba(255, 255, 255, 0.1);
+                color: #ecf0f1;
+            }
+            
+            .main-title {
+                color: #3498db;
+            }
+            
+            .subtitle {
+                color: #bdc3c7;
+            }
+            
+            .description {
+                color: #95a5a6;
+            }
+        }
+        
+        /* 高对比度模式 */
         @media (prefers-contrast: high) {
             .container {
                 background: white;
                 border: 2px solid #000;
             }
-
+            
             .main-title {
                 color: #000;
             }
-
+            
             .subtitle, .description {
                 color: #333;
+            }
+            
+            .welcome-btn {
+                background: #000;
+                color: #fff;
+                border: 2px solid #000;
             }
         }
     </style>
 </head>
 <body>
+    <!-- 装饰元素 -->
+    <div class="decoration"></div>
+    <div class="decoration"></div>
+    <div class="decoration"></div>
+
+    <!-- 页面头部 -->
     <header>
-        <h1>欢迎来到我的网站</h1>
+        <h1>欢迎来到我的世界</h1>
     </header>
 
+    <!-- 主要内容 -->
     <main>
         <div class="container">
             <h2 class="main-title">Hello World!</h2>
-            <p class="subtitle">欢迎来到这个美好的世界</p>
-            <div class="description">
-                <p>这是一个使用现代Web技术构建的Hello World页面。</p>
-                <p>采用了语义化HTML5标签、响应式CSS设计和现代化的用户界面。</p>
-                <p>页面支持多种设备访问，并遵循Web可访问性标准。</p>
-            </div>
+            <p class="subtitle">你好，世界！</p>
+            <p class="description">
+                这是一个简单而美丽的问候页面，展示了现代Web设计的魅力。
+                无论你来自哪里，无论你使用什么设备，这个页面都会以最佳的方式为你呈现。
+                让我们一起探索数字世界的无限可能！
+            </p>
             <button class="welcome-btn" onclick="showWelcomeMessage()">点击问候</button>
-            <div id="message-area" style="margin-top: 1rem; min-height: 2rem;"></div>
         </div>
     </main>
 
+    <!-- 页面底部 -->
     <footer>
-        <p>&copy; 2024 Hello World Project. 由AI开发系统自动生成。</p>
+        <p>&copy; 2024 Hello World Project. 由 AI 开发系统精心制作</p>
     </footer>
 
     <script>
         // 问候消息功能
         function showWelcomeMessage() {
-            const messageArea = document.getElementById('message-area');
             const messages = [
-                '🎉 欢迎！很高兴见到你！',
-                '✨ Hello! 希望你今天过得愉快！',
-                '🌟 你好！欢迎探索这个页面！',
-                '🎈 嗨！感谢你的访问！',
-                '🌈 Hello World! 让我们开始这段旅程吧！'
+                '你好！欢迎来到这个美丽的世界！',
+                'Hello! Welcome to this beautiful world!',
+                'こんにちは！この美しい世界へようこそ！',
+                'Bonjour! Bienvenue dans ce beau monde!',
+                'Hola! ¡Bienvenido a este hermoso mundo!'
             ];
             
             const randomMessage = messages[Math.floor(Math.random() * messages.length)];
-            
-            // 创建消息元素
-            const messageElement = document.createElement('p');
-            messageElement.textContent = randomMessage;
-            messageElement.style.cssText = `
-                color: #667eea;
-                font-weight: 600;
-                font-size: 1.1rem;
-                margin: 0;
-                opacity: 0;
-                transform: translateY(10px);
-                transition: all 0.3s ease;
-            `;
-            
-            // 清空之前的消息
-            messageArea.innerHTML = '';
-            messageArea.appendChild(messageElement);
-            
-            // 触发动画
-            setTimeout(() => {
-                messageElement.style.opacity = '1';
-                messageElement.style.transform = 'translateY(0)';
-            }, 10);
-            
-            // 3秒后淡出消息
-            setTimeout(() => {
-                messageElement.style.opacity = '0';
-                messageElement.style.transform = 'translateY(-10px)';
-                setTimeout(() => {
-                    if (messageArea.contains(messageElement)) {
-                        messageArea.removeChild(messageElement);
-                    }
-                }, 300);
-            }, 3000);
+            alert(randomMessage);
         }
-
-        // 页面加载完成后的初始化
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('Hello World 页面加载完成！');
-            
-            // 添加键盘支持
-            document.addEventListener('keydown', function(event) {
-                if (event.key === 'Enter' && event.target.classList.contains('welcome-btn')) {
-                    showWelcomeMessage();
-                }
-            });
-            
-            // 添加页面可见性检测
-            document.addEventListener('visibilitychange', function() {
-                if (document.visibilityState === 'visible') {
-                    console.log('欢迎回来！');
-                }
-            });
-        });
-
-        // 响应式字体大小调整
-        function adjustFontSize() {
-            const container = document.querySelector('.container');
-            const windowWidth = window.innerWidth;
-            
-            if (windowWidth < 480) {
-                document.documentElement.style.fontSize = '12px';
-            } else if (windowWidth < 768) {
-                document.documentElement.style.fontSize = '14px';
-            } else {
-                document.documentElement.style.fontSize = '16px';
+        
+        // 响应式调试信息（开发环境）
+        function logScreenInfo() {
+            if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+                console.log('屏幕信息:', {
+                    width: window.innerWidth,
+                    height: window.innerHeight,
+                    devicePixelRatio: window.devicePixelRatio,
+                    orientation: screen.orientation ? screen.orientation.type : 'unknown'
+                });
             }
         }
-
-        // 监听窗口大小变化
-        window.addEventListener('resize', adjustFontSize);
         
-        // 初始调整
-        adjustFontSize();
+        // 监听窗口大小变化
+        window.addEventListener('resize', logScreenInfo);
+        window.addEventListener('orientationchange', logScreenInfo);
+        
+        // 页面加载完成后执行
+        document.addEventListener('DOMContentLoaded', function() {
+            logScreenInfo();
+            
+            // 添加触摸友好的交互
+            const button = document.querySelector('.welcome-btn');
+            if (button) {
+                button.addEventListener('touchstart', function() {
+                    this.style.transform = 'scale(0.95)';
+                });
+                
+                button.addEventListener('touchend', function() {
+                    this.style.transform = 'scale(1)';
+                });
+            }
+        });
     </script>
 </body>
 </html>
