@@ -1,14 +1,14 @@
 # 架构设计 - 控制系统开发
 
 ## 架构模式
-MVC + 观察者模式
+MVC + 事件驱动架构
 
 ## 技术栈
 
 - **language**: JavaScript ES6+
 - **framework**: 原生JavaScript
 - **database**: LocalStorage
-- **others**: HTML5 Canvas, CSS3, Web Audio API
+- **others**: HTML5 Canvas, CSS3, Web Audio API, requestAnimationFrame
 
 ## 模块设计
 
@@ -17,54 +17,54 @@ MVC + 观察者模式
 - addEventListener(eventType, callback)
 - removeEventListener(eventType, callback)
 - isKeyPressed(keyCode)
-- getKeyState()
+- getInputState()
 - enableInput()
 - disableInput()
 
 ### KeyboardController
-职责: 处理键盘事件映射，支持WASD和方向键双重绑定
-- bindKey(keyCode, action)
-- unbindKey(keyCode)
-- mapAction(action, callback)
-- setKeyRepeatDelay(delay)
+职责: 处理键盘事件监听，键位映射，防抖处理
+- bindKeys(keyMapping)
 - handleKeyDown(event)
 - handleKeyUp(event)
+- setDebounceDelay(delay)
+- getCurrentKeys()
 
-### ActionDispatcher
-职责: 将输入动作转换为游戏命令并分发给相应的游戏模块
-- dispatch(action, params)
-- registerHandler(action, handler)
-- unregisterHandler(action)
-- setActionThrottle(action, interval)
+### GameController
+职责: 接收输入事件并转换为游戏操作指令
+- onMoveLeft()
+- onMoveRight()
+- onMoveDown()
+- onRotate()
+- onPause()
+- onRestart()
+- processInput(inputData)
 
 ### InputValidator
-职责: 验证输入的有效性，防止无效操作和作弊行为
-- validateAction(action, gameState)
-- isActionAllowed(action)
-- setValidationRules(rules)
-- checkInputSequence(sequence)
+职责: 验证输入操作的合法性和时机
+- validateMove(direction)
+- validateRotation()
+- canProcessInput()
+- isGameActive()
 
-### ControlSettings
-职责: 管理控制设置，支持自定义键位绑定和敏感度调节
-- loadSettings()
-- saveSettings(settings)
-- resetToDefault()
-- setKeyBinding(action, keyCode)
-- getKeyBinding(action)
+### EventBus
+职责: 提供发布订阅机制，解耦输入系统与游戏逻辑
+- subscribe(event, callback)
+- unsubscribe(event, callback)
+- publish(event, data)
+- clear()
 
 ## 数据流
-用户按键 -> KeyboardController捕获事件 -> InputManager统一处理 -> InputValidator验证有效性 -> ActionDispatcher分发动作 -> GameEngine执行相应逻辑 -> UI更新反馈
+用户按键 -> KeyboardController捕获事件 -> InputManager处理防抖和状态管理 -> InputValidator验证操作合法性 -> GameController转换为游戏指令 -> EventBus分发事件 -> GameEngine执行相应操作 -> UI更新反馈
 
 ## 风险点
-- 键盘事件冲突导致操作失效
-- 高频输入可能造成性能问题
-- 不同浏览器键盘事件兼容性差异
-- 移动端触控适配复杂度高
-- 输入延迟影响游戏体验
+- 不同浏览器键盘事件兼容性问题
+- 高频输入可能导致性能问题
+- 移动端触摸控制适配复杂
+- 键盘焦点丢失导致控制失效
 
 ## 关键决策
-- 采用事件委托机制减少内存占用
-- 使用防抖和节流技术优化高频输入
-- 实现双键位绑定提升用户体验
-- 建立输入状态机确保操作一致性
-- 预留触控和手柄扩展接口
+- 采用事件委托机制减少事件监听器数量
+- 使用防抖技术避免重复触发
+- 支持自定义键位映射提升用户体验
+- 实现输入状态缓存机制提高响应性能
+- 使用EventBus模式实现松耦合的事件通信
