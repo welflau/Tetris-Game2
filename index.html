@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Hello World - 一个简单的问候页面">
-    <meta name="keywords" content="Hello World, 问候, 欢迎">
+    <meta name="description" content="俄罗斯方块 - 跨浏览器兼容性测试">
+    <meta name="keywords" content="俄罗斯方块, 投影方块, 跨浏览器测试">
     <meta name="author" content="AI开发系统">
-    <title>Hello World</title>
+    <title>俄罗斯方块 - 跨浏览器兼容性测试</title>
     <style>
         /* 重置样式 */
         * {
@@ -51,465 +51,940 @@
         main {
             flex: 1;
             display: flex;
-            align-items: center;
+            align-items: flex-start;
             justify-content: center;
             padding: 2rem;
+            gap: 2rem;
         }
 
-        /* 内容容器 - 使用Flexbox布局管理 */
-        .container {
+        /* 游戏容器 */
+        .game-container {
             background: rgba(255, 255, 255, 0.95);
             border-radius: 20px;
-            padding: 3rem 2rem;
-            text-align: center;
+            padding: 2rem;
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.2);
-            max-width: 600px;
-            width: 100%;
-            transform: translateY(0);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            display: flex;
-            flex-direction: column;
-            gap: 1.5rem;
         }
 
-        .container:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
-        }
-
-        /* 文字显示组件 - 统一样式类 */
-        .text-display {
-            padding: 1rem;
-            border-radius: 10px;
-            background: rgba(102, 126, 234, 0.05);
-            border: 1px solid rgba(102, 126, 234, 0.1);
-            transition: all 0.3s ease;
-        }
-
-        .text-display:hover {
-            background: rgba(102, 126, 234, 0.1);
-            transform: scale(1.02);
-        }
-
-        /* 主标题样式 */
-        .main-title {
-            font-size: 3rem;
-            color: #667eea;
-            margin: 0;
-            font-weight: 700;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        /* AAA文字样式 - 复用主标题样式 */
-        .aaa-text {
-            font-size: 2.5rem;
-            color: #764ba2;
-            margin: 0;
-            font-weight: 600;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
-            letter-spacing: 3px;
-        }
-
-        /* 副标题 */
-        .subtitle {
-            font-size: 1.2rem;
-            color: #666;
-            margin: 0;
-            font-weight: 300;
-        }
-
-        /* 描述文本 */
-        .description {
-            font-size: 1rem;
-            color: #777;
-            line-height: 1.8;
-            margin: 0;
-        }
-
-        /* 按钮样式 */
-        .welcome-btn {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            padding: 1rem 2rem;
-            border-radius: 50px;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            font-weight: 600;
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
-        }
-
-        .welcome-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
-        }
-
-        .welcome-btn:active {
-            transform: translateY(0);
-        }
-
-        /* 页脚 */
-        footer {
-            background: rgba(255, 255, 255, 0.1);
+        /* 测试控制面板 */
+        .test-panel {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
             backdrop-filter: blur(10px);
-            padding: 1rem 0;
-            text-align: center;
-            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            width: 350px;
         }
 
-        footer p {
-            color: rgba(255, 255, 255, 0.8);
+        .test-panel h2 {
+            color: #333;
+            margin-bottom: 1.5rem;
+            font-size: 1.2rem;
+            font-weight: 500;
+        }
+
+        /* 配置组 */
+        .config-group {
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+            background: rgba(0, 0, 0, 0.05);
+            border-radius: 10px;
+        }
+
+        .config-group h3 {
+            color: #555;
+            margin-bottom: 0.8rem;
+            font-size: 1rem;
+            font-weight: 500;
+        }
+
+        /* 控制项 */
+        .control-item {
+            margin-bottom: 1rem;
+        }
+
+        .control-item label {
+            display: block;
+            margin-bottom: 0.3rem;
+            color: #666;
             font-size: 0.9rem;
         }
 
-        /* 响应式设计 - 移动优先策略 */
+        .control-item input[type="range"] {
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: #ddd;
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        .control-item input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #667eea;
+            cursor: pointer;
+        }
+
+        .control-item input[type="range"]::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #667eea;
+            cursor: pointer;
+            border: none;
+        }
+
+        .control-item select {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background: white;
+            font-size: 0.9rem;
+        }
+
+        .control-item input[type="color"] {
+            width: 100%;
+            height: 40px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        /* 按钮样式 */
+        .btn {
+            padding: 0.6rem 1.2rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            margin-right: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5a6fd8;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #218838;
+        }
+
+        /* 游戏画布 */
+        #gameCanvas {
+            border: 2px solid #333;
+            border-radius: 10px;
+            background: #000;
+            display: block;
+            margin: 0 auto;
+        }
+
+        /* 游戏信息 */
+        .game-info {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 1rem;
+            padding: 1rem;
+            background: rgba(0, 0, 0, 0.05);
+            border-radius: 10px;
+        }
+
+        .info-item {
+            text-align: center;
+        }
+
+        .info-item .label {
+            font-size: 0.8rem;
+            color: #666;
+            margin-bottom: 0.3rem;
+        }
+
+        .info-item .value {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #333;
+        }
+
+        /* 预览区域 */
+        .preview-area {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: rgba(0, 0, 0, 0.05);
+            border-radius: 10px;
+        }
+
+        .preview-canvas {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background: #000;
+            display: block;
+            margin: 0 auto;
+        }
+
+        /* 响应式设计 */
         @media (max-width: 768px) {
-            html {
-                font-size: 14px;
-            }
-
-            .container {
-                margin: 1rem;
-                padding: 2rem 1.5rem;
-                gap: 1rem;
-            }
-
-            .main-title {
-                font-size: 2.5rem;
-            }
-
-            .aaa-text {
-                font-size: 2rem;
-                letter-spacing: 2px;
-            }
-
-            .subtitle {
-                font-size: 1.1rem;
-            }
-
-            .description {
-                font-size: 0.95rem;
-            }
-
-            .welcome-btn {
-                padding: 0.8rem 1.5rem;
-                font-size: 0.9rem;
-            }
-        }
-
-        @media (max-width: 480px) {
-            html {
-                font-size: 13px;
-            }
-
             main {
-                padding: 1rem;
+                flex-direction: column;
+                align-items: center;
             }
 
-            .container {
-                padding: 1.5rem 1rem;
-            }
-
-            .main-title {
-                font-size: 2rem;
-            }
-
-            .aaa-text {
-                font-size: 1.8rem;
-                letter-spacing: 1px;
-            }
-
-            header h1 {
-                font-size: 1.3rem;
-            }
-        }
-
-        @media (min-width: 1024px) {
-            html {
-                font-size: 18px;
-            }
-
-            .container {
-                padding: 4rem 3rem;
-                gap: 2rem;
-            }
-
-            .main-title {
-                font-size: 3.5rem;
-            }
-
-            .aaa-text {
-                font-size: 3rem;
-            }
-        }
-
-        @media (min-width: 1200px) {
-            .container {
-                max-width: 700px;
-            }
-        }
-
-        /* 动画效果 */
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .text-display {
-            animation: fadeInUp 0.6s ease-out;
-        }
-
-        .text-display:nth-child(2) {
-            animation-delay: 0.2s;
-        }
-
-        .text-display:nth-child(3) {
-            animation-delay: 0.4s;
-        }
-
-        .welcome-btn {
-            animation: fadeInUp 0.6s ease-out 0.6s both;
-        }
-
-        /* 可访问性增强 */
-        @media (prefers-reduced-motion: reduce) {
-            * {
-                animation-duration: 0.01ms !important;
-                animation-iteration-count: 1 !important;
-                transition-duration: 0.01ms !important;
-            }
-        }
-
-        /* 高对比度模式支持 */
-        @media (prefers-contrast: high) {
-            .container {
-                background: white;
-                border: 2px solid #333;
-            }
-
-            .text-display {
-                background: #f5f5f5;
-                border: 1px solid #333;
+            .test-panel {
+                width: 100%;
+                max-width: 400px;
             }
         }
     </style>
 </head>
 <body>
     <header>
-        <h1>欢迎来到我的网站</h1>
+        <h1>俄罗斯方块 - 投影方块配置优化</h1>
     </header>
 
     <main>
-        <div class="container">
-            <!-- HelloWorld文字显示组件 -->
-            <div class="text-display">
-                <h2 class="main-title">Hello World</h2>
-                <p class="subtitle">欢迎来到这个美好的世界！</p>
+        <div class="game-container">
+            <canvas id="gameCanvas" width="300" height="600"></canvas>
+            <div class="game-info">
+                <div class="info-item">
+                    <div class="label">分数</div>
+                    <div class="value" id="score">0</div>
+                </div>
+                <div class="info-item">
+                    <div class="label">等级</div>
+                    <div class="value" id="level">1</div>
+                </div>
+                <div class="info-item">
+                    <div class="label">行数</div>
+                    <div class="value" id="lines">0</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="test-panel">
+            <h2>投影方块配置</h2>
+
+            <div class="config-group">
+                <h3>基础设置</h3>
+                <div class="control-item">
+                    <label for="opacity">透明度: <span id="opacityValue">0.3</span></label>
+                    <input type="range" id="opacity" min="0.1" max="1" step="0.1" value="0.3">
+                </div>
+                <div class="control-item">
+                    <label for="renderMode">渲染模式</label>
+                    <select id="renderMode">
+                        <option value="fill">填充</option>
+                        <option value="outline">轮廓</option>
+                        <option value="mixed">混合</option>
+                    </select>
+                </div>
+                <div class="control-item">
+                    <label for="ghostColor">投影颜色</label>
+                    <input type="color" id="ghostColor" value="#ffffff">
+                </div>
             </div>
 
-            <!-- AAA文字显示组件 -->
-            <div class="text-display">
-                <h2 class="aaa-text">AAA</h2>
-                <p class="subtitle">新增的内容元素</p>
+            <div class="config-group">
+                <h3>高级设置</h3>
+                <div class="control-item">
+                    <label for="outlineWidth">轮廓宽度: <span id="outlineWidthValue">2</span></label>
+                    <input type="range" id="outlineWidth" min="1" max="5" step="1" value="2">
+                </div>
+                <div class="control-item">
+                    <label for="blendMode">混合模式</label>
+                    <select id="blendMode">
+                        <option value="normal">正常</option>
+                        <option value="multiply">正片叠底</option>
+                        <option value="screen">滤色</option>
+                        <option value="overlay">叠加</option>
+                    </select>
+                </div>
+                <div class="control-item">
+                    <label for="animation">动画效果</label>
+                    <select id="animation">
+                        <option value="none">无</option>
+                        <option value="pulse">脉冲</option>
+                        <option value="fade">渐变</option>
+                    </select>
+                </div>
             </div>
 
-            <!-- 描述信息 -->
-            <div class="text-display">
-                <p class="description">
-                    这是一个简单而优雅的Hello World页面，现在包含了新的AAA文字元素。
-                    页面采用响应式设计，在各种设备上都能完美显示。
-                </p>
+            <div class="config-group">
+                <h3>可见性测试</h3>
+                <div class="control-item">
+                    <label for="backgroundType">背景类型</label>
+                    <select id="backgroundType">
+                        <option value="dark">深色</option>
+                        <option value="light">浅色</option>
+                        <option value="pattern">图案</option>
+                        <option value="gradient">渐变</option>
+                    </select>
+                </div>
+                <div class="preview-area">
+                    <canvas id="previewCanvas" width="120" height="80" class="preview-canvas"></canvas>
+                </div>
             </div>
 
-            <button class="welcome-btn" onclick="showWelcomeMessage()">点击欢迎</button>
+            <div class="config-group">
+                <h3>配置管理</h3>
+                <button class="btn btn-primary" id="applyConfig">应用配置</button>
+                <button class="btn btn-secondary" id="resetConfig">重置默认</button>
+                <button class="btn btn-success" id="saveConfig">保存配置</button>
+                <button class="btn btn-secondary" id="loadConfig">加载配置</button>
+            </div>
         </div>
     </main>
 
-    <footer>
-        <p>&copy; 2024 Hello World Project. 由 AI 开发系统创建。</p>
-    </footer>
-
     <script>
-        // 页面交互功能
-        function showWelcomeMessage() {
-            const messages = [
-                '欢迎来到Hello World！',
-                'AAA元素已成功添加！',
-                '感谢您的访问！',
-                '页面布局调整完成！'
-            ];
-            
-            const randomMessage = messages[Math.floor(Math.random() * messages.length)];
-            
-            // 创建提示框
-            const toast = document.createElement('div');
-            toast.style.cssText = `
-                position: fixed;
-                top: 20px;
-                right: 20px;
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                color: white;
-                padding: 1rem 2rem;
-                border-radius: 10px;
-                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-                z-index: 1000;
-                animation: slideInRight 0.3s ease-out;
-                font-weight: 500;
-            `;
-            toast.textContent = randomMessage;
-            
-            document.body.appendChild(toast);
-            
-            // 3秒后移除提示框
-            setTimeout(() => {
-                toast.style.animation = 'slideOutRight 0.3s ease-out';
-                setTimeout(() => {
-                    document.body.removeChild(toast);
-                }, 300);
-            }, 3000);
-        }
-
-        // 添加动画样式
-        const style = document.createElement('style');
-        style.textContent = `
-            @keyframes slideInRight {
-                from {
-                    transform: translateX(100%);
-                    opacity: 0;
-                }
-                to {
-                    transform: translateX(0);
-                    opacity: 1;
-                }
-            }
-            
-            @keyframes slideOutRight {
-                from {
-                    transform: translateX(0);
-                    opacity: 1;
-                }
-                to {
-                    transform: translateX(100%);
-                    opacity: 0;
-                }
-            }
-        `;
-        document.head.appendChild(style);
-
-        // 响应式断点检测
-        class ResponsiveManager {
+        // 投影方块配置类
+        class GhostPieceConfig {
             constructor() {
-                this.breakpoints = {
-                    mobile: 480,
-                    tablet: 768,
-                    desktop: 1024,
-                    large: 1200
+                this.defaultConfig = {
+                    opacity: 0.3,
+                    renderMode: 'fill',
+                    color: '#ffffff',
+                    outlineWidth: 2,
+                    blendMode: 'normal',
+                    animation: 'none'
                 };
-                this.currentBreakpoint = null;
-                this.init();
+                this.currentConfig = { ...this.defaultConfig };
             }
 
-            init() {
-                this.detectBreakpoint();
-                this.setupEventListeners();
+            getConfig() {
+                return { ...this.currentConfig };
             }
 
-            detectBreakpoint() {
-                const width = window.innerWidth;
-                let breakpoint = 'mobile';
-                
-                if (width >= this.breakpoints.large) {
-                    breakpoint = 'large';
-                } else if (width >= this.breakpoints.desktop) {
-                    breakpoint = 'desktop';
-                } else if (width >= this.breakpoints.tablet) {
-                    breakpoint = 'tablet';
+            updateConfig(options) {
+                this.currentConfig = { ...this.currentConfig, ...options };
+                return this.validateConfig(this.currentConfig);
+            }
+
+            resetToDefault() {
+                this.currentConfig = { ...this.defaultConfig };
+                return this.currentConfig;
+            }
+
+            validateConfig(config) {
+                const errors = [];
+                if (config.opacity < 0.1 || config.opacity > 1) {
+                    errors.push('透明度必须在0.1-1之间');
                 }
-                
-                if (this.currentBreakpoint !== breakpoint) {
-                    this.currentBreakpoint = breakpoint;
-                    this.onBreakpointChange(breakpoint);
+                if (!['fill', 'outline', 'mixed'].includes(config.renderMode)) {
+                    errors.push('无效的渲染模式');
                 }
-                
-                return breakpoint;
-            }
-
-            setupEventListeners() {
-                let resizeTimer;
-                window.addEventListener('resize', () => {
-                    clearTimeout(resizeTimer);
-                    resizeTimer = setTimeout(() => {
-                        this.detectBreakpoint();
-                    }, 100);
-                });
-            }
-
-            onBreakpointChange(breakpoint) {
-                document.body.setAttribute('data-breakpoint', breakpoint);
-                console.log(`断点变化: ${breakpoint} (${window.innerWidth}px)`);
+                if (config.outlineWidth < 1 || config.outlineWidth > 5) {
+                    errors.push('轮廓宽度必须在1-5之间');
+                }
+                return { valid: errors.length === 0, errors };
             }
         }
 
-        // 初始化响应式管理器
-        const responsiveManager = new ResponsiveManager();
+        // 投影方块渲染器
+        class GhostPieceRenderer {
+            constructor(canvas) {
+                this.canvas = canvas;
+                this.ctx = canvas.getContext('2d');
+                this.animationTime = 0;
+            }
 
-        // 页面加载完成后的初始化
-        document.addEventListener('DOMContentLoaded', function() {
-            // 为文字元素添加交互效果
-            const textDisplays = document.querySelectorAll('.text-display');
-            
-            textDisplays.forEach((element, index) => {
-                element.addEventListener('click', function() {
-                    this.style.transform = 'scale(1.05)';
-                    setTimeout(() => {
-                        this.style.transform = 'scale(1)';
-                    }, 200);
-                });
+            drawGhost(piece, position, style) {
+                if (!piece || !position) return;
+
+                const { opacity, renderMode, color, outlineWidth, blendMode, animation } = style;
                 
-                // 添加键盘可访问性
-                element.setAttribute('tabindex', '0');
-                element.setAttribute('role', 'button');
-                element.setAttribute('aria-label', `文字显示区域 ${index + 1}`);
-            });
+                this.ctx.save();
+                this.ctx.globalAlpha = this.calculateOpacity(opacity, animation);
+                this.ctx.globalCompositeOperation = blendMode;
 
-            // 添加键盘事件支持
-            document.addEventListener('keydown', function(e) {
-                if (e.key === 'Enter' && e.target.classList.contains('text-display')) {
-                    e.target.click();
+                const blockSize = 30;
+                const startX = position.x * blockSize;
+                const startY = position.y * blockSize;
+
+                piece.shape.forEach((row, y) => {
+                    row.forEach((cell, x) => {
+                        if (cell) {
+                            const blockX = startX + x * blockSize;
+                            const blockY = startY + y * blockSize;
+                            this.drawBlock(blockX, blockY, blockSize, renderMode, color, outlineWidth);
+                        }
+                    });
+                });
+
+                this.ctx.restore();
+            }
+
+            drawBlock(x, y, size, renderMode, color, outlineWidth) {
+                switch (renderMode) {
+                    case 'fill':
+                        this.ctx.fillStyle = color;
+                        this.ctx.fillRect(x, y, size, size);
+                        break;
+                    case 'outline':
+                        this.ctx.strokeStyle = color;
+                        this.ctx.lineWidth = outlineWidth;
+                        this.ctx.strokeRect(x, y, size, size);
+                        break;
+                    case 'mixed':
+                        this.ctx.fillStyle = color;
+                        this.ctx.fillRect(x, y, size, size);
+                        this.ctx.strokeStyle = this.adjustColor(color, -50);
+                        this.ctx.lineWidth = outlineWidth;
+                        this.ctx.strokeRect(x, y, size, size);
+                        break;
                 }
-            });
+            }
 
-            console.log('页面初始化完成 - HelloWorld和AAA元素已就绪');
-        });
+            calculateOpacity(baseOpacity, animation) {
+                switch (animation) {
+                    case 'pulse':
+                        return baseOpacity * (0.7 + 0.3 * Math.sin(this.animationTime * 0.1));
+                    case 'fade':
+                        return baseOpacity * (0.5 + 0.5 * Math.sin(this.animationTime * 0.05));
+                    default:
+                        return baseOpacity;
+                }
+            }
 
-        // 性能优化：图片懒加载（如果有图片的话）
-        if ('IntersectionObserver' in window) {
-            const imageObserver = new IntersectionObserver((entries, observer) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        const img = entry.target;
-                        img.src = img.dataset.src;
-                        img.classList.remove('lazy');
-                        imageObserver.unobserve(img);
+            adjustColor(color, amount) {
+                const hex = color.replace('#', '');
+                const r = Math.max(0, Math.min(255, parseInt(hex.substr(0, 2), 16) + amount));
+                const g = Math.max(0, Math.min(255, parseInt(hex.substr(2, 2), 16) + amount));
+                const b = Math.max(0, Math.min(255, parseInt(hex.substr(4, 2), 16) + amount));
+                return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
+            }
+
+            updateAnimation() {
+                this.animationTime++;
+            }
+        }
+
+        // 用户偏好设置管理
+        class UserPreferences {
+            constructor() {
+                this.storageKey = 'tetris_ghost_config';
+            }
+
+            savePreferences(config) {
+                try {
+                    localStorage.setItem(this.storageKey, JSON.stringify(config));
+                    return { success: true };
+                } catch (error) {
+                    return { success: false, error: error.message };
+                }
+            }
+
+            loadPreferences() {
+                try {
+                    const stored = localStorage.getItem(this.storageKey);
+                    return stored ? JSON.parse(stored) : null;
+                } catch (error) {
+                    return null;
+                }
+            }
+
+            exportSettings() {
+                const config = this.loadPreferences();
+                if (config) {
+                    const dataStr = JSON.stringify(config, null, 2);
+                    const dataBlob = new Blob([dataStr], { type: 'application/json' });
+                    const url = URL.createObjectURL(dataBlob);
+                    const link = document.createElement('a');
+                    link.href = url;
+                    link.download = 'tetris_ghost_config.json';
+                    link.click();
+                    URL.revokeObjectURL(url);
+                }
+            }
+
+            importSettings(data) {
+                try {
+                    const config = JSON.parse(data);
+                    return this.savePreferences(config);
+                } catch (error) {
+                    return { success: false, error: '无效的配置文件格式' };
+                }
+            }
+        }
+
+        // 可见性测试器
+        class VisibilityTester {
+            constructor(canvas) {
+                this.canvas = canvas;
+                this.ctx = canvas.getContext('2d');
+            }
+
+            testVisibility(backgroundType, ghostStyle) {
+                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+                
+                // 绘制背景
+                this.drawBackground(backgroundType);
+                
+                // 绘制测试方块
+                this.drawTestBlock(ghostStyle);
+                
+                // 计算对比度
+                const contrast = this.calculateContrast();
+                return { contrast, visible: contrast > 3 };
+            }
+
+            drawBackground(type) {
+                const { width, height } = this.canvas;
+                
+                switch (type) {
+                    case 'dark':
+                        this.ctx.fillStyle = '#222';
+                        this.ctx.fillRect(0, 0, width, height);
+                        break;
+                    case 'light':
+                        this.ctx.fillStyle = '#eee';
+                        this.ctx.fillRect(0, 0, width, height);
+                        break;
+                    case 'pattern':
+                        this.drawCheckerboard();
+                        break;
+                    case 'gradient':
+                        const gradient = this.ctx.createLinearGradient(0, 0, width, height);
+                        gradient.addColorStop(0, '#333');
+                        gradient.addColorStop(1, '#666');
+                        this.ctx.fillStyle = gradient;
+                        this.ctx.fillRect(0, 0, width, height);
+                        break;
+                }
+            }
+
+            drawCheckerboard() {
+                const { width, height } = this.canvas;
+                const size = 10;
+                
+                for (let x = 0; x < width; x += size) {
+                    for (let y = 0; y < height; y += size) {
+                        const isEven = (Math.floor(x / size) + Math.floor(y / size)) % 2 === 0;
+                        this.ctx.fillStyle = isEven ? '#444' : '#666';
+                        this.ctx.fillRect(x, y, size, size);
+                    }
+                }
+            }
+
+            drawTestBlock(style) {
+                const { width, height } = this.canvas;
+                const blockSize = 20;
+                const x = (width - blockSize) / 2;
+                const y = (height - blockSize) / 2;
+                
+                this.ctx.save();
+                this.ctx.globalAlpha = style.opacity;
+                this.ctx.globalCompositeOperation = style.blendMode;
+                
+                if (style.renderMode === 'fill' || style.renderMode === 'mixed') {
+                    this.ctx.fillStyle = style.color;
+                    this.ctx.fillRect(x, y, blockSize, blockSize);
+                }
+                
+                if (style.renderMode === 'outline' || style.renderMode === 'mixed') {
+                    this.ctx.strokeStyle = style.color;
+                    this.ctx.lineWidth = style.outlineWidth;
+                    this.ctx.strokeRect(x, y, blockSize, blockSize);
+                }
+                
+                this.ctx.restore();
+            }
+
+            calculateContrast() {
+                // 简化的对比度计算
+                const imageData = this.ctx.getImageData(0, 0, this.canvas.width, this.canvas.height);
+                const data = imageData.data;
+                let totalBrightness = 0;
+                
+                for (let i = 0; i < data.length; i += 4) {
+                    const r = data[i];
+                    const g = data[i + 1];
+                    const b = data[i + 2];
+                    const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+                    totalBrightness += brightness;
+                }
+                
+                const avgBrightness = totalBrightness / (data.length / 4);
+                return Math.abs(avgBrightness - 128) / 128 * 10; // 简化的对比度值
+            }
+
+            suggestOptimalSettings() {
+                // 基于当前背景建议最佳设置
+                return {
+                    opacity: 0.4,
+                    renderMode: 'mixed',
+                    color: '#ffffff'
+                };
+            }
+        }
+
+        // 简单的俄罗斯方块游戏逻辑
+        class TetrisGame {
+            constructor(canvas) {
+                this.canvas = canvas;
+                this.ctx = canvas.getContext('2d');
+                this.board = this.createBoard(10, 20);
+                this.currentPiece = null;
+                this.ghostPiece = null;
+                this.score = 0;
+                this.level = 1;
+                this.lines = 0;
+                this.blockSize = 30;
+                
+                this.pieces = [
+                    { shape: [[1, 1, 1, 1]], color: '#00ffff' }, // I
+                    { shape: [[1, 1], [1, 1]], color: '#ffff00' }, // O
+                    { shape: [[0, 1, 0], [1, 1, 1]], color: '#800080' }, // T
+                    { shape: [[0, 1, 1], [1, 1, 0]], color: '#00ff00' }, // S
+                    { shape: [[1, 1, 0], [0, 1, 1]], color: '#ff0000' }, // Z
+                    { shape: [[1, 0, 0], [1, 1, 1]], color: '#ffa500' }, // L
+                    { shape: [[0, 0, 1], [1, 1, 1]], color: '#0000ff' }  // J
+                ];
+                
+                this.spawnPiece();
+            }
+
+            createBoard(width, height) {
+                return Array(height).fill().map(() => Array(width).fill(0));
+            }
+
+            spawnPiece() {
+                const pieceTemplate = this.pieces[Math.floor(Math.random() * this.pieces.length)];
+                this.currentPiece = {
+                    shape: pieceTemplate.shape,
+                    color: pieceTemplate.color,
+                    x: Math.floor(this.board[0].length / 2) - Math.floor(pieceTemplate.shape[0].length / 2),
+                    y: 0
+                };
+                this.updateGhostPiece();
+            }
+
+            updateGhostPiece() {
+                if (!this.currentPiece) return;
+                
+                this.ghostPiece = {
+                    shape: this.currentPiece.shape,
+                    x: this.currentPiece.x,
+                    y: this.currentPiece.y
+                };
+                
+                // 计算投影位置
+                while (this.isValidPosition(this.ghostPiece.x, this.ghostPiece.y + 1, this.ghostPiece.shape)) {
+                    this.ghostPiece.y++;
+                }
+            }
+
+            isValidPosition(x, y, shape) {
+                for (let row = 0; row < shape.length; row++) {
+                    for (let col = 0; col < shape[row].length; col++) {
+                        if (shape[row][col]) {
+                            const newX = x + col;
+                            const newY = y + row;
+                            
+                            if (newX < 0 || newX >= this.board[0].length || 
+                                newY >= this.board.length || 
+                                (newY >= 0 && this.board[newY][newX])) {
+                                return false;
+                            }
+                        }
+                    }
+                }
+                return true;
+            }
+
+            render(ghostRenderer, ghostConfig) {
+                // 清空画布
+                this.ctx.fillStyle = '#000';
+                this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+                
+                // 绘制网格
+                this.drawGrid();
+                
+                // 绘制已放置的方块
+                this.drawBoard();
+                
+                // 绘制投影方块
+                if (this.ghostPiece && ghostRenderer) {
+                    ghostRenderer.drawGhost(this.ghostPiece, this.ghostPiece, ghostConfig.getConfig());
+                }
+                
+                // 绘制当前方块
+                if (this.currentPiece) {
+                    this.drawPiece(this.currentPiece);
+                }
+            }
+
+            drawGrid() {
+                this.ctx.strokeStyle = '#333';
+                this.ctx.lineWidth = 1;
+                
+                for (let x = 0; x <= this.board[0].length; x++) {
+                    this.ctx.beginPath();
+                    this.ctx.moveTo(x * this.blockSize, 0);
+                    this.ctx.lineTo(x * this.blockSize, this.canvas.height);
+                    this.ctx.stroke();
+                }
+                
+                for (let y = 0; y <= this.board.length; y++) {
+                    this.ctx.beginPath();
+                    this.ctx.moveTo(0, y * this.blockSize);
+                    this.ctx.lineTo(this.canvas.width, y * this.blockSize);
+                    this.ctx.stroke();
+                }
+            }
+
+            drawBoard() {
+                for (let y = 0; y < this.board.length; y++) {
+                    for (let x = 0; x < this.board[y].length; x++) {
+                        if (this.board[y][x]) {
+                            this.ctx.fillStyle = this.board[y][x];
+                            this.ctx.fillRect(x * this.blockSize, y * this.blockSize, this.blockSize, this.blockSize);
+                        }
+                    }
+                }
+            }
+
+            drawPiece(piece) {
+                this.ctx.fillStyle = piece.color;
+                piece.shape.forEach((row, y) => {
+                    row.forEach((cell, x) => {
+                        if (cell) {
+                            this.ctx.fillRect(
+                                (piece.x + x) * this.blockSize,
+                                (piece.y + y) * this.blockSize,
+                                this.blockSize,
+                                this.blockSize
+                            );
+                        }
+                    });
+                });
+            }
+
+            movePiece(dx, dy) {
+                if (this.currentPiece && this.isValidPosition(this.currentPiece.x + dx, this.currentPiece.y + dy, this.currentPiece.shape)) {
+                    this.currentPiece.x += dx;
+                    this.currentPiece.y += dy;
+                    this.updateGhostPiece();
+                    return true;
+                }
+                return false;
+            }
+        }
+
+        // 主应用程序
+        class TetrisApp {
+            constructor() {
+                this.canvas = document.getElementById('gameCanvas');
+                this.previewCanvas = document.getElementById('previewCanvas');
+                
+                this.game = new TetrisGame(this.canvas);
+                this.ghostConfig = new GhostPieceConfig();
+                this.ghostRenderer = new GhostPieceRenderer(this.canvas);
+                this.userPrefs = new UserPreferences();
+                this.visibilityTester = new VisibilityTester(this.previewCanvas);
+                
+                this.initializeUI();
+                this.loadSavedConfig();
+                this.startGameLoop();
+            }
+
+            initializeUI() {
+                // 透明度控制
+                const opacitySlider = document.getElementById('opacity');
+                const opacityValue = document.getElementById('opacityValue');
+                opacitySlider.addEventListener('input', (e) => {
+                    const value = parseFloat(e.target.value);
+                    opacityValue.textContent = value;
+                    this.ghostConfig.updateConfig({ opacity: value });
+                    this.updatePreview();
+                });
+
+                // 渲染模式
+                document.getElementById('renderMode').addEventListener('change', (e) => {
+                    this.ghostConfig.updateConfig({ renderMode: e.target.value });
+                    this.updatePreview();
+                });
+
+                // 颜色选择
+                document.getElementById('ghostColor').addEventListener('change', (e) => {
+                    this.ghostConfig.updateConfig({ color: e.target.value });
+                    this.updatePreview();
+                });
+
+                // 轮廓宽度
+                const outlineSlider = document.getElementById('outlineWidth');
+                const outlineValue = document.getElementById('outlineWidthValue');
+                outlineSlider.addEventListener('input', (e) => {
+                    const value = parseInt(e.target.value);
+                    outlineValue.textContent = value;
+                    this.ghostConfig.updateConfig({ outlineWidth: value });
+                    this.updatePreview();
+                });
+
+                // 混合模式
+                document.getElementById('blendMode').addEventListener('change', (e) => {
+                    this.ghostConfig.updateConfig({ blendMode: e.target.value });
+                    this.updatePreview();
+                });
+
+                // 动画效果
+                document.getElementById('animation').addEventListener('change', (e) => {
+                    this.ghostConfig.updateConfig({ animation: e.target.value });
+                });
+
+                // 背景类型
+                document.getElementById('backgroundType').addEventListener('change', (e) => {
+                    this.updatePreview();
+                });
+
+                // 按钮事件
+                document.getElementById('applyConfig').addEventListener('click', () => {
+                    this.applyConfiguration();
+                });
+
+                document.getElementById('resetConfig').addEventListener('click', () => {
+                    this.resetConfiguration();
+                });
+
+                document.getElementById('saveConfig').addEventListener('click', () => {
+                    this.saveConfiguration();
+                });
+
+                document.getElementById('loadConfig').addEventListener('click', () => {
+                    this.loadConfiguration();
+                });
+
+                // 键盘控制
+                document.addEventListener('keydown', (e) => {
+                    switch (e.key) {
+                        case 'ArrowLeft':
+                            this.game.movePiece(-1, 0);
+                            break;
+                        case 'ArrowRight':
+                            this.game.movePiece(1, 0);
+                            break;
+                        case 'ArrowDown':
+                            this.game.movePiece(0, 1);
+                            break;
+                        case ' ':
+                            e.preventDefault();
+                            // 硬降落
+                            while (this.game.movePiece(0, 1)) {}
+                            break;
                     }
                 });
-            });
+            }
 
-            document.querySelectorAll('img[data-src]').forEach(img => {
-                imageObserver.observe(img);
-            });
+            updatePreview() {
+                const backgroundType = document.getElementById('backgroundType').value;
+                const ghostStyle = this.ghostConfig.getConfig();
+                this.visibilityTester.testVisibility(backgroundType, ghostStyle);
+            }
+
+            applyConfiguration() {
+                const config = this.ghostConfig.getConfig();
+                const validation = this.ghostConfig.validateConfig(config);
+                
+                if (validation.valid) {
+                    alert('配置已应用！');
+                } else {
+                    alert('配置错误：' + validation.errors.join(', '));
+                }
+            }
+
+            resetConfiguration() {
+                const defaultConfig = this.ghostConfig.resetToDefault();
+                this.updateUIFromConfig(defaultConfig);
+                this.updatePreview();
+                alert('配置已重置为默认值！');
+            }
+
+            saveConfiguration() {
+                const config = this.ghostConfig.getConfig();
+                const result = this.userPrefs.savePreferences(config);
+                
+                if (result.success) {
+                    alert('配置已保存！');
+                } else {
+                    alert('保存失败：' + result.error);
+                }
+            }
+
+            loadConfiguration() {
+                const config = this.userPrefs.loadPreferences();
+                if (config) {
+                    this.ghostConfig.updateConfig(config);
+                    this.updateUIFromConfig(config);
+                    this.updatePreview();
+                    alert('配置已加载！');
+                } else {
+                    alert('没有找到保存的配置！');
+                }
+            }
+
+            loadSavedConfig() {
+                const config = this.userPrefs.loadPreferences();
+                if (config) {
+                    this.ghostConfig.updateConfig(config);
+                    this.updateUIFromConfig(config);
+                }
+                this.updatePreview();
+            }
+
+            updateUIFromConfig(config) {
+                document.getElementById('opacity').value = config.opacity;
+                document.getElementById('opacityValue').textContent = config.opacity;
+                document.getElementById('renderMode').value = config.renderMode;
+                document.getElementById('ghostColor').value = config.color;
+                document.getElementById('outlineWidth').value = config.outlineWidth;
+                document.getElementById('outlineWidthValue').textContent = config.outlineWidth;
+                document.getElementById('blendMode').value = config.blendMode;
+                document.getElementById('animation').value = config.animation;
+            }
+
+            startGameLoop() {
+                const gameLoop = () => {
+                    this.ghostRenderer.updateAnimation();
+                    this.game.render(this.ghostRenderer, this.ghostConfig);
+                    
+                    // 更新游戏信息
+                    document.getElementById('score').textContent = this.game.score;
+                    document.getElementById('level').textContent = this.game.level;
+                    document.getElementById('lines').textContent = this.game.lines;
+                    
+                    requestAnimationFrame(gameLoop);
+                };
+                gameLoop();
+            }
         }
+
+        // 启动应用
+        document.addEventListener('DOMContentLoaded', () => {
+            new TetrisApp();
+        });
     </script>
 </body>
 </html>
