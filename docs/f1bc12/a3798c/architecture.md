@@ -1,28 +1,26 @@
 # 架构设计 - 游戏引擎核心架构开发
 
 ## 架构模式
-MVC + 观察者模式
+模块化游戏引擎架构
 
 ## 技术栈
 
 - **language**: JavaScript ES6+
 - **framework**: 原生JavaScript + HTML5 Canvas
-- **database**: LocalStorage
-- **others**: Web Audio API, requestAnimationFrame, CSS3
 
 ## 模块设计
 
 ### GameEngine
-职责: 游戏引擎核心，管理游戏循环、状态切换、全局配置
+职责: 游戏引擎核心类，管理游戏循环、状态切换和全局配置
 - start()
 - pause()
 - resume()
 - stop()
-- getState()
 - setState()
+- getState()
 
 ### GameLoop
-职责: 游戏主循环控制，使用requestAnimationFrame实现60FPS渲染
+职责: 游戏主循环管理，使用requestAnimationFrame实现60fps渲染
 - run()
 - pause()
 - resume()
@@ -30,59 +28,45 @@ MVC + 观察者模式
 - addUpdateCallback()
 
 ### StateManager
-职责: 游戏状态管理，处理MENU、PLAYING、PAUSED、GAMEOVER等状态
-- changeState()
-- getCurrentState()
-- registerStateHandler()
+职责: 游戏状态管理器，处理菜单、游戏中、暂停、结束等状态
+- setState()
+- getState()
+- onStateChange()
+- isState()
 
 ### EventSystem
-职责: 事件系统，实现观察者模式，处理游戏内各种事件通信
-- emit()
+职责: 事件系统，处理键盘输入、游戏事件的发布订阅
 - on()
 - off()
+- emit()
 - once()
-
-### InputManager
-职责: 输入管理器，处理键盘输入、防抖、按键映射
-- bindKey()
-- unbindKey()
-- isPressed()
-- enableDebounce()
-
-### Renderer
-职责: 渲染引擎，管理Canvas绘制、动画效果、UI元素渲染
-- render()
-- clear()
-- drawGrid()
-- drawTetromino()
-- drawUI()
+- removeAllListeners()
 
 ### GameBoard
-职责: 游戏区域模型，维护10x20网格状态、碰撞检测
+职责: 游戏区域管理，维护10x20网格状态和渲染
+- init()
+- render()
 - getCell()
 - setCell()
-- isValidPosition()
-- clearLines()
+- clearLine()
+- isLineFull()
 
-### TetrominoFactory
-职责: 方块工厂，生成7种Tetromino类型，管理方块队列
-- createTetromino()
-- getNext()
-- getPreview()
+### CanvasRenderer
+职责: Canvas渲染器，优化绘制性能和动画效果
+- init()
+- clear()
+- drawGrid()
+- drawBlock()
+- drawText()
+- resize()
 
 ## 数据流
-用户输入 -> InputManager -> EventSystem -> GameEngine -> StateManager -> GameLoop -> 业务逻辑更新 -> Renderer -> Canvas显示。事件系统作为中央总线，各模块通过事件进行解耦通信。
-
-## 风险点
-- Canvas渲染性能在低端设备上可能不佳
-- requestAnimationFrame在后台标签页会暂停，需要处理页面可见性
-- 键盘事件在不同浏览器的兼容性问题
-- 游戏循环时间精度可能影响游戏体验
+GameEngine作为核心控制器，通过StateManager管理游戏状态，GameLoop驱动每帧更新，EventSystem处理用户输入并触发相应事件，GameBoard维护游戏数据状态，CanvasRenderer负责将数据渲染到Canvas上。数据流向：用户输入 -> EventSystem -> GameEngine -> StateManager -> GameBoard -> CanvasRenderer -> 屏幕显示
 
 ## 关键决策
-- 采用MVC架构分离游戏逻辑、数据和视图
-- 使用观察者模式实现模块间解耦通信
-- 选择requestAnimationFrame而非setInterval确保流畅动画
-- 使用单例模式管理全局游戏引擎实例
-- 采用工厂模式生成Tetromino方块对象
-- 使用状态机模式管理游戏不同阶段
+- 采用模块化设计，每个核心组件独立封装便于测试和维护
+- 使用requestAnimationFrame替代setInterval实现流畅的60fps游戏循环
+- 实现发布订阅模式的事件系统，降低模块间耦合度
+- GameBoard使用二维数组存储游戏状态，便于碰撞检测和消行逻辑
+- CanvasRenderer采用双缓冲技术优化渲染性能
+- 在现有index.html基础上添加Canvas元素和游戏容器，保持现有页面结构
