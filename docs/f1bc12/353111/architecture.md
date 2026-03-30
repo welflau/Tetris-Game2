@@ -1,61 +1,49 @@
 # 架构设计 - Tetromino方块系统开发
 
 ## 架构模式
-MVC + 组件化架构
+模块化组件架构
 
 ## 技术栈
 
 - **language**: JavaScript ES6+
-- **framework**: 原生JavaScript + HTML5 Canvas
-- **database**: LocalStorage
-- **others**: CSS3, Web Audio API, requestAnimationFrame
+- **framework**: 原生JavaScript
 
 ## 模块设计
 
 ### TetrominoFactory
-职责: 负责创建和管理7种Tetromino方块类型的工厂类
-- createTetromino(type): Tetromino
-- getRandomTetromino(): Tetromino
-- getAllTypes(): Array<string>
+职责: 管理7种Tetromino方块类型的定义和创建
+- createTetromino(type)
+- getRandomTetromino()
+- getAllTypes()
 
-### Tetromino
-职责: 单个方块的数据结构和基础操作
-- rotate(direction): void
-- getShape(): Array<Array<number>>
-- getPosition(): {x: number, y: number}
-- setPosition(x, y): void
-- clone(): Tetromino
-
-### TetrominoRenderer
-职责: 负责方块的Canvas渲染和视觉效果
-- render(tetromino, context): void
-- renderPreview(tetromino, context): void
-- renderGhost(tetromino, context): void
+### TetrominoShape
+职责: 单个Tetromino方块的数据结构和基础操作
+- constructor(type, matrix, color)
+- getMatrix()
+- getColor()
+- getType()
+- clone()
 
 ### RotationSystem
-职责: 实现SRS旋转系统，处理旋转逻辑和碰撞修正
-- rotate(tetromino, direction, gameBoard): boolean
-- getWallKickData(type, rotation): Array<{x, y}>
-- validateRotation(shape, position, gameBoard): boolean
+职责: 处理方块旋转逻辑和旋转状态管理
+- rotateClockwise(matrix)
+- rotateCounterClockwise(matrix)
+- getRotationStates(type)
+- validateRotation(matrix, position, gameBoard)
 
-### TetrominoQueue
-职责: 管理方块队列，实现7-bag随机生成算法
-- getNext(): Tetromino
-- peek(count): Array<Tetromino>
-- refillBag(): void
+### TetrominoGenerator
+职责: 实现7-bag随机生成算法，确保方块分布均匀
+- getNext()
+- peek(count)
+- refillBag()
+- reset()
 
 ## 数据流
-TetrominoQueue生成方块序列 -> TetrominoFactory创建具体方块实例 -> Tetromino存储方块状态和形状数据 -> RotationSystem处理旋转变换 -> TetrominoRenderer将方块渲染到Canvas -> 游戏主循环更新方块位置和状态
-
-## 风险点
-- 旋转系统的SRS算法实现复杂度较高
-- Canvas渲染性能优化需要精细调试
-- 方块旋转时的边界检测和碰撞处理逻辑复杂
-- 不同方块类型的旋转中心点计算可能出错
+TetrominoFactory定义7种方块类型的矩阵数据和颜色 -> TetrominoGenerator使用7-bag算法生成随机序列 -> 创建TetrominoShape实例 -> RotationSystem处理旋转变换 -> 返回可用的方块对象给游戏引擎
 
 ## 关键决策
-- 采用标准SRS旋转系统确保游戏体验符合现代俄罗斯方块标准
-- 使用7-bag随机算法保证方块分布的公平性
-- 方块数据使用二维数组表示，便于旋转和碰撞检测
-- 分离渲染逻辑和游戏逻辑，提高代码可维护性
-- 使用工厂模式管理方块创建，便于扩展新的方块类型
+- 采用标准SRS(Super Rotation System)旋转系统确保兼容性
+- 使用4x4矩阵统一表示所有方块类型，简化数据结构
+- 实现7-bag随机算法避免连续出现相同方块
+- 方块颜色采用标准Tetris配色方案提升用户体验
+- 预生成旋转状态矩阵优化运行时性能
