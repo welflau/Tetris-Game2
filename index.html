@@ -83,57 +83,49 @@
             display: flex;
             gap: 2rem;
             background: var(--bg-glass);
-            backdrop-filter: blur(10px);
-            padding: 2rem;
+            backdrop-filter: blur(15px);
             border-radius: var(--border-radius-large);
-            border: 1px solid var(--border-glass);
+            padding: 2rem;
             box-shadow: var(--shadow-heavy);
-            max-width: 800px;
-            width: 100%;
+            border: 1px solid var(--border-glass);
+            max-width: 100%;
+            width: fit-content;
         }
 
-        /* 游戏区域 */
-        .game-area {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        /* 游戏画布 */
-        #gameCanvas {
-            border: 2px solid var(--border-glass);
+        /* 游戏面板 */
+        .game-board {
+            background: rgba(0, 0, 0, 0.8);
             border-radius: var(--border-radius);
-            background: rgba(0, 0, 0, 0.3);
-            box-shadow: var(--shadow-light);
+            padding: 1rem;
+            border: 2px solid var(--border-glass);
         }
 
         /* 侧边栏 */
         .sidebar {
-            width: 200px;
             display: flex;
             flex-direction: column;
-            gap: 1rem;
+            gap: 1.5rem;
+            min-width: 200px;
         }
 
         /* 信息面板 */
         .info-panel {
             background: var(--bg-glass);
-            padding: 1rem;
             border-radius: var(--border-radius);
+            padding: 1rem;
             border: 1px solid var(--border-glass);
             color: var(--text-light);
         }
 
         .info-panel h3 {
             margin-bottom: 0.5rem;
-            font-size: 1rem;
             color: var(--accent-color);
+            font-size: 1rem;
         }
 
         .info-panel p {
-            margin-bottom: 0.3rem;
-            font-size: 0.9rem;
+            font-size: 1.2rem;
+            font-weight: 600;
         }
 
         /* 控制按钮 */
@@ -144,10 +136,12 @@
         }
 
         .btn {
-            padding: 0.8rem 1.2rem;
+            background: var(--accent-color);
+            color: var(--text-light);
             border: none;
+            padding: 0.75rem 1.5rem;
             border-radius: var(--border-radius);
-            font-size: 0.9rem;
+            font-size: 1rem;
             font-weight: 600;
             cursor: pointer;
             transition: var(--transition);
@@ -155,53 +149,51 @@
             letter-spacing: 0.5px;
         }
 
-        .btn-primary {
-            background: var(--accent-color);
-            color: var(--text-light);
-        }
-
-        .btn-primary:hover {
+        .btn:hover {
             background: #45a049;
             transform: translateY(-2px);
             box-shadow: var(--shadow-light);
         }
 
-        .btn-secondary {
-            background: var(--warning-color);
-            color: var(--text-light);
+        .btn:active {
+            transform: translateY(0);
         }
 
-        .btn-secondary:hover {
-            background: #f57c00;
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-light);
-        }
-
-        .btn-danger {
+        .btn.danger {
             background: var(--danger-color);
-            color: var(--text-light);
         }
 
-        .btn-danger:hover {
-            background: #d32f2f;
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-light);
+        .btn.danger:hover {
+            background: #da190b;
+        }
+
+        .btn.warning {
+            background: var(--warning-color);
+        }
+
+        .btn.warning:hover {
+            background: #f57c00;
         }
 
         /* 设置面板 */
         .settings-panel {
             background: var(--bg-glass);
-            padding: 1rem;
             border-radius: var(--border-radius);
+            padding: 1rem;
             border: 1px solid var(--border-glass);
             color: var(--text-light);
+        }
+
+        .settings-panel h3 {
+            margin-bottom: 1rem;
+            color: var(--accent-color);
         }
 
         .setting-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 0.8rem;
+            margin-bottom: 0.5rem;
         }
 
         .setting-item label {
@@ -209,7 +201,7 @@
         }
 
         .setting-item input[type="range"] {
-            width: 80px;
+            width: 100px;
         }
 
         .setting-item input[type="checkbox"] {
@@ -225,12 +217,15 @@
             }
 
             .sidebar {
-                width: 100%;
+                min-width: auto;
             }
 
-            #gameCanvas {
-                width: 100%;
-                max-width: 300px;
+            header h1 {
+                font-size: 1.5rem;
+            }
+
+            main {
+                padding: 1rem;
             }
         }
 
@@ -241,7 +236,7 @@
             height: 20px;
             border: 3px solid rgba(255, 255, 255, 0.3);
             border-radius: 50%;
-            border-top-color: var(--accent-color);
+            border-top-color: var(--text-light);
             animation: spin 1s ease-in-out infinite;
         }
 
@@ -254,21 +249,18 @@
             position: fixed;
             top: 20px;
             right: 20px;
+            background: var(--accent-color);
+            color: var(--text-light);
             padding: 1rem 1.5rem;
             border-radius: var(--border-radius);
-            color: var(--text-light);
-            font-weight: 600;
+            box-shadow: var(--shadow-heavy);
             z-index: 1000;
-            transform: translateX(100%);
+            transform: translateX(400px);
             transition: transform 0.3s ease;
         }
 
         .notification.show {
             transform: translateX(0);
-        }
-
-        .notification.success {
-            background: var(--accent-color);
         }
 
         .notification.error {
@@ -287,27 +279,34 @@
 
     <main>
         <div class="game-container">
-            <div class="game-area">
+            <div class="game-board">
                 <canvas id="gameCanvas" width="300" height="600"></canvas>
             </div>
-
+            
             <div class="sidebar">
                 <div class="info-panel">
-                    <h3>游戏信息</h3>
-                    <p>分数: <span id="score">0</span></p>
-                    <p>等级: <span id="level">1</span></p>
-                    <p>行数: <span id="lines">0</span></p>
-                    <p>最高分: <span id="highScore">0</span></p>
+                    <h3>分数</h3>
+                    <p id="score">0</p>
                 </div>
-
+                
+                <div class="info-panel">
+                    <h3>等级</h3>
+                    <p id="level">1</p>
+                </div>
+                
+                <div class="info-panel">
+                    <h3>行数</h3>
+                    <p id="lines">0</p>
+                </div>
+                
                 <div class="controls">
-                    <button id="startBtn" class="btn btn-primary">开始游戏</button>
-                    <button id="pauseBtn" class="btn btn-secondary">暂停</button>
-                    <button id="resetBtn" class="btn btn-danger">重置</button>
-                    <button id="saveBtn" class="btn btn-primary">保存游戏</button>
-                    <button id="loadBtn" class="btn btn-secondary">加载游戏</button>
+                    <button class="btn" id="startBtn">开始游戏</button>
+                    <button class="btn warning" id="pauseBtn">暂停</button>
+                    <button class="btn danger" id="resetBtn">重置</button>
+                    <button class="btn" id="saveBtn">保存游戏</button>
+                    <button class="btn" id="loadBtn">加载游戏</button>
                 </div>
-
+                
                 <div class="settings-panel">
                     <h3>设置</h3>
                     <div class="setting-item">
@@ -319,17 +318,19 @@
                         <input type="range" id="volumeSlider" min="0" max="100" value="50">
                     </div>
                     <div class="setting-item">
-                        <label>自动保存</label>
-                        <input type="checkbox" id="autoSave" checked>
+                        <label>显示网格</label>
+                        <input type="checkbox" id="showGrid" checked>
                     </div>
-                    <button id="resetSettingsBtn" class="btn btn-danger" style="margin-top: 1rem;">重置设置</button>
+                    <div class="setting-item">
+                        <label>显示阴影</label>
+                        <input type="checkbox" id="showShadow" checked>
+                    </div>
+                    <button class="btn warning" id="resetSettingsBtn">重置设置</button>
                 </div>
-
+                
                 <div class="info-panel">
-                    <h3>排行榜</h3>
-                    <div id="highScoresList">
-                        <p>暂无记录</p>
-                    </div>
+                    <h3>最高分</h3>
+                    <p id="highScore">0</p>
                 </div>
             </div>
         </div>
@@ -344,19 +345,26 @@
 
             save(key, data) {
                 try {
-                    const serializedData = JSON.stringify(data);
+                    const serializedData = JSON.stringify({
+                        data: data,
+                        timestamp: Date.now(),
+                        version: '1.0.0'
+                    });
                     localStorage.setItem(this.prefix + key, serializedData);
                     return true;
                 } catch (error) {
-                    console.error('存储数据失败:', error);
+                    console.error('保存数据失败:', error);
                     return false;
                 }
             }
 
             load(key) {
                 try {
-                    const data = localStorage.getItem(this.prefix + key);
-                    return data ? JSON.parse(data) : null;
+                    const item = localStorage.getItem(this.prefix + key);
+                    if (!item) return null;
+                    
+                    const parsed = JSON.parse(item);
+                    return parsed.data;
                 } catch (error) {
                     console.error('加载数据失败:', error);
                     return null;
@@ -390,38 +398,37 @@
         }
 
         class DataValidator {
-            static validateGameState(data) {
+            validateGameState(data) {
                 if (!data || typeof data !== 'object') return false;
                 
                 const requiredFields = ['score', 'level', 'lines', 'board', 'currentPiece'];
                 return requiredFields.every(field => data.hasOwnProperty(field));
             }
 
-            static validateSettings(data) {
+            validateSettings(data) {
                 if (!data || typeof data !== 'object') return false;
                 
-                const validFields = {
+                const validSettings = {
                     soundEnabled: 'boolean',
                     volume: 'number',
-                    autoSave: 'boolean'
+                    showGrid: 'boolean',
+                    showShadow: 'boolean'
                 };
-
-                return Object.keys(validFields).every(field => {
-                    if (!data.hasOwnProperty(field)) return false;
-                    return typeof data[field] === validFields[field];
+                
+                return Object.entries(validSettings).every(([key, type]) => {
+                    return data.hasOwnProperty(key) && typeof data[key] === type;
                 });
             }
 
-            static validateScore(data) {
+            validateScore(data) {
                 if (!data || typeof data !== 'object') return false;
                 
-                return data.hasOwnProperty('score') && 
-                       data.hasOwnProperty('date') && 
-                       typeof data.score === 'number' && 
-                       data.score >= 0;
+                return typeof data.score === 'number' && 
+                       typeof data.playerName === 'string' && 
+                       typeof data.timestamp === 'number';
             }
 
-            static sanitizeData(data) {
+            sanitizeData(data) {
                 if (!data || typeof data !== 'object') return null;
                 
                 // 深拷贝并清理数据
@@ -430,158 +437,134 @@
                 // 移除可能的恶意属性
                 const dangerousKeys = ['__proto__', 'constructor', 'prototype'];
                 dangerousKeys.forEach(key => {
-                    if (sanitized.hasOwnProperty(key)) {
-                        delete sanitized[key];
-                    }
+                    delete sanitized[key];
                 });
                 
                 return sanitized;
             }
         }
 
-        class StorageEventHandler {
-            constructor() {
-                this.callbacks = [];
+        class MigrationManager {
+            constructor(storageManager) {
+                this.storageManager = storageManager;
+                this.currentVersion = '1.0.0';
             }
 
-            subscribe(callback) {
-                this.callbacks.push(callback);
+            checkVersion() {
+                const storedVersion = this.storageManager.load('version');
+                if (!storedVersion) {
+                    this.storageManager.save('version', this.currentVersion);
+                    return this.currentVersion;
+                }
+                return storedVersion;
             }
 
-            unsubscribe(callback) {
-                this.callbacks = this.callbacks.filter(cb => cb !== callback);
+            migrate(fromVersion, toVersion) {
+                console.log(`数据迁移: ${fromVersion} -> ${toVersion}`);
+                
+                // 这里可以添加具体的迁移逻辑
+                switch (fromVersion) {
+                    case '0.9.0':
+                        this.migrateFrom090();
+                        break;
+                    default:
+                        console.log('无需迁移');
+                }
+                
+                this.storageManager.save('version', toVersion);
             }
 
-            onDataSaved(key, data) {
-                this.notifyCallbacks('dataSaved', { key, data });
+            migrateFrom090() {
+                // 示例迁移逻辑
+                const oldSettings = this.storageManager.load('settings');
+                if (oldSettings && !oldSettings.hasOwnProperty('showShadow')) {
+                    oldSettings.showShadow = true;
+                    this.storageManager.save('settings', oldSettings);
+                }
             }
 
-            onDataLoaded(key, data) {
-                this.notifyCallbacks('dataLoaded', { key, data });
-            }
-
-            onStorageError(error) {
-                this.notifyCallbacks('storageError', { error });
-            }
-
-            notifyCallbacks(event, data) {
-                this.callbacks.forEach(callback => {
-                    try {
-                        callback(event, data);
-                    } catch (error) {
-                        console.error('事件回调执行失败:', error);
-                    }
-                });
+            getCurrentVersion() {
+                return this.currentVersion;
             }
         }
 
-        class GameDataService {
-            constructor(storageManager, eventHandler) {
-                this.storage = storageManager;
-                this.eventHandler = eventHandler;
+        class GameDataRepository {
+            constructor(storageManager, validator) {
+                this.storageManager = storageManager;
+                this.validator = validator;
             }
 
             saveGameState(gameState) {
-                if (!DataValidator.validateGameState(gameState)) {
-                    this.eventHandler.onStorageError(new Error('游戏状态数据无效'));
-                    return false;
-                }
-
-                const sanitizedData = DataValidator.sanitizeData(gameState);
-                const success = this.storage.save('gameState', sanitizedData);
-                
-                if (success) {
-                    this.eventHandler.onDataSaved('gameState', sanitizedData);
-                } else {
-                    this.eventHandler.onStorageError(new Error('保存游戏状态失败'));
+                const sanitizedData = this.validator.sanitizeData(gameState);
+                if (!this.validator.validateGameState(sanitizedData)) {
+                    throw new Error('游戏状态数据无效');
                 }
                 
-                return success;
+                return this.storageManager.save('gameState', sanitizedData);
             }
 
             loadGameState() {
-                const data = this.storage.load('gameState');
+                const data = this.storageManager.load('gameState');
+                if (!data) return null;
                 
-                if (data && DataValidator.validateGameState(data)) {
-                    this.eventHandler.onDataLoaded('gameState', data);
-                    return data;
+                const sanitizedData = this.validator.sanitizeData(data);
+                if (!this.validator.validateGameState(sanitizedData)) {
+                    console.warn('游戏状态数据损坏，已清除');
+                    this.storageManager.remove('gameState');
+                    return null;
                 }
                 
-                return null;
+                return sanitizedData;
             }
 
             saveProgress(progress) {
-                const success = this.storage.save('progress', progress);
-                
-                if (success) {
-                    this.eventHandler.onDataSaved('progress', progress);
-                }
-                
-                return success;
+                return this.storageManager.save('progress', progress);
             }
 
             loadProgress() {
-                const data = this.storage.load('progress');
-                
-                if (data) {
-                    this.eventHandler.onDataLoaded('progress', data);
-                }
-                
-                return data;
+                return this.storageManager.load('progress');
             }
 
             clearGameData() {
-                const keys = ['gameState', 'progress'];
-                let success = true;
-                
-                keys.forEach(key => {
-                    if (!this.storage.remove(key)) {
-                        success = false;
-                    }
-                });
-                
-                return success;
+                this.storageManager.remove('gameState');
+                this.storageManager.remove('progress');
+                return true;
             }
         }
 
-        class SettingsService {
-            constructor(storageManager, eventHandler) {
-                this.storage = storageManager;
-                this.eventHandler = eventHandler;
+        class SettingsRepository {
+            constructor(storageManager, validator) {
+                this.storageManager = storageManager;
+                this.validator = validator;
                 this.defaultSettings = {
                     soundEnabled: true,
                     volume: 50,
-                    autoSave: true
+                    showGrid: true,
+                    showShadow: true
                 };
             }
 
             saveSettings(settings) {
-                if (!DataValidator.validateSettings(settings)) {
-                    this.eventHandler.onStorageError(new Error('设置数据无效'));
-                    return false;
-                }
-
-                const sanitizedData = DataValidator.sanitizeData(settings);
-                const success = this.storage.save('settings', sanitizedData);
-                
-                if (success) {
-                    this.eventHandler.onDataSaved('settings', sanitizedData);
-                } else {
-                    this.eventHandler.onStorageError(new Error('保存设置失败'));
+                const sanitizedData = this.validator.sanitizeData(settings);
+                if (!this.validator.validateSettings(sanitizedData)) {
+                    throw new Error('设置数据无效');
                 }
                 
-                return success;
+                return this.storageManager.save('settings', sanitizedData);
             }
 
             loadSettings() {
-                const data = this.storage.load('settings');
+                const data = this.storageManager.load('settings');
+                if (!data) return this.defaultSettings;
                 
-                if (data && DataValidator.validateSettings(data)) {
-                    this.eventHandler.onDataLoaded('settings', data);
-                    return { ...this.defaultSettings, ...data };
+                const sanitizedData = this.validator.sanitizeData(data);
+                if (!this.validator.validateSettings(sanitizedData)) {
+                    console.warn('设置数据损坏，使用默认设置');
+                    return this.defaultSettings;
                 }
                 
-                return this.defaultSettings;
+                // 合并默认设置，确保所有必需的设置都存在
+                return { ...this.defaultSettings, ...sanitizedData };
             }
 
             updateSetting(key, value) {
@@ -590,290 +573,298 @@
                 return this.saveSettings(currentSettings);
             }
 
-            resetSettings() {
+            resetToDefault() {
                 return this.saveSettings(this.defaultSettings);
             }
         }
 
-        class ScoreService {
-            constructor(storageManager, eventHandler) {
-                this.storage = storageManager;
-                this.eventHandler = eventHandler;
-                this.maxHighScores = 10;
+        class ScoreRepository {
+            constructor(storageManager, validator) {
+                this.storageManager = storageManager;
+                this.validator = validator;
+                this.maxScores = 10;
             }
 
             saveScore(score) {
                 const scoreData = {
                     score: score,
-                    date: new Date().toISOString()
+                    playerName: 'Player',
+                    timestamp: Date.now()
                 };
-
-                if (!DataValidator.validateScore(scoreData)) {
-                    this.eventHandler.onStorageError(new Error('分数数据无效'));
-                    return false;
-                }
-
-                const success = this.storage.save('lastScore', scoreData);
                 
-                if (success) {
-                    this.eventHandler.onDataSaved('lastScore', scoreData);
-                    // 同时更新排行榜
-                    this.addHighScore(scoreData);
+                if (!this.validator.validateScore(scoreData)) {
+                    throw new Error('分数数据无效');
                 }
                 
-                return success;
+                return this.storageManager.save('currentScore', scoreData);
             }
 
             getHighScores() {
-                const data = this.storage.load('highScores');
-                return data || [];
+                const scores = this.storageManager.load('highScores') || [];
+                return scores.filter(score => this.validator.validateScore(score))
+                           .sort((a, b) => b.score - a.score)
+                           .slice(0, this.maxScores);
             }
 
-            addHighScore(scoreData) {
-                if (!DataValidator.validateScore(scoreData)) {
-                    return false;
+            addScore(playerName, score) {
+                const scoreData = {
+                    score: score,
+                    playerName: playerName,
+                    timestamp: Date.now()
+                };
+                
+                if (!this.validator.validateScore(scoreData)) {
+                    throw new Error('分数数据无效');
                 }
-
-                let highScores = this.getHighScores();
+                
+                const highScores = this.getHighScores();
                 highScores.push(scoreData);
                 
-                // 按分数降序排序
-                highScores.sort((a, b) => b.score - a.score);
+                const sortedScores = highScores.sort((a, b) => b.score - a.score)
+                                              .slice(0, this.maxScores);
                 
-                // 只保留前N名
-                highScores = highScores.slice(0, this.maxHighScores);
-                
-                const success = this.storage.save('highScores', highScores);
-                
-                if (success) {
-                    this.eventHandler.onDataSaved('highScores', highScores);
-                }
-                
-                return success;
+                return this.storageManager.save('highScores', sortedScores);
             }
 
             clearScores() {
-                const keys = ['lastScore', 'highScores'];
-                let success = true;
-                
-                keys.forEach(key => {
-                    if (!this.storage.remove(key)) {
-                        success = false;
-                    }
-                });
-                
-                return success;
-            }
-
-            getHighestScore() {
-                const highScores = this.getHighScores();
-                return highScores.length > 0 ? highScores[0].score : 0;
+                this.storageManager.remove('highScores');
+                this.storageManager.remove('currentScore');
+                return true;
             }
         }
 
         // 通知系统
         class NotificationManager {
-            static show(message, type = 'success', duration = 3000) {
-                const notification = document.createElement('div');
-                notification.className = `notification ${type}`;
-                notification.textContent = message;
+            constructor() {
+                this.container = null;
+                this.createContainer();
+            }
+
+            createContainer() {
+                this.container = document.createElement('div');
+                this.container.className = 'notification';
+                document.body.appendChild(this.container);
+            }
+
+            show(message, type = 'info', duration = 3000) {
+                this.container.textContent = message;
+                this.container.className = `notification ${type}`;
                 
-                document.body.appendChild(notification);
-                
-                // 显示动画
+                // 显示通知
                 setTimeout(() => {
-                    notification.classList.add('show');
-                }, 100);
+                    this.container.classList.add('show');
+                }, 10);
                 
                 // 自动隐藏
                 setTimeout(() => {
-                    notification.classList.remove('show');
-                    setTimeout(() => {
-                        document.body.removeChild(notification);
-                    }, 300);
+                    this.container.classList.remove('show');
                 }, duration);
+            }
+
+            success(message, duration) {
+                this.show(message, 'success', duration);
+            }
+
+            error(message, duration) {
+                this.show(message, 'error', duration);
+            }
+
+            warning(message, duration) {
+                this.show(message, 'warning', duration);
             }
         }
 
-        // 简单的俄罗斯方块游戏逻辑
+        // 游戏主类
         class TetrisGame {
             constructor() {
                 this.canvas = document.getElementById('gameCanvas');
                 this.ctx = this.canvas.getContext('2d');
                 this.blockSize = 30;
-                this.cols = 10;
-                this.rows = 20;
+                this.boardWidth = 10;
+                this.boardHeight = 20;
                 
+                // 初始化数据持久化系统
+                this.storageManager = new StorageManager();
+                this.validator = new DataValidator();
+                this.migrationManager = new MigrationManager(this.storageManager);
+                this.gameDataRepo = new GameDataRepository(this.storageManager, this.validator);
+                this.settingsRepo = new SettingsRepository(this.storageManager, this.validator);
+                this.scoreRepo = new ScoreRepository(this.storageManager, this.validator);
+                this.notificationManager = new NotificationManager();
+                
+                // 游戏状态
+                this.board = this.createEmptyBoard();
                 this.score = 0;
                 this.level = 1;
                 this.lines = 0;
-                this.board = this.createBoard();
-                this.currentPiece = null;
                 this.gameRunning = false;
                 this.gamePaused = false;
                 
-                this.initializeServices();
+                // 加载设置和数据
                 this.loadSettings();
+                this.loadHighScore();
+                
+                // 检查数据版本
+                this.checkDataVersion();
+                
+                this.initializeEventListeners();
                 this.updateDisplay();
             }
 
-            initializeServices() {
-                this.storageManager = new StorageManager();
-                this.eventHandler = new StorageEventHandler();
-                this.gameDataService = new GameDataService(this.storageManager, this.eventHandler);
-                this.settingsService = new SettingsService(this.storageManager, this.eventHandler);
-                this.scoreService = new ScoreService(this.storageManager, this.eventHandler);
-                
-                // 订阅存储事件
-                this.eventHandler.subscribe((event, data) => {
-                    switch (event) {
-                        case 'dataSaved':
-                            NotificationManager.show(`数据已保存: ${data.key}`, 'success');
-                            break;
-                        case 'dataLoaded':
-                            NotificationManager.show(`数据已加载: ${data.key}`, 'success');
-                            break;
-                        case 'storageError':
-                            NotificationManager.show(`存储错误: ${data.error.message}`, 'error');
-                            break;
-                    }
-                });
+            createEmptyBoard() {
+                return Array(this.boardHeight).fill().map(() => Array(this.boardWidth).fill(0));
             }
 
-            createBoard() {
-                return Array(this.rows).fill().map(() => Array(this.cols).fill(0));
+            checkDataVersion() {
+                const currentVersion = this.migrationManager.checkVersion();
+                const systemVersion = this.migrationManager.getCurrentVersion();
+                
+                if (currentVersion !== systemVersion) {
+                    this.migrationManager.migrate(currentVersion, systemVersion);
+                    this.notificationManager.success('数据已更新到最新版本');
+                }
             }
 
             loadSettings() {
-                const settings = this.settingsService.loadSettings();
-                
-                document.getElementById('soundEnabled').checked = settings.soundEnabled;
-                document.getElementById('volumeSlider').value = settings.volume;
-                document.getElementById('autoSave').checked = settings.autoSave;
-                
-                this.settings = settings;
+                try {
+                    const settings = this.settingsRepo.loadSettings();
+                    
+                    // 应用设置到UI
+                    document.getElementById('soundEnabled').checked = settings.soundEnabled;
+                    document.getElementById('volumeSlider').value = settings.volume;
+                    document.getElementById('showGrid').checked = settings.showGrid;
+                    document.getElementById('showShadow').checked = settings.showShadow;
+                    
+                    this.settings = settings;
+                } catch (error) {
+                    console.error('加载设置失败:', error);
+                    this.notificationManager.error('设置加载失败，使用默认设置');
+                }
             }
 
             saveSettings() {
-                const settings = {
-                    soundEnabled: document.getElementById('soundEnabled').checked,
-                    volume: parseInt(document.getElementById('volumeSlider').value),
-                    autoSave: document.getElementById('autoSave').checked
-                };
-                
-                this.settingsService.saveSettings(settings);
-                this.settings = settings;
+                try {
+                    const settings = {
+                        soundEnabled: document.getElementById('soundEnabled').checked,
+                        volume: parseInt(document.getElementById('volumeSlider').value),
+                        showGrid: document.getElementById('showGrid').checked,
+                        showShadow: document.getElementById('showShadow').checked
+                    };
+                    
+                    this.settingsRepo.saveSettings(settings);
+                    this.settings = settings;
+                    this.notificationManager.success('设置已保存');
+                } catch (error) {
+                    console.error('保存设置失败:', error);
+                    this.notificationManager.error('设置保存失败');
+                }
+            }
+
+            loadHighScore() {
+                try {
+                    const highScores = this.scoreRepo.getHighScores();
+                    const highScore = highScores.length > 0 ? highScores[0].score : 0;
+                    document.getElementById('highScore').textContent = highScore;
+                } catch (error) {
+                    console.error('加载最高分失败:', error);
+                }
             }
 
             saveGame() {
-                const gameState = {
-                    score: this.score,
-                    level: this.level,
-                    lines: this.lines,
-                    board: this.board,
-                    currentPiece: this.currentPiece,
-                    gameRunning: this.gameRunning,
-                    gamePaused: this.gamePaused
-                };
-                
-                return this.gameDataService.saveGameState(gameState);
+                try {
+                    const gameState = {
+                        board: this.board,
+                        score: this.score,
+                        level: this.level,
+                        lines: this.lines,
+                        currentPiece: null, // 简化处理
+                        gameRunning: this.gameRunning,
+                        gamePaused: this.gamePaused
+                    };
+                    
+                    this.gameDataRepo.saveGameState(gameState);
+                    this.notificationManager.success('游戏已保存');
+                } catch (error) {
+                    console.error('保存游戏失败:', error);
+                    this.notificationManager.error('游戏保存失败');
+                }
             }
 
             loadGame() {
-                const gameState = this.gameDataService.loadGameState();
-                
-                if (gameState) {
-                    this.score = gameState.score || 0;
-                    this.level = gameState.level || 1;
-                    this.lines = gameState.lines || 0;
-                    this.board = gameState.board || this.createBoard();
-                    this.currentPiece = gameState.currentPiece;
-                    this.gameRunning = gameState.gameRunning || false;
-                    this.gamePaused = gameState.gamePaused || false;
+                try {
+                    const gameState = this.gameDataRepo.loadGameState();
+                    if (!gameState) {
+                        this.notificationManager.warning('没有找到保存的游戏');
+                        return;
+                    }
+                    
+                    this.board = gameState.board;
+                    this.score = gameState.score;
+                    this.level = gameState.level;
+                    this.lines = gameState.lines;
+                    this.gameRunning = gameState.gameRunning;
+                    this.gamePaused = gameState.gamePaused;
                     
                     this.updateDisplay();
-                    this.draw();
+                    this.notificationManager.success('游戏已加载');
+                } catch (error) {
+                    console.error('加载游戏失败:', error);
+                    this.notificationManager.error('游戏加载失败');
+                }
+            }
+
+            updateScore(points) {
+                this.score += points;
+                
+                // 保存当前分数
+                try {
+                    this.scoreRepo.saveScore(this.score);
                     
-                    return true;
+                    // 检查是否创造新纪录
+                    const highScores = this.scoreRepo.getHighScores();
+                    const currentHighScore = highScores.length > 0 ? highScores[0].score : 0;
+                    
+                    if (this.score > currentHighScore) {
+                        this.scoreRepo.addScore('Player', this.score);
+                        this.loadHighScore();
+                        this.notificationManager.success('新纪录！');
+                    }
+                } catch (error) {
+                    console.error('保存分数失败:', error);
                 }
                 
-                return false;
+                this.updateDisplay();
+            }
+
+            resetGame() {
+                this.board = this.createEmptyBoard();
+                this.score = 0;
+                this.level = 1;
+                this.lines = 0;
+                this.gameRunning = false;
+                this.gamePaused = false;
+                
+                this.updateDisplay();
+                this.draw();
+                
+                this.notificationManager.success('游戏已重置');
+            }
+
+            resetSettings() {
+                try {
+                    this.settingsRepo.resetToDefault();
+                    this.loadSettings();
+                    this.notificationManager.success('设置已重置为默认值');
+                } catch (error) {
+                    console.error('重置设置失败:', error);
+                    this.notificationManager.error('设置重置失败');
+                }
             }
 
             updateDisplay() {
                 document.getElementById('score').textContent = this.score;
                 document.getElementById('level').textContent = this.level;
                 document.getElementById('lines').textContent = this.lines;
-                document.getElementById('highScore').textContent = this.scoreService.getHighestScore();
-                
-                this.updateHighScoresList();
-            }
-
-            updateHighScoresList() {
-                const highScores = this.scoreService.getHighScores();
-                const listElement = document.getElementById('highScoresList');
-                
-                if (highScores.length === 0) {
-                    listElement.innerHTML = '<p>暂无记录</p>';
-                } else {
-                    listElement.innerHTML = highScores.slice(0, 5).map((score, index) => 
-                        `<p>${index + 1}. ${score.score}分</p>`
-                    ).join('');
-                }
-            }
-
-            start() {
-                this.gameRunning = true;
-                this.gamePaused = false;
-                this.draw();
-                
-                if (this.settings.autoSave) {
-                    this.autoSaveInterval = setInterval(() => {
-                        this.saveGame();
-                    }, 30000); // 每30秒自动保存
-                }
-            }
-
-            pause() {
-                this.gamePaused = !this.gamePaused;
-                
-                if (this.gamePaused) {
-                    document.getElementById('pauseBtn').textContent = '继续';
-                } else {
-                    document.getElementById('pauseBtn').textContent = '暂停';
-                }
-            }
-
-            reset() {
-                this.score = 0;
-                this.level = 1;
-                this.lines = 0;
-                this.board = this.createBoard();
-                this.currentPiece = null;
-                this.gameRunning = false;
-                this.gamePaused = false;
-                
-                if (this.autoSaveInterval) {
-                    clearInterval(this.autoSaveInterval);
-                }
-                
-                document.getElementById('pauseBtn').textContent = '暂停';
-                this.updateDisplay();
-                this.draw();
-            }
-
-            gameOver() {
-                this.gameRunning = false;
-                
-                if (this.autoSaveInterval) {
-                    clearInterval(this.autoSaveInterval);
-                }
-                
-                // 保存分数
-                this.scoreService.saveScore(this.score);
-                this.updateDisplay();
-                
-                NotificationManager.show(`游戏结束！得分: ${this.score}`, 'warning', 5000);
             }
 
             draw() {
@@ -881,127 +872,190 @@
                 this.ctx.fillStyle = '#000';
                 this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
                 
-                // 绘制网格
+                // 绘制网格（如果启用）
+                if (this.settings && this.settings.showGrid) {
+                    this.drawGrid();
+                }
+                
+                // 绘制游戏板
+                this.drawBoard();
+            }
+
+            drawGrid() {
                 this.ctx.strokeStyle = '#333';
                 this.ctx.lineWidth = 1;
                 
-                for (let i = 0; i <= this.cols; i++) {
+                // 垂直线
+                for (let x = 0; x <= this.boardWidth; x++) {
                     this.ctx.beginPath();
-                    this.ctx.moveTo(i * this.blockSize, 0);
-                    this.ctx.lineTo(i * this.blockSize, this.canvas.height);
+                    this.ctx.moveTo(x * this.blockSize, 0);
+                    this.ctx.lineTo(x * this.blockSize, this.canvas.height);
                     this.ctx.stroke();
                 }
                 
-                for (let i = 0; i <= this.rows; i++) {
+                // 水平线
+                for (let y = 0; y <= this.boardHeight; y++) {
                     this.ctx.beginPath();
-                    this.ctx.moveTo(0, i * this.blockSize);
-                    this.ctx.lineTo(this.canvas.width, i * this.blockSize);
+                    this.ctx.moveTo(0, y * this.blockSize);
+                    this.ctx.lineTo(this.canvas.width, y * this.blockSize);
                     this.ctx.stroke();
                 }
-                
-                // 绘制已放置的方块
-                for (let row = 0; row < this.rows; row++) {
-                    for (let col = 0; col < this.cols; col++) {
-                        if (this.board[row][col]) {
-                            this.ctx.fillStyle = '#4CAF50';
+            }
+
+            drawBoard() {
+                for (let y = 0; y < this.boardHeight; y++) {
+                    for (let x = 0; x < this.boardWidth; x++) {
+                        if (this.board[y][x]) {
+                            this.ctx.fillStyle = this.getBlockColor(this.board[y][x]);
                             this.ctx.fillRect(
-                                col * this.blockSize + 1,
-                                row * this.blockSize + 1,
-                                this.blockSize - 2,
-                                this.blockSize - 2
+                                x * this.blockSize,
+                                y * this.blockSize,
+                                this.blockSize,
+                                this.blockSize
+                            );
+                            
+                            // 绘制边框
+                            this.ctx.strokeStyle = '#fff';
+                            this.ctx.lineWidth = 2;
+                            this.ctx.strokeRect(
+                                x * this.blockSize,
+                                y * this.blockSize,
+                                this.blockSize,
+                                this.blockSize
                             );
                         }
                     }
                 }
             }
-        }
 
-        // 初始化游戏和事件监听
-        document.addEventListener('DOMContentLoaded', function() {
-            const game = new TetrisGame();
-            
-            // 按钮事件监听
-            document.getElementById('startBtn').addEventListener('click', () => {
-                game.start();
-            });
-            
-            document.getElementById('pauseBtn').addEventListener('click', () => {
-                game.pause();
-            });
-            
-            document.getElementById('resetBtn').addEventListener('click', () => {
-                if (confirm('确定要重置游戏吗？')) {
-                    game.reset();
-                }
-            });
-            
-            document.getElementById('saveBtn').addEventListener('click', () => {
-                game.saveGame();
-            });
-            
-            document.getElementById('loadBtn').addEventListener('click', () => {
-                if (game.loadGame()) {
-                    NotificationManager.show('游戏加载成功！', 'success');
-                } else {
-                    NotificationManager.show('没有找到保存的游戏', 'warning');
-                }
-            });
-            
-            document.getElementById('resetSettingsBtn').addEventListener('click', () => {
-                if (confirm('确定要重置所有设置吗？')) {
-                    game.settingsService.resetSettings();
-                    game.loadSettings();
-                    NotificationManager.show('设置已重置', 'success');
-                }
-            });
-            
-            // 设置变更监听
-            document.getElementById('soundEnabled').addEventListener('change', () => {
-                game.saveSettings();
-            });
-            
-            document.getElementById('volumeSlider').addEventListener('input', () => {
-                game.saveSettings();
-            });
-            
-            document.getElementById('autoSave').addEventListener('change', () => {
-                game.saveSettings();
-            });
-            
-            // 键盘事件监听
-            document.addEventListener('keydown', (e) => {
-                if (!game.gameRunning || game.gamePaused) return;
+            getBlockColor(blockType) {
+                const colors = {
+                    1: '#ff0000', // 红色
+                    2: '#00ff00', // 绿色
+                    3: '#0000ff', // 蓝色
+                    4: '#ffff00', // 黄色
+                    5: '#ff00ff', // 紫色
+                    6: '#00ffff', // 青色
+                    7: '#ffa500'  // 橙色
+                };
+                return colors[blockType] || '#ffffff';
+            }
+
+            initializeEventListeners() {
+                // 游戏控制按钮
+                document.getElementById('startBtn').addEventListener('click', () => {
+                    this.startGame();
+                });
                 
-                switch(e.key) {
+                document.getElementById('pauseBtn').addEventListener('click', () => {
+                    this.togglePause();
+                });
+                
+                document.getElementById('resetBtn').addEventListener('click', () => {
+                    this.resetGame();
+                });
+                
+                document.getElementById('saveBtn').addEventListener('click', () => {
+                    this.saveGame();
+                });
+                
+                document.getElementById('loadBtn').addEventListener('click', () => {
+                    this.loadGame();
+                });
+                
+                document.getElementById('resetSettingsBtn').addEventListener('click', () => {
+                    this.resetSettings();
+                });
+                
+                // 设置变更监听
+                const settingInputs = ['soundEnabled', 'volumeSlider', 'showGrid', 'showShadow'];
+                settingInputs.forEach(id => {
+                    document.getElementById(id).addEventListener('change', () => {
+                        this.saveSettings();
+                        this.draw(); // 重绘以应用视觉设置
+                    });
+                });
+                
+                // 键盘控制
+                document.addEventListener('keydown', (e) => {
+                    this.handleKeyPress(e);
+                });
+            }
+
+            startGame() {
+                if (!this.gameRunning) {
+                    this.gameRunning = true;
+                    this.gamePaused = false;
+                    this.notificationManager.success('游戏开始！');
+                    this.gameLoop();
+                }
+            }
+
+            togglePause() {
+                if (this.gameRunning) {
+                    this.gamePaused = !this.gamePaused;
+                    const message = this.gamePaused ? '游戏已暂停' : '游戏继续';
+                    this.notificationManager.success(message);
+                    
+                    if (!this.gamePaused) {
+                        this.gameLoop();
+                    }
+                }
+            }
+
+            gameLoop() {
+                if (!this.gameRunning || this.gamePaused) return;
+                
+                // 简单的游戏循环逻辑
+                this.draw();
+                
+                setTimeout(() => {
+                    this.gameLoop();
+                }, 1000 / (this.level + 1));
+            }
+
+            handleKeyPress(e) {
+                if (!this.gameRunning || this.gamePaused) return;
+                
+                switch (e.code) {
                     case 'ArrowLeft':
-                        // 左移逻辑
+                        // 向左移动
                         break;
                     case 'ArrowRight':
-                        // 右移逻辑
+                        // 向右移动
                         break;
                     case 'ArrowDown':
-                        // 下移逻辑
+                        // 快速下降
                         break;
                     case 'ArrowUp':
-                        // 旋转逻辑
+                    case 'Space':
+                        // 旋转
                         break;
-                    case ' ':
-                        // 快速下落
-                        e.preventDefault();
+                    case 'KeyP':
+                        this.togglePause();
                         break;
-                    case 'p':
-                    case 'P':
-                        game.pause();
+                    case 'KeyS':
+                        this.saveGame();
+                        break;
+                    case 'KeyL':
+                        this.loadGame();
                         break;
                 }
-            });
+            }
+        }
+
+        // 初始化游戏
+        document.addEventListener('DOMContentLoaded', () => {
+            const game = new TetrisGame();
             
-            // 页面卸载时自动保存
-            window.addEventListener('beforeunload', () => {
-                if (game.gameRunning && game.settings.autoSave) {
-                    game.saveGame();
-                }
-            });
+            // 添加一些测试数据用于演示
+            setTimeout(() => {
+                // 模拟一些游戏数据
+                game.board[19] = [1, 1, 0, 0, 0, 0, 0, 0, 1, 1];
+                game.board[18] = [1, 1, 1, 0, 0, 0, 0, 1, 1, 1];
+                game.updateScore(100);
+                game.draw();
+            }, 1000);
         });
     </script>
 </body>
