@@ -1,7 +1,7 @@
 # 架构设计 - 排行榜功能开发
 
 ## 架构模式
-MVC模式结合组件化设计
+MVC + 模块化组件架构
 
 ## 技术栈
 
@@ -12,60 +12,64 @@ MVC模式结合组件化设计
 
 ## 模块设计
 
-### LeaderboardModel
-职责: 管理排行榜数据，包括分数存储、排序、历史记录管理
-- saveScore(playerName, score, level, lines)
+### LeaderboardManager
+职责: 排行榜核心管理器，负责分数记录、排名计算和数据持久化
+- addScore(playerName, score, level, lines)
 - getTopScores(limit)
-- getAllScores()
 - clearHistory()
 - exportData()
 - importData(data)
 
-### LeaderboardView
-职责: 排行榜界面渲染和用户交互处理
-- render(scores)
-- showModal()
-- hideModal()
-- updateDisplay()
-- handleNameInput()
-- showConfirmDialog(message)
+### ScoreRecord
+职责: 分数记录数据模型，封装单条游戏记录
+- constructor(playerName, score, level, lines, timestamp)
+- toJSON()
+- fromJSON(data)
+- getFormattedDate()
 
-### LeaderboardController
-职责: 协调排行榜的业务逻辑和界面交互
-- submitScore(score, level, lines)
-- displayLeaderboard()
-- handleClearHistory()
-- handleExportImport()
+### LeaderboardUI
+职责: 排行榜界面组件，负责排行榜的显示和交互
+- render()
+- show()
+- hide()
+- updateDisplay(scores)
+- bindEvents()
+
+### GameOverDialog
+职责: 游戏结束对话框，处理玩家姓名输入和分数提交
+- show(finalScore, level, lines)
+- hide()
+- submitScore()
 - validatePlayerName(name)
 
-### ScoreFormatter
-职责: 分数格式化和排名计算工具类
-- formatScore(score)
-- formatDate(timestamp)
-- calculateRank(score, allScores)
-- generateScoreId()
+### StorageService
+职责: 本地存储服务，统一管理LocalStorage操作
+- saveScores(scores)
+- loadScores()
+- saveSettings(settings)
+- loadSettings()
+- clearAll()
 
-### StorageManager
-职责: LocalStorage数据持久化管理
-- save(key, data)
-- load(key)
-- remove(key)
-- clear()
-- isStorageAvailable()
+### AnimationHelper
+职责: 排行榜动画效果辅助类，提供平滑的UI动画
+- fadeIn(element, duration)
+- slideDown(element, duration)
+- highlightNewRecord(element)
+- countUpAnimation(element, targetValue)
 
 ## 数据流
-游戏结束时GameController调用LeaderboardController.submitScore() -> LeaderboardController验证并调用LeaderboardModel.saveScore() -> LeaderboardModel通过StorageManager保存到LocalStorage -> LeaderboardView渲染更新后的排行榜 -> 用户可通过LeaderboardView查看、清除或导出数据
+游戏结束时触发GameOverDialog显示 -> 玩家输入姓名并提交 -> LeaderboardManager处理分数记录和排名计算 -> StorageService保存到LocalStorage -> LeaderboardUI更新显示 -> AnimationHelper提供视觉反馈。查看排行榜时，LeaderboardUI从LeaderboardManager获取数据并渲染，支持分页和筛选功能。
 
 ## 风险点
 - LocalStorage容量限制可能影响大量历史记录存储
-- 浏览器兼容性问题，特别是较老版本浏览器的LocalStorage支持
-- 用户恶意输入可能导致XSS攻击
-- 数据导入导出功能的文件格式兼容性问题
+- 浏览器兼容性问题，特别是较老版本的移动浏览器
+- 用户可能通过开发者工具修改本地存储数据
+- 排行榜动画效果在低性能设备上可能卡顿
 
 ## 关键决策
-- 使用LocalStorage而非IndexedDB以保持轻量级和简单性
-- 采用JSON格式存储排行榜数据，便于序列化和反序列化
-- 实现分页显示机制，默认显示前10名，支持查看更多历史记录
-- 添加数据验证和清理机制，防止存储损坏数据
-- 支持数据导出为JSON文件，便于用户备份和迁移
-- 使用时间戳作为分数记录的唯一标识，支持同分数排序
+- 使用LocalStorage而非IndexedDB，简化实现并满足轻量级需求
+- 采用JSON格式存储分数数据，便于调试和数据迁移
+- 实现客户端排序算法，避免服务器依赖
+- 设计响应式排行榜界面，适配移动端和桌面端
+- 添加数据导入导出功能，支持用户备份游戏记录
+- 使用CSS3动画配合JavaScript实现流畅的视觉效果
