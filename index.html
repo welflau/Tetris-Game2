@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Hello World - 一个简单的问候页面">
-    <meta name="keywords" content="Hello World, 问候, 欢迎">
+    <meta name="description" content="游戏状态管理系统 - 一个完整的游戏状态管理演示">
+    <meta name="keywords" content="游戏, 状态管理, JavaScript, Canvas">
     <meta name="author" content="AI开发系统">
-    <title>Hello World</title>
+    <title>游戏状态管理系统</title>
     <style>
         /* 重置样式 */
         * {
@@ -29,6 +29,7 @@
             min-height: 100vh;
             display: flex;
             flex-direction: column;
+            overflow: hidden;
         }
 
         /* 页面头部 */
@@ -38,6 +39,7 @@
             padding: 1rem 0;
             text-align: center;
             border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            z-index: 1000;
         }
 
         header h1 {
@@ -53,463 +55,756 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 2rem;
+            padding: 1rem;
+            position: relative;
         }
 
-        /* 内容容器 - 使用Flexbox布局管理 */
-        .container {
+        /* 游戏容器 */
+        .game-container {
             background: rgba(255, 255, 255, 0.95);
             border-radius: 20px;
-            padding: 3rem 2rem;
+            padding: 2rem;
             text-align: center;
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.2);
-            max-width: 600px;
+            max-width: 800px;
             width: 100%;
-            transform: translateY(0);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            display: flex;
-            flex-direction: column;
-            gap: 1.5rem;
+            position: relative;
         }
 
-        .container:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
-        }
-
-        /* 文字显示组件 - 统一样式类 */
-        .text-display {
-            padding: 1rem;
+        /* 游戏画布 */
+        #gameCanvas {
+            border: 2px solid #333;
             border-radius: 10px;
-            background: rgba(102, 126, 234, 0.05);
-            border: 1px solid rgba(102, 126, 234, 0.1);
-            transition: all 0.3s ease;
+            background: #000;
+            display: block;
+            margin: 0 auto 1rem;
         }
 
-        .text-display:hover {
-            background: rgba(102, 126, 234, 0.1);
-            transform: scale(1.02);
+        /* 控制按钮 */
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-bottom: 1rem;
         }
 
-        /* 主标题样式 */
-        .main-title {
-            font-size: 3rem;
-            color: #667eea;
-            margin: 0;
-            font-weight: 700;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        /* AAA文字样式 - 复用主标题样式 */
-        .aaa-text {
-            font-size: 2.5rem;
-            color: #764ba2;
-            margin: 0;
-            font-weight: 600;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
-            letter-spacing: 3px;
-        }
-
-        /* 副标题 */
-        .subtitle {
-            font-size: 1.2rem;
-            color: #666;
-            margin: 0;
-            font-weight: 300;
-        }
-
-        /* 描述文本 */
-        .description {
-            font-size: 1rem;
-            color: #777;
-            line-height: 1.8;
-            margin: 0;
-        }
-
-        /* 按钮样式 */
-        .welcome-btn {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
+        .btn {
+            padding: 0.8rem 1.5rem;
             border: none;
-            padding: 1rem 2rem;
-            border-radius: 50px;
+            border-radius: 25px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
             font-size: 1rem;
             cursor: pointer;
             transition: all 0.3s ease;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            font-weight: 600;
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
         }
 
-        .welcome-btn:hover {
+        .btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
         }
 
-        .welcome-btn:active {
-            transform: translateY(0);
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
         }
 
-        /* 页脚 */
-        footer {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            padding: 1rem 0;
+        .btn.danger {
+            background: linear-gradient(45deg, #ff6b6b, #ee5a52);
+        }
+
+        .btn.success {
+            background: linear-gradient(45deg, #51cf66, #40c057);
+        }
+
+        /* 状态显示 */
+        .status-display {
+            background: rgba(0, 0, 0, 0.1);
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+        }
+
+        .status-item {
+            display: inline-block;
+            margin: 0 1rem;
+            font-weight: bold;
+        }
+
+        /* 遮罩层 */
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            border-radius: 20px;
+            z-index: 100;
+        }
+
+        .overlay.show {
+            display: flex;
+        }
+
+        .overlay-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
             text-align: center;
-            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            max-width: 400px;
+            width: 90%;
         }
 
-        footer p {
-            color: rgba(255, 255, 255, 0.8);
-            font-size: 0.9rem;
+        .overlay h2 {
+            margin-bottom: 1rem;
+            color: #333;
         }
 
-        /* 响应式设计 - 移动优先策略 */
+        .overlay p {
+            margin-bottom: 1.5rem;
+            color: #666;
+        }
+
+        /* 游戏对象样式 */
+        .game-object {
+            position: absolute;
+            border-radius: 50%;
+            transition: all 0.1s ease;
+        }
+
+        /* 响应式设计 */
         @media (max-width: 768px) {
-            html {
-                font-size: 14px;
-            }
-
-            .container {
-                margin: 1rem;
-                padding: 2rem 1.5rem;
-                gap: 1rem;
-            }
-
-            .main-title {
-                font-size: 2.5rem;
-            }
-
-            .aaa-text {
-                font-size: 2rem;
-                letter-spacing: 2px;
-            }
-
-            .subtitle {
-                font-size: 1.1rem;
-            }
-
-            .description {
-                font-size: 0.95rem;
-            }
-
-            .welcome-btn {
-                padding: 0.8rem 1.5rem;
-                font-size: 0.9rem;
-            }
-        }
-
-        @media (max-width: 480px) {
-            html {
-                font-size: 13px;
-            }
-
-            main {
+            .game-container {
                 padding: 1rem;
             }
 
-            .container {
-                padding: 1.5rem 1rem;
+            #gameCanvas {
+                width: 100%;
+                height: auto;
             }
 
-            .main-title {
-                font-size: 2rem;
+            .controls {
+                gap: 0.5rem;
             }
 
-            .aaa-text {
-                font-size: 1.8rem;
-                letter-spacing: 1px;
-            }
-
-            header h1 {
-                font-size: 1.3rem;
-            }
-        }
-
-        @media (min-width: 1024px) {
-            html {
-                font-size: 18px;
-            }
-
-            .container {
-                padding: 4rem 3rem;
-                gap: 2rem;
-            }
-
-            .main-title {
-                font-size: 3.5rem;
-            }
-
-            .aaa-text {
-                font-size: 3rem;
-            }
-        }
-
-        @media (min-width: 1200px) {
-            .container {
-                max-width: 700px;
-            }
-        }
-
-        /* 动画效果 */
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .text-display {
-            animation: fadeInUp 0.6s ease-out;
-        }
-
-        .text-display:nth-child(2) {
-            animation-delay: 0.2s;
-        }
-
-        .text-display:nth-child(3) {
-            animation-delay: 0.4s;
-        }
-
-        .welcome-btn {
-            animation: fadeInUp 0.6s ease-out 0.6s both;
-        }
-
-        /* 可访问性增强 */
-        @media (prefers-reduced-motion: reduce) {
-            * {
-                animation-duration: 0.01ms !important;
-                animation-iteration-count: 1 !important;
-                transition-duration: 0.01ms !important;
-            }
-        }
-
-        /* 高对比度模式支持 */
-        @media (prefers-contrast: high) {
-            .container {
-                background: white;
-                border: 2px solid #333;
-            }
-
-            .text-display {
-                background: #f5f5f5;
-                border: 1px solid #333;
+            .btn {
+                padding: 0.6rem 1rem;
+                font-size: 0.9rem;
             }
         }
     </style>
 </head>
 <body>
     <header>
-        <h1>欢迎来到我的网站</h1>
+        <h1>游戏状态管理系统</h1>
     </header>
 
     <main>
-        <div class="container">
-            <!-- HelloWorld文字显示组件 -->
-            <div class="text-display">
-                <h2 class="main-title">Hello World</h2>
-                <p class="subtitle">欢迎来到这个美好的世界！</p>
+        <div class="game-container">
+            <!-- 状态显示 -->
+            <div class="status-display">
+                <div class="status-item">状态: <span id="currentState">MENU</span></div>
+                <div class="status-item">分数: <span id="score">0</span></div>
+                <div class="status-item">时间: <span id="gameTime">00:00</span></div>
             </div>
 
-            <!-- AAA文字显示组件 -->
-            <div class="text-display">
-                <h2 class="aaa-text">AAA</h2>
-                <p class="subtitle">新增的内容元素</p>
+            <!-- 游戏画布 -->
+            <canvas id="gameCanvas" width="600" height="400"></canvas>
+
+            <!-- 控制按钮 -->
+            <div class="controls">
+                <button id="startBtn" class="btn success">开始游戏</button>
+                <button id="pauseBtn" class="btn" disabled>暂停</button>
+                <button id="resumeBtn" class="btn" disabled>继续</button>
+                <button id="endBtn" class="btn danger" disabled>结束游戏</button>
+                <button id="restartBtn" class="btn">重新开始</button>
             </div>
 
-            <!-- 描述信息 -->
-            <div class="text-display">
-                <p class="description">
-                    这是一个简单而优雅的Hello World页面，现在包含了新的AAA文字元素。
-                    页面采用响应式设计，在各种设备上都能完美显示。
-                </p>
+            <!-- 暂停遮罩 -->
+            <div id="pauseOverlay" class="overlay">
+                <div class="overlay-content">
+                    <h2>游戏已暂停</h2>
+                    <p>点击继续按钮恢复游戏</p>
+                    <button id="resumeFromOverlay" class="btn success">继续游戏</button>
+                </div>
             </div>
 
-            <button class="welcome-btn" onclick="showWelcomeMessage()">点击欢迎</button>
+            <!-- 游戏结束遮罩 -->
+            <div id="gameOverOverlay" class="overlay">
+                <div class="overlay-content">
+                    <h2>游戏结束</h2>
+                    <p id="finalScore">最终分数: 0</p>
+                    <p id="gameTimeResult">游戏时间: 00:00</p>
+                    <div style="margin-top: 1rem;">
+                        <button id="restartFromOverlay" class="btn success">重新开始</button>
+                        <button id="backToMenu" class="btn">返回菜单</button>
+                    </div>
+                </div>
+            </div>
         </div>
     </main>
 
-    <footer>
-        <p>&copy; 2024 Hello World Project. 由 AI 开发系统创建。</p>
-    </footer>
-
     <script>
-        // 页面交互功能
-        function showWelcomeMessage() {
-            const messages = [
-                '欢迎来到Hello World！',
-                'AAA元素已成功添加！',
-                '感谢您的访问！',
-                '页面布局调整完成！'
-            ];
-            
-            const randomMessage = messages[Math.floor(Math.random() * messages.length)];
-            
-            // 创建提示框
-            const toast = document.createElement('div');
-            toast.style.cssText = `
-                position: fixed;
-                top: 20px;
-                right: 20px;
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                color: white;
-                padding: 1rem 2rem;
-                border-radius: 10px;
-                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-                z-index: 1000;
-                animation: slideInRight 0.3s ease-out;
-                font-weight: 500;
-            `;
-            toast.textContent = randomMessage;
-            
-            document.body.appendChild(toast);
-            
-            // 3秒后移除提示框
-            setTimeout(() => {
-                toast.style.animation = 'slideOutRight 0.3s ease-out';
-                setTimeout(() => {
-                    document.body.removeChild(toast);
-                }, 300);
-            }, 3000);
+        // 游戏状态枚举
+        const GameStates = {
+            MENU: 'MENU',
+            PLAYING: 'PLAYING',
+            PAUSED: 'PAUSED',
+            GAME_OVER: 'GAME_OVER'
+        };
+
+        // 游戏状态管理器
+        class GameStateManager {
+            constructor() {
+                this.currentState = GameStates.MENU;
+                this.observers = [];
+                this.stateTransitions = {
+                    [GameStates.MENU]: [GameStates.PLAYING],
+                    [GameStates.PLAYING]: [GameStates.PAUSED, GameStates.GAME_OVER, GameStates.MENU],
+                    [GameStates.PAUSED]: [GameStates.PLAYING, GameStates.GAME_OVER, GameStates.MENU],
+                    [GameStates.GAME_OVER]: [GameStates.MENU, GameStates.PLAYING]
+                };
+            }
+
+            setState(newState) {
+                if (this.canTransition(this.currentState, newState)) {
+                    const oldState = this.currentState;
+                    this.currentState = newState;
+                    this.notifyObservers(oldState, newState);
+                    return true;
+                }
+                return false;
+            }
+
+            getState() {
+                return this.currentState;
+            }
+
+            canTransition(fromState, toState) {
+                return this.stateTransitions[fromState]?.includes(toState) || false;
+            }
+
+            onStateChange(callback) {
+                this.observers.push(callback);
+            }
+
+            notifyObservers(oldState, newState) {
+                this.observers.forEach(callback => callback(oldState, newState));
+            }
         }
 
-        // 添加动画样式
-        const style = document.createElement('style');
-        style.textContent = `
-            @keyframes slideInRight {
-                from {
-                    transform: translateX(100%);
-                    opacity: 0;
-                }
-                to {
-                    transform: translateX(0);
-                    opacity: 1;
-                }
-            }
-            
-            @keyframes slideOutRight {
-                from {
-                    transform: translateX(0);
-                    opacity: 1;
-                }
-                to {
-                    transform: translateX(100%);
-                    opacity: 0;
-                }
-            }
-        `;
-        document.head.appendChild(style);
-
-        // 响应式断点检测
-        class ResponsiveManager {
+        // 持久化管理器
+        class PersistenceManager {
             constructor() {
-                this.breakpoints = {
-                    mobile: 480,
-                    tablet: 768,
-                    desktop: 1024,
-                    large: 1200
+                this.storageKey = 'gameState';
+                this.settingsKey = 'gameSettings';
+            }
+
+            saveGameState(state) {
+                try {
+                    localStorage.setItem(this.storageKey, JSON.stringify(state));
+                    return true;
+                } catch (error) {
+                    console.error('保存游戏状态失败:', error);
+                    return false;
+                }
+            }
+
+            loadGameState() {
+                try {
+                    const saved = localStorage.getItem(this.storageKey);
+                    return saved ? JSON.parse(saved) : null;
+                } catch (error) {
+                    console.error('加载游戏状态失败:', error);
+                    return null;
+                }
+            }
+
+            clearSavedState() {
+                try {
+                    localStorage.removeItem(this.storageKey);
+                    return true;
+                } catch (error) {
+                    console.error('清除保存状态失败:', error);
+                    return false;
+                }
+            }
+
+            saveSettings(settings) {
+                try {
+                    localStorage.setItem(this.settingsKey, JSON.stringify(settings));
+                    return true;
+                } catch (error) {
+                    console.error('保存设置失败:', error);
+                    return false;
+                }
+            }
+        }
+
+        // 游戏循环管理器
+        class GameLoop {
+            constructor() {
+                this.isRunning = false;
+                this.animationId = null;
+                this.updateCallback = null;
+                this.lastTime = 0;
+            }
+
+            start() {
+                if (!this.isRunning) {
+                    this.isRunning = true;
+                    this.lastTime = performance.now();
+                    this.loop();
+                }
+            }
+
+            pause() {
+                this.isRunning = false;
+                if (this.animationId) {
+                    cancelAnimationFrame(this.animationId);
+                    this.animationId = null;
+                }
+            }
+
+            resume() {
+                if (!this.isRunning) {
+                    this.isRunning = true;
+                    this.lastTime = performance.now();
+                    this.loop();
+                }
+            }
+
+            stop() {
+                this.pause();
+            }
+
+            setUpdateCallback(callback) {
+                this.updateCallback = callback;
+            }
+
+            loop() {
+                if (!this.isRunning) return;
+
+                const currentTime = performance.now();
+                const deltaTime = currentTime - this.lastTime;
+                this.lastTime = currentTime;
+
+                if (this.updateCallback) {
+                    this.updateCallback(deltaTime);
+                }
+
+                this.animationId = requestAnimationFrame(() => this.loop());
+            }
+        }
+
+        // UI状态渲染器
+        class UIStateRenderer {
+            constructor() {
+                this.elements = {
+                    currentState: document.getElementById('currentState'),
+                    score: document.getElementById('score'),
+                    gameTime: document.getElementById('gameTime'),
+                    startBtn: document.getElementById('startBtn'),
+                    pauseBtn: document.getElementById('pauseBtn'),
+                    resumeBtn: document.getElementById('resumeBtn'),
+                    endBtn: document.getElementById('endBtn'),
+                    restartBtn: document.getElementById('restartBtn'),
+                    pauseOverlay: document.getElementById('pauseOverlay'),
+                    gameOverOverlay: document.getElementById('gameOverOverlay'),
+                    finalScore: document.getElementById('finalScore'),
+                    gameTimeResult: document.getElementById('gameTimeResult')
                 };
-                this.currentBreakpoint = null;
+            }
+
+            renderState(state) {
+                this.elements.currentState.textContent = state;
+                this.updateButtonStates(state);
+                this.hideAllOverlays();
+
+                switch (state) {
+                    case GameStates.PAUSED:
+                        this.showPauseOverlay();
+                        break;
+                    case GameStates.GAME_OVER:
+                        this.showGameOverScreen();
+                        break;
+                }
+            }
+
+            updateButtonStates(state) {
+                const buttons = this.elements;
+                
+                // 重置所有按钮状态
+                Object.values(buttons).forEach(btn => {
+                    if (btn && btn.disabled !== undefined) {
+                        btn.disabled = false;
+                    }
+                });
+
+                switch (state) {
+                    case GameStates.MENU:
+                        buttons.pauseBtn.disabled = true;
+                        buttons.resumeBtn.disabled = true;
+                        buttons.endBtn.disabled = true;
+                        break;
+                    case GameStates.PLAYING:
+                        buttons.startBtn.disabled = true;
+                        buttons.resumeBtn.disabled = true;
+                        break;
+                    case GameStates.PAUSED:
+                        buttons.startBtn.disabled = true;
+                        buttons.pauseBtn.disabled = true;
+                        break;
+                    case GameStates.GAME_OVER:
+                        buttons.startBtn.disabled = true;
+                        buttons.pauseBtn.disabled = true;
+                        buttons.resumeBtn.disabled = true;
+                        buttons.endBtn.disabled = true;
+                        break;
+                }
+            }
+
+            showPauseOverlay() {
+                this.elements.pauseOverlay.classList.add('show');
+            }
+
+            showGameOverScreen() {
+                this.elements.gameOverOverlay.classList.add('show');
+            }
+
+            hideAllOverlays() {
+                this.elements.pauseOverlay.classList.remove('show');
+                this.elements.gameOverOverlay.classList.remove('show');
+            }
+
+            updateScore(score) {
+                this.elements.score.textContent = score;
+            }
+
+            updateGameTime(time) {
+                const minutes = Math.floor(time / 60000);
+                const seconds = Math.floor((time % 60000) / 1000);
+                const timeString = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                this.elements.gameTime.textContent = timeString;
+            }
+
+            updateFinalResults(score, time) {
+                this.elements.finalScore.textContent = `最终分数: ${score}`;
+                const minutes = Math.floor(time / 60000);
+                const seconds = Math.floor((time % 60000) / 1000);
+                const timeString = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                this.elements.gameTimeResult.textContent = `游戏时间: ${timeString}`;
+            }
+        }
+
+        // 输入处理器
+        class InputHandler {
+            constructor(gameController) {
+                this.gameController = gameController;
+                this.enabled = true;
+                this.keyBindings = {
+                    [GameStates.MENU]: {
+                        'Enter': () => this.gameController.startGame(),
+                        ' ': () => this.gameController.startGame()
+                    },
+                    [GameStates.PLAYING]: {
+                        'Escape': () => this.gameController.pauseGame(),
+                        ' ': () => this.gameController.pauseGame()
+                    },
+                    [GameStates.PAUSED]: {
+                        'Escape': () => this.gameController.resumeGame(),
+                        ' ': () => this.gameController.resumeGame(),
+                        'Enter': () => this.gameController.resumeGame()
+                    },
+                    [GameStates.GAME_OVER]: {
+                        'Enter': () => this.gameController.restartGame(),
+                        ' ': () => this.gameController.restartGame(),
+                        'Escape': () => this.gameController.backToMenu()
+                    }
+                };
+
+                this.bindEvents();
+            }
+
+            bindEvents() {
+                document.addEventListener('keydown', (event) => {
+                    this.handleKeyPress(event.key, this.gameController.stateManager.getState());
+                });
+            }
+
+            handleKeyPress(key, currentState) {
+                if (!this.enabled) return;
+
+                const stateBindings = this.keyBindings[currentState];
+                if (stateBindings && stateBindings[key]) {
+                    event.preventDefault();
+                    stateBindings[key]();
+                }
+            }
+
+            enableInput() {
+                this.enabled = true;
+            }
+
+            disableInput() {
+                this.enabled = false;
+            }
+
+            bindStateSpecificControls(state) {
+                // 可以根据状态绑定特定的控制逻辑
+                console.log(`绑定状态 ${state} 的特定控制`);
+            }
+        }
+
+        // 简单的游戏对象
+        class GameObject {
+            constructor(x, y, size, color) {
+                this.x = x;
+                this.y = y;
+                this.size = size;
+                this.color = color;
+                this.vx = (Math.random() - 0.5) * 4;
+                this.vy = (Math.random() - 0.5) * 4;
+            }
+
+            update(deltaTime, canvasWidth, canvasHeight) {
+                this.x += this.vx;
+                this.y += this.vy;
+
+                // 边界碰撞检测
+                if (this.x <= this.size || this.x >= canvasWidth - this.size) {
+                    this.vx = -this.vx;
+                    this.x = Math.max(this.size, Math.min(canvasWidth - this.size, this.x));
+                }
+                if (this.y <= this.size || this.y >= canvasHeight - this.size) {
+                    this.vy = -this.vy;
+                    this.y = Math.max(this.size, Math.min(canvasHeight - this.size, this.y));
+                }
+            }
+
+            draw(ctx) {
+                ctx.fillStyle = this.color;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        // 游戏控制器
+        class GameController {
+            constructor() {
+                this.stateManager = new GameStateManager();
+                this.persistenceManager = new PersistenceManager();
+                this.gameLoop = new GameLoop();
+                this.uiRenderer = new UIStateRenderer();
+                this.inputHandler = new InputHandler(this);
+
+                this.canvas = document.getElementById('gameCanvas');
+                this.ctx = this.canvas.getContext('2d');
+                
+                this.gameData = {
+                    score: 0,
+                    startTime: 0,
+                    gameTime: 0,
+                    objects: []
+                };
+
                 this.init();
             }
 
             init() {
-                this.detectBreakpoint();
-                this.setupEventListeners();
-            }
-
-            detectBreakpoint() {
-                const width = window.innerWidth;
-                let breakpoint = 'mobile';
-                
-                if (width >= this.breakpoints.large) {
-                    breakpoint = 'large';
-                } else if (width >= this.breakpoints.desktop) {
-                    breakpoint = 'desktop';
-                } else if (width >= this.breakpoints.tablet) {
-                    breakpoint = 'tablet';
-                }
-                
-                if (this.currentBreakpoint !== breakpoint) {
-                    this.currentBreakpoint = breakpoint;
-                    this.onBreakpointChange(breakpoint);
-                }
-                
-                return breakpoint;
-            }
-
-            setupEventListeners() {
-                let resizeTimer;
-                window.addEventListener('resize', () => {
-                    clearTimeout(resizeTimer);
-                    resizeTimer = setTimeout(() => {
-                        this.detectBreakpoint();
-                    }, 100);
+                // 注册状态变化监听器
+                this.stateManager.onStateChange((oldState, newState) => {
+                    this.handleStateTransition(oldState, newState);
                 });
+
+                // 设置游戏循环回调
+                this.gameLoop.setUpdateCallback((deltaTime) => {
+                    this.update(deltaTime);
+                    this.render();
+                });
+
+                // 绑定UI事件
+                this.bindUIEvents();
+
+                // 初始化UI
+                this.uiRenderer.renderState(this.stateManager.getState());
             }
 
-            onBreakpointChange(breakpoint) {
-                document.body.setAttribute('data-breakpoint', breakpoint);
-                console.log(`断点变化: ${breakpoint} (${window.innerWidth}px)`);
+            bindUIEvents() {
+                document.getElementById('startBtn').addEventListener('click', () => this.startGame());
+                document.getElementById('pauseBtn').addEventListener('click', () => this.pauseGame());
+                document.getElementById('resumeBtn').addEventListener('click', () => this.resumeGame());
+                document.getElementById('endBtn').addEventListener('click', () => this.endGame());
+                document.getElementById('restartBtn').addEventListener('click', () => this.restartGame());
+                document.getElementById('resumeFromOverlay').addEventListener('click', () => this.resumeGame());
+                document.getElementById('restartFromOverlay').addEventListener('click', () => this.restartGame());
+                document.getElementById('backToMenu').addEventListener('click', () => this.backToMenu());
+            }
+
+            startGame() {
+                if (this.stateManager.setState(GameStates.PLAYING)) {
+                    this.initializeGame();
+                    this.gameLoop.start();
+                }
+            }
+
+            pauseGame() {
+                if (this.stateManager.setState(GameStates.PAUSED)) {
+                    this.gameLoop.pause();
+                }
+            }
+
+            resumeGame() {
+                if (this.stateManager.setState(GameStates.PLAYING)) {
+                    this.gameLoop.resume();
+                }
+            }
+
+            endGame() {
+                if (this.stateManager.setState(GameStates.GAME_OVER)) {
+                    this.gameLoop.stop();
+                    this.uiRenderer.updateFinalResults(this.gameData.score, this.gameData.gameTime);
+                }
+            }
+
+            restartGame() {
+                this.stateManager.setState(GameStates.PLAYING);
+                this.initializeGame();
+                this.gameLoop.start();
+            }
+
+            backToMenu() {
+                this.stateManager.setState(GameStates.MENU);
+                this.gameLoop.stop();
+                this.clearCanvas();
+            }
+
+            handleStateTransition(oldState, newState) {
+                console.log(`状态转换: ${oldState} -> ${newState}`);
+                
+                // 更新UI
+                this.uiRenderer.renderState(newState);
+                
+                // 保存状态
+                this.persistenceManager.saveGameState({
+                    state: newState,
+                    gameData: this.gameData,
+                    timestamp: Date.now()
+                });
+
+                // 状态特定逻辑
+                switch (newState) {
+                    case GameStates.PLAYING:
+                        this.inputHandler.enableInput();
+                        break;
+                    case GameStates.PAUSED:
+                        // 暂停时可以保持输入启用以便恢复
+                        break;
+                    case GameStates.GAME_OVER:
+                        this.inputHandler.enableInput();
+                        break;
+                    case GameStates.MENU:
+                        this.inputHandler.enableInput();
+                        this.resetGameData();
+                        break;
+                }
+            }
+
+            initializeGame() {
+                this.gameData.score = 0;
+                this.gameData.startTime = Date.now();
+                this.gameData.gameTime = 0;
+                this.gameData.objects = [];
+
+                // 创建一些游戏对象
+                const colors = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4', '#feca57'];
+                for (let i = 0; i < 5; i++) {
+                    this.gameData.objects.push(new GameObject(
+                        Math.random() * (this.canvas.width - 40) + 20,
+                        Math.random() * (this.canvas.height - 40) + 20,
+                        10 + Math.random() * 15,
+                        colors[i % colors.length]
+                    ));
+                }
+
+                this.uiRenderer.updateScore(this.gameData.score);
+                this.uiRenderer.updateGameTime(this.gameData.gameTime);
+            }
+
+            resetGameData() {
+                this.gameData = {
+                    score: 0,
+                    startTime: 0,
+                    gameTime: 0,
+                    objects: []
+                };
+                this.uiRenderer.updateScore(0);
+                this.uiRenderer.updateGameTime(0);
+            }
+
+            update(deltaTime) {
+                if (this.stateManager.getState() !== GameStates.PLAYING) return;
+
+                // 更新游戏时间
+                this.gameData.gameTime = Date.now() - this.gameData.startTime;
+                this.uiRenderer.updateGameTime(this.gameData.gameTime);
+
+                // 更新游戏对象
+                this.gameData.objects.forEach(obj => {
+                    obj.update(deltaTime, this.canvas.width, this.canvas.height);
+                });
+
+                // 简单的分数逻辑
+                this.gameData.score += Math.floor(deltaTime / 100);
+                this.uiRenderer.updateScore(this.gameData.score);
+
+                // 游戏结束条件（示例：30秒后自动结束）
+                if (this.gameData.gameTime > 30000) {
+                    this.endGame();
+                }
+            }
+
+            render() {
+                this.clearCanvas();
+
+                if (this.stateManager.getState() === GameStates.MENU) {
+                    this.renderMenu();
+                } else if (this.gameData.objects.length > 0) {
+                    this.gameData.objects.forEach(obj => obj.draw(this.ctx));
+                }
+            }
+
+            clearCanvas() {
+                this.ctx.fillStyle = '#000';
+                this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+            }
+
+            renderMenu() {
+                this.ctx.fillStyle = '#fff';
+                this.ctx.font = '24px Arial';
+                this.ctx.textAlign = 'center';
+                this.ctx.fillText('欢迎来到游戏状态管理演示', this.canvas.width / 2, this.canvas.height / 2 - 50);
+                this.ctx.font = '16px Arial';
+                this.ctx.fillText('点击开始游戏或按空格键/回车键开始', this.canvas.width / 2, this.canvas.height / 2);
+                this.ctx.fillText('游戏中按ESC或空格键暂停', this.canvas.width / 2, this.canvas.height / 2 + 30);
             }
         }
 
-        // 初始化响应式管理器
-        const responsiveManager = new ResponsiveManager();
-
-        // 页面加载完成后的初始化
-        document.addEventListener('DOMContentLoaded', function() {
-            // 为文字元素添加交互效果
-            const textDisplays = document.querySelectorAll('.text-display');
-            
-            textDisplays.forEach((element, index) => {
-                element.addEventListener('click', function() {
-                    this.style.transform = 'scale(1.05)';
-                    setTimeout(() => {
-                        this.style.transform = 'scale(1)';
-                    }, 200);
-                });
-                
-                // 添加键盘可访问性
-                element.setAttribute('tabindex', '0');
-                element.setAttribute('role', 'button');
-                element.setAttribute('aria-label', `文字显示区域 ${index + 1}`);
-            });
-
-            // 添加键盘事件支持
-            document.addEventListener('keydown', function(e) {
-                if (e.key === 'Enter' && e.target.classList.contains('text-display')) {
-                    e.target.click();
-                }
-            });
-
-            console.log('页面初始化完成 - HelloWorld和AAA元素已就绪');
+        // 初始化游戏
+        document.addEventListener('DOMContentLoaded', () => {
+            const game = new GameController();
+            window.game = game; // 用于调试
         });
-
-        // 性能优化：图片懒加载（如果有图片的话）
-        if ('IntersectionObserver' in window) {
-            const imageObserver = new IntersectionObserver((entries, observer) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        const img = entry.target;
-                        img.src = img.dataset.src;
-                        img.classList.remove('lazy');
-                        imageObserver.unobserve(img);
-                    }
-                });
-            });
-
-            document.querySelectorAll('img[data-src]').forEach(img => {
-                imageObserver.observe(img);
-            });
-        }
     </script>
 </body>
 </html>
