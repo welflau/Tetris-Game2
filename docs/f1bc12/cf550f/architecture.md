@@ -1,72 +1,58 @@
 # 架构设计 - Canvas渲染系统开发
 
 ## 架构模式
-MVC + 组件化架构
+模块化Canvas渲染架构
 
 ## 技术栈
 
 - **language**: JavaScript ES6+
-- **framework**: 原生HTML5 Canvas API
-- **database**: LocalStorage
-- **others**: CSS3, Web Audio API, requestAnimationFrame
+- **framework**: 原生Canvas API + 现有CSS模块
 
 ## 模块设计
 
 ### CanvasRenderer
-职责: 核心渲染引擎，负责Canvas初始化、坐标系管理、基础绘制方法
-- init(canvas)
+职责: Canvas渲染引擎核心，管理画布初始化、坐标系统、基础绘制方法
+- init(canvasId, width, height)
 - clear()
-- setViewport()
-- drawRect()
-- drawText()
+- drawRect(x, y, width, height, color)
+- drawText(text, x, y, style)
+- setTransform(matrix)
 
-### GameRenderer
-职责: 游戏场景渲染器，负责游戏区域、网格、边框的绘制
-- drawGameBoard()
+### GameAreaRenderer
+职责: 游戏区域渲染器，绘制10x20网格、边界、背景
 - drawGrid()
 - drawBorder()
 - drawBackground()
+- highlightCell(x, y, color)
 
 ### TetrominoRenderer
-职责: 方块渲染器，负责各种Tetromino方块的绘制和动画效果
-- drawTetromino()
-- drawGhostPiece()
-- drawPreview()
-- drawWithAnimation()
+职责: 方块渲染器，处理7种Tetromino的绘制、阴影效果
+- drawTetromino(tetromino, x, y)
+- drawGhostPiece(tetromino, x, y)
+- drawPreview(tetromino, previewArea)
+- animateLineClear(lines)
 
 ### UIRenderer
-职责: 界面元素渲染器，负责分数、等级、下一个方块等UI元素显示
-- drawScore()
-- drawLevel()
-- drawNextPiece()
-- drawGameOver()
+职责: 界面元素渲染器，显示分数、等级、下一个方块预览
+- drawScore(score)
+- drawLevel(level)
+- drawNextPiece(tetromino)
+- drawGameStatus(status)
 
-### AnimationManager
-职责: 动画管理器，负责消行动画、方块下落动画等效果
-- startAnimation()
-- updateAnimation()
-- stopAnimation()
-- addEffect()
-
-### RenderOptimizer
-职责: 渲染优化器，负责脏区域检测、批量渲染、性能监控
-- markDirty()
-- batchRender()
-- optimizeFrame()
-- getPerformanceStats()
+### RenderManager
+职责: 渲染管理器，协调各渲染器，优化渲染性能
+- render(gameState)
+- startRenderLoop()
+- stopRenderLoop()
+- setFPS(fps)
 
 ## 数据流
-游戏状态数据 -> GameRenderer处理游戏区域 -> TetrominoRenderer绘制方块 -> UIRenderer绘制界面元素 -> AnimationManager处理动画效果 -> RenderOptimizer优化渲染 -> Canvas显示最终画面
-
-## 风险点
-- Canvas性能在低端设备上可能不佳
-- 不同浏览器Canvas API兼容性问题
-- 高频率渲染可能导致内存泄漏
-- 动画效果与游戏逻辑同步问题
+RenderManager接收游戏状态数据 -> 分发给各专门渲染器 -> CanvasRenderer提供底层绘制API -> 各渲染器调用Canvas API绘制对应元素 -> 通过requestAnimationFrame实现流畅动画循环
 
 ## 关键决策
-- 使用requestAnimationFrame确保60FPS流畅渲染
-- 采用脏区域检测减少不必要的重绘
-- 实现双缓冲机制避免画面闪烁
-- 使用对象池模式管理渲染对象避免频繁创建销毁
-- 分离渲染逻辑和游戏逻辑确保架构清晰
+- 采用分层渲染架构，将Canvas渲染分解为专门的渲染器模块
+- 使用requestAnimationFrame替代setInterval实现流畅动画
+- 实现脏矩形优化，只重绘变化区域提升性能
+- 集成现有CSS模块的样式系统，保持视觉一致性
+- 预留动画接口支持后续音效和特效扩展
+- 采用坐标映射系统，支持响应式Canvas缩放
