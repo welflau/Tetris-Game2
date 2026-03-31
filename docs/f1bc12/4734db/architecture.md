@@ -1,57 +1,44 @@
 # 架构设计 - 排行榜系统开发
 
 ## 架构模式
-MVC + 模块化设计
+增量模块扩展
 
 ## 技术栈
 
 - **language**: JavaScript ES6+
-- **framework**: 原生JavaScript（无框架）
-- **database**: LocalStorage
-- **others**: HTML5, CSS3, Canvas API
+- **framework**: 原生JavaScript + LocalStorage
 
 ## 模块设计
 
-### LeaderboardModel
-职责: 管理排行榜数据的存储、读取、排序和验证
+### LeaderboardManager
+职责: 排行榜数据管理，包括分数存储、排序、持久化
 - saveScore(playerName, score, level, lines)
 - getTopScores(limit)
 - clearLeaderboard()
-- validateScore(score)
+- exportScores()
+- importScores(data)
 
-### LeaderboardView
-职责: 渲染排行榜界面，显示分数列表和排名信息
-- render(scoresData)
+### LeaderboardUI
+职责: 排行榜界面渲染和交互
+- render(container)
 - showLeaderboard()
 - hideLeaderboard()
-- highlightNewRecord(index)
-
-### LeaderboardController
-职责: 协调排行榜的业务逻辑，处理用户交互和数据更新
-- handleGameOver(finalScore, level, lines)
-- showLeaderboardModal()
-- handleNameInput()
-- refreshDisplay()
+- updateDisplay(scores)
+- showNewRecordDialog(score)
 
 ### ScoreEntry
-职责: 表示单个分数记录的数据结构
-- constructor(name, score, level, lines, timestamp)
-- toJSON()
-- fromJSON(data)
+职责: 新纪录输入界面，处理玩家姓名输入
+- showEntryDialog(score, callback)
+- validatePlayerName(name)
+- submitScore(name, score)
 
 ## 数据流
-游戏结束 → Controller检查是否为新记录 → 如果是则弹出姓名输入框 → Model保存分数到LocalStorage → View刷新显示排行榜 → 用户可查看历史记录
-
-## 风险点
-- LocalStorage容量限制可能影响大量数据存储
-- 浏览器兼容性问题（特别是较老版本）
-- 用户可能通过开发者工具修改LocalStorage数据
-- 排行榜数据可能因浏览器清理而丢失
+游戏结束时触发分数检查 -> 判断是否为新纪录 -> 显示姓名输入对话框 -> LeaderboardManager保存分数到LocalStorage -> LeaderboardUI更新显示 -> 排行榜按分数降序展示前10名记录
 
 ## 关键决策
-- 使用LocalStorage而非SessionStorage确保数据持久化
-- 限制排行榜显示前10名以优化性能和用户体验
-- 采用JSON格式存储复合数据结构便于扩展
-- 实现数据验证机制防止异常数据破坏排行榜
-- 使用时间戳记录游戏时间便于后续功能扩展
-- 设计响应式布局适配不同屏幕尺寸
+- 使用LocalStorage作为数据持久化方案，符合项目轻量化要求
+- 排行榜数据结构包含：playerName、score、level、lines、timestamp
+- 默认显示前10名记录，支持数据导入导出功能
+- 集成到现有游戏界面中，作为独立模块可通过按键或菜单调用
+- 新纪录检测逻辑集成到游戏结束流程中
+- 支持匿名玩家（默认名称：Anonymous Player）
