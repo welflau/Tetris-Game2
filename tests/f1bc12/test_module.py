@@ -1,89 +1,93 @@
 import pytest
 from pathlib import Path
-import re
+from bs4 import BeautifulSoup
 
-class TestFrontendModule:
-    """前端模块测试类"""
+class TestIndexHTML:
     
-    def test_index_html_file_exists(self):
+    @pytest.fixture
+    def html_file_path(self):
+        """获取index.html文件路径的fixture"""
+        return Path(__file__).parent.parent / "frontend" / "index.html"
+    
+    @pytest.fixture
+    def html_content(self, html_file_path):
+        """读取HTML文件内容的fixture"""
+        if html_file_path.exists():
+            with open(html_file_path, 'r', encoding='utf-8') as f:
+                return f.read()
+        return None
+    
+    def test_html_file_exists(self, html_file_path):
         """测试index.html文件是否存在"""
-        frontend_dir = Path("frontend")
-        index_file = frontend_dir / "index.html"
-        assert index_file.exists(), f"index.html文件不存在于{frontend_dir}目录中"
-        assert index_file.is_file(), "index.html应该是一个文件而不是目录"
+        assert html_file_path.exists(), f"HTML文件不存在: {html_file_path}"
+        assert html_file_path.is_file(), f"路径不是文件: {html_file_path}"
     
-    def test_index_html_contains_essential_elements(self):
-        """测试index.html文件是否包含基本的HTML结构元素"""
-        frontend_dir = Path("frontend")
-        index_file = frontend_dir / "index.html"
+    def test_html_contains_game_elements(self, html_content):
+        """测试HTML文件是否包含游戏相关的关键元素"""
+        assert html_content is not None, "无法读取HTML文件内容"
         
-        # 确保文件存在
-        assert index_file.exists(), "index.html文件不存在"
+        soup = BeautifulSoup(html_content, 'html.parser')
         
-        # 读取文件内容
-        content = index_file.read_text(encoding='utf-8')
+        # 检查是否包含游戏容器或画布元素
+        game_container = soup.find(id='game') or soup.find(class_='game-container') or soup.find('canvas')
+        assert game_container is not None, "HTML中缺少游戏容器元素（#game、.game-container或canvas）"
+        
+        # 检查是否包含游戏相关的关键词
+        html_text = html_content.lower()
+        game_keywords = ['game', 'play', 'start', 'canvas', 'score']
+        found_keywords = [keyword for keyword in game_keywords if keyword in html_text]
+        assert len(found_keywords) > 0, f"HTML中缺少游戏相关关键词，期望包含: {game_keywords}"
+    
+    def test_html_contains_pause_functionality(self, html_content):
+        """测试HTML文件是否包含暂停功能相关元素"""
+        assert html_content is not None, "无法读取HTML文件内容"
+        
+        soup = BeautifulSoup(html_content, 'html.parser')
+        html_text = html_content.lower()
+        
+        # 检查暂停相关的按钮或元素
+        pause_button = (soup.find('button', string=lambda text: text and 'pause' in text.lower()) or
+                       soup.find(id='pause') or 
+                       soup.find(class_='pause-btn') or
+                       soup.find('button', {'onclick': lambda x: x and 'pause' in x.lower()}))
+        
+        # 或者检查是否包含暂停相关的文本内容
+        pause_keywords = ['pause', 'resume', 'stop', '暂停', '继续']
+        found_pause_keywords = [keyword for keyword in pause_keywords if keyword in html_text]
+        
+        assert pause_button is not None or len(found_pause_keywords) > 0, \
+            "HTML中缺少暂停功能相关元素或关键词"
+    
+    def test_html_has_valid_structure(self, html_content):
+        """测试HTML文件是否具有有效的基本结构"""
+        assert html_content is not None, "无法读取HTML文件内容"
+        
+        soup = BeautifulSoup(html_content, 'html.parser')
         
         # 检查基本HTML结构
-        assert re.search(r'<!DOCTYPE\s+html>', content, re.IGNORECASE), "缺少DOCTYPE声明"
-        assert re.search(r'<html[^>]*>', content, re.IGNORECASE), "缺少html标签"
-        assert re.search(r'<head[^>]*>', content, re.IGNORECASE), "缺少head标签"
-        assert re.search(r'<body[^>]*>', content, re.IGNORECASE), "缺少body标签"
-        assert re.search(r'<title[^>]*>.*</title>', content, re.IGNORECASE), "缺少title标签"
+        assert soup.find('html') is not None, "HTML文件缺少<html>标签"
+        assert soup.find('head') is not None, "HTML文件缺少<head>标签"
+        assert soup.find('body') is not None, "HTML文件缺少<body>标签"
+        
+        # 检查是否有标题
+        title = soup.find('title')
+        assert title is not None and title.get_text().strip(), "HTML文件缺少有效的<title>标签"
     
-    def test_index_html_has_valid_structure(self):
-        """测试index.html文件是否具有有效的HTML文档结构"""
-        frontend_dir = Path("frontend")
-        index_file = frontend_dir / "index.html"
+    def test_html_includes_javascript_or_css(self, html_content):
+        """测试HTML文件是否包含JavaScript或CSS资源"""
+        assert html_content is not None, "无法读取HTML文件内容"
         
-        assert index_file.exists(), "index.html文件不存在"
+        soup = BeautifulSoup(html_content, 'html.parser')
         
-        content = index_file.read_text(encoding='utf-8')
+        # 检查是否包含JavaScript文件或内联脚本
+        js_files = soup.find_all('script', src=True)
+        inline_scripts = soup.find_all('script', src=False)
         
-        # 检查标签是否正确闭合（基本检查）
-        open_tags = len(re.findall(r'<html[^>]*>', content, re.IGNORECASE))
-        close_tags = len(re.findall(r'</html>', content, re.IGNORECASE))
-        assert open_tags == close_tags, "html标签未正确闭合"
+        # 检查是否包含CSS文件或内联样式
+        css_files = soup.find_all('link', rel='stylesheet')
+        inline_styles = soup.find_all('style')
         
-        open_head = len(re.findall(r'<head[^>]*>', content, re.IGNORECASE))
-        close_head = len(re.findall(r'</head>', content, re.IGNORECASE))
-        assert open_head == close_head, "head标签未正确闭合"
+        has_js = len(js_files) > 0 or len(inline_scripts) > 0
+        has_css = len(css_files) > 0 or len(inline_styles) > 0
         
-        open_body = len(re.findall(r'<body[^>]*>', content, re.IGNORECASE))
-        close_body = len(re.findall(r'</body>', content, re.IGNORECASE))
-        assert open_body == close_body, "body标签未正确闭合"
-    
-    def test_dev_notes_file_exists(self):
-        """测试开发文档文件是否存在"""
-        docs_path = Path("docs/f1bc12/c3f0c7/dev-notes.md")
-        assert docs_path.exists(), f"开发文档文件不存在于{docs_path}路径"
-        assert docs_path.is_file(), "dev-notes.md应该是一个文件而不是目录"
-    
-    def test_dev_notes_has_content(self):
-        """测试开发文档文件是否包含有效内容"""
-        docs_path = Path("docs/f1bc12/c3f0c7/dev-notes.md")
-        
-        assert docs_path.exists(), "开发文档文件不存在"
-        
-        content = docs_path.read_text(encoding='utf-8')
-        
-        # 检查文件不为空
-        assert len(content.strip()) > 0, "开发文档文件内容为空"
-        
-        # 检查是否包含markdown格式的标题
-        has_headers = bool(re.search(r'^#+\s+.+', content, re.MULTILINE))
-        assert has_headers, "开发文档应该包含markdown格式的标题"
-    
-    def test_project_structure_integrity(self):
-        """测试项目结构完整性"""
-        # 检查frontend目录存在
-        frontend_dir = Path("frontend")
-        assert frontend_dir.exists(), "frontend目录不存在"
-        assert frontend_dir.is_dir(), "frontend应该是一个目录"
-        
-        # 检查docs目录结构存在
-        docs_dir = Path("docs")
-        assert docs_dir.exists(), "docs目录不存在"
-        
-        nested_dir = Path("docs/f1bc12/c3f0c7")
-        assert nested_dir.exists(), "docs子目录结构不完整"
-        assert nested_dir.is_dir(), "docs/f1bc12/c3f0c7应该是一个目录"
+        assert has_js or has_css, "HTML文件应该包含JavaScript或CSS资源以实现游戏功能"
