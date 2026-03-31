@@ -2,11 +2,11 @@ import pytest
 from pathlib import Path
 from bs4 import BeautifulSoup
 
-class TestIndexHTML:
+class TestFrontendIndex:
     
     @pytest.fixture
     def html_file_path(self):
-        """获取index.html文件路径的fixture"""
+        """获取HTML文件路径的fixture"""
         return Path(__file__).parent.parent / "frontend" / "index.html"
     
     @pytest.fixture
@@ -18,99 +18,79 @@ class TestIndexHTML:
         return None
     
     def test_html_file_exists(self, html_file_path):
-        """测试index.html文件是否存在"""
+        """测试HTML文件是否存在"""
         assert html_file_path.exists(), f"HTML文件不存在: {html_file_path}"
         assert html_file_path.is_file(), f"路径不是文件: {html_file_path}"
     
-    def test_html_contains_game_elements(self, html_content):
-        """测试HTML文件是否包含消行游戏的关键元素"""
+    def test_html_contains_audio_elements(self, html_content):
+        """测试HTML文件是否包含音效系统相关的关键元素"""
         assert html_content is not None, "无法读取HTML文件内容"
         
         soup = BeautifulSoup(html_content, 'html.parser')
         
-        # 检查是否包含游戏区域相关元素
-        game_area_selectors = [
-            'canvas',  # 游戏画布
-            '#game-board',  # 游戏面板ID
-            '.game-area',  # 游戏区域类
-            '#game-container'  # 游戏容器ID
-        ]
+        # 检查是否包含音频相关元素
+        audio_elements = soup.find_all(['audio', 'button', 'input'])
+        assert len(audio_elements) > 0, "HTML文件中未找到音频控制元素"
         
-        has_game_area = any(soup.select(selector) for selector in game_area_selectors)
-        assert has_game_area, "HTML中未找到游戏区域相关元素(canvas, #game-board, .game-area, #game-container)"
+        # 检查是否包含音效系统相关的类名或ID
+        audio_related_attrs = []
+        for element in soup.find_all(attrs={'class': True}):
+            audio_related_attrs.extend(element.get('class', []))
+        for element in soup.find_all(attrs={'id': True}):
+            audio_related_attrs.append(element.get('id'))
+        
+        audio_keywords = ['audio', 'sound', 'music', 'play', 'volume', 'control']
+        has_audio_related = any(
+            any(keyword in str(attr).lower() for keyword in audio_keywords)
+            for attr in audio_related_attrs
+        )
+        assert has_audio_related, "HTML文件中未找到音效系统相关的类名或ID"
     
-    def test_html_contains_score_system_elements(self, html_content):
-        """测试HTML文件是否包含计分系统相关元素"""
-        assert html_content is not None, "无法读取HTML文件内容"
-        
-        soup = BeautifulSoup(html_content, 'html.parser')
-        
-        # 检查计分相关元素
-        score_indicators = []
-        
-        # 检查是否有分数显示相关的ID或类
-        score_selectors = ['#score', '.score', '#current-score', '.current-score']
-        for selector in score_selectors:
-            if soup.select(selector):
-                score_indicators.append(selector)
-        
-        # 检查是否包含"分数"、"得分"等文本
-        text_content = soup.get_text().lower()
-        score_keywords = ['分数', '得分', 'score', '积分']
-        for keyword in score_keywords:
-            if keyword in text_content:
-                score_indicators.append(f"文本包含: {keyword}")
-        
-        assert len(score_indicators) > 0, f"HTML中未找到计分系统相关元素，检查的选择器: {score_selectors}，关键词: {score_keywords}"
-    
-    def test_html_contains_control_elements(self, html_content):
-        """测试HTML文件是否包含游戏控制相关元素"""
-        assert html_content is not None, "无法读取HTML文件内容"
-        
-        soup = BeautifulSoup(html_content, 'html.parser')
-        
-        # 检查控制按钮
-        control_elements = []
-        
-        # 检查按钮元素
-        buttons = soup.find_all('button')
-        if buttons:
-            control_elements.extend([f"button: {btn.get_text()}" for btn in buttons])
-        
-        # 检查常见的游戏控制ID和类
-        control_selectors = [
-            '#start-btn', '#pause-btn', '#restart-btn',
-            '.start-button', '.pause-button', '.restart-button',
-            '#start', '#pause', '#restart'
-        ]
-        
-        for selector in control_selectors:
-            if soup.select(selector):
-                control_elements.append(selector)
-        
-        # 检查是否包含控制相关文本
-        text_content = soup.get_text()
-        control_keywords = ['开始', '暂停', '重新开始', 'start', 'pause', 'restart', '重置']
-        for keyword in control_keywords:
-            if keyword in text_content:
-                control_elements.append(f"文本包含: {keyword}")
-        
-        assert len(control_elements) > 0, f"HTML中未找到游戏控制相关元素，找到的元素: {control_elements}"
-    
-    def test_html_basic_structure(self, html_content):
-        """测试HTML文件是否具有基本的HTML结构"""
+    def test_html_structure_validity(self, html_content):
+        """测试HTML文件结构的有效性"""
         assert html_content is not None, "无法读取HTML文件内容"
         
         soup = BeautifulSoup(html_content, 'html.parser')
         
         # 检查基本HTML结构
-        assert soup.find('html'), "HTML文件缺少<html>标签"
-        assert soup.find('head'), "HTML文件缺少<head>标签"
-        assert soup.find('body'), "HTML文件缺少<body>标签"
+        assert soup.find('html') is not None, "HTML文件缺少<html>标签"
+        assert soup.find('head') is not None, "HTML文件缺少<head>标签"
+        assert soup.find('body') is not None, "HTML文件缺少<body>标签"
         
-        # 检查是否有标题
+        # 检查title标签
         title = soup.find('title')
         assert title is not None, "HTML文件缺少<title>标签"
+        assert len(title.get_text().strip()) > 0, "HTML文件的title标签为空"
         
-        title_text = title.get_text().strip()
-        assert len(title_text) > 0, "HTML文件的title标签为空"
+        # 检查是否包含JavaScript或CSS引用（音效系统通常需要）
+        scripts = soup.find_all('script')
+        styles = soup.find_all(['style', 'link'])
+        assert len(scripts) > 0 or len(styles) > 0, "HTML文件中未找到JavaScript或CSS引用"
+
+    def test_html_contains_interactive_elements(self, html_content):
+        """测试HTML文件是否包含交互式元素用于音效控制"""
+        assert html_content is not None, "无法读取HTML文件内容"
+        
+        soup = BeautifulSoup(html_content, 'html.parser')
+        
+        # 检查交互式元素
+        interactive_elements = soup.find_all(['button', 'input', 'select', 'audio'])
+        assert len(interactive_elements) > 0, "HTML文件中未找到交互式元素"
+        
+        # 检查是否有事件处理相关的属性
+        event_attrs = ['onclick', 'onchange', 'onplay', 'onpause', 'onended']
+        has_events = False
+        for element in soup.find_all():
+            for attr in event_attrs:
+                if element.get(attr):
+                    has_events = True
+                    break
+            if has_events:
+                break
+        
+        # 如果没有内联事件，检查是否有可能通过JavaScript绑定事件的元素
+        if not has_events:
+            elements_with_ids = soup.find_all(attrs={'id': True})
+            elements_with_classes = soup.find_all(attrs={'class': True})
+            assert len(elements_with_ids) > 0 or len(elements_with_classes) > 0, \
+                "HTML文件中未找到可用于事件绑定的元素（缺少id或class属性）"
