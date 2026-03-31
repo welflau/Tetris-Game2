@@ -4,70 +4,95 @@ from bs4 import BeautifulSoup
 
 class TestIndexHTML:
     
-    @pytest.fixture
-    def html_file_path(self):
-        """获取index.html文件路径的fixture"""
-        return Path(__file__).parent.parent / "frontend" / "index.html"
+    def setup_method(self):
+        """测试前的准备工作，定位HTML文件路径"""
+        self.project_root = Path(__file__).parent.parent
+        self.html_file = self.project_root / "frontend" / "index.html"
     
-    @pytest.fixture
-    def html_content(self, html_file_path):
-        """读取HTML文件内容的fixture"""
-        if html_file_path.exists():
-            with open(html_file_path, 'r', encoding='utf-8') as f:
-                return f.read()
-        return None
+    def test_html_file_exists(self):
+        """测试HTML文件是否存在"""
+        assert self.html_file.exists(), f"HTML文件不存在: {self.html_file}"
+        assert self.html_file.is_file(), f"路径不是文件: {self.html_file}"
     
-    def test_html_file_exists(self, html_file_path):
-        """测试index.html文件是否存在"""
-        assert html_file_path.exists(), f"HTML文件不存在: {html_file_path}"
-        assert html_file_path.is_file(), f"路径不是文件: {html_file_path}"
+    def test_html_contains_performance_elements(self):
+        """测试HTML文件是否包含性能优化相关的关键元素"""
+        with open(self.html_file, 'r', encoding='utf-8') as f:
+            content = f.read()
+            soup = BeautifulSoup(content, 'html.parser')
+        
+        # 检查是否有基本的HTML结构
+        assert soup.find('html'), "HTML文件缺少html标签"
+        assert soup.find('head'), "HTML文件缺少head标签"
+        assert soup.find('body'), "HTML文件缺少body标签"
+        
+        # 检查性能优化相关元素
+        meta_viewport = soup.find('meta', attrs={'name': 'viewport'})
+        assert meta_viewport, "缺少viewport meta标签，影响移动端性能"
+        
+        # 检查是否有CSS或JS引用（性能优化项目应该有）
+        css_links = soup.find_all('link', rel='stylesheet')
+        script_tags = soup.find_all('script')
+        assert len(css_links) > 0 or len(script_tags) > 0, "缺少CSS或JavaScript引用"
     
-    def test_html_contains_essential_elements(self, html_content):
-        """测试HTML文件是否包含基本的HTML结构元素"""
-        assert html_content is not None, "无法读取HTML文件内容"
+    def test_html_contains_animation_elements(self):
+        """测试HTML文件是否包含动画效果相关的元素或属性"""
+        with open(self.html_file, 'r', encoding='utf-8') as f:
+            content = f.read()
+            soup = BeautifulSoup(content, 'html.parser')
         
-        soup = BeautifulSoup(html_content, 'html.parser')
+        # 检查是否有动画相关的class或id
+        animation_indicators = [
+            'animation', 'animate', 'transition', 'transform',
+            'fade', 'slide', 'bounce', 'rotate', 'scale'
+        ]
         
-        # 检查基本HTML结构
-        assert soup.find('html') is not None, "HTML文件缺少<html>标签"
-        assert soup.find('head') is not None, "HTML文件缺少<head>标签"
-        assert soup.find('body') is not None, "HTML文件缺少<body>标签"
-        assert soup.find('title') is not None, "HTML文件缺少<title>标签"
+        found_animation_elements = False
+        
+        # 检查所有元素的class和id属性
+        for element in soup.find_all():
+            classes = element.get('class', [])
+            element_id = element.get('id', '')
+            
+            for indicator in animation_indicators:
+                if any(indicator.lower() in str(cls).lower() for cls in classes):
+                    found_animation_elements = True
+                    break
+                if indicator.lower() in element_id.lower():
+                    found_animation_elements = True
+                    break
+            
+            if found_animation_elements:
+                break
+        
+        # 如果没有找到class/id中的动画标识，检查CSS或JS中是否有动画相关代码
+        if not found_animation_elements:
+            content_lower = content.lower()
+            css_animation_keywords = [
+                '@keyframes', 'animation:', 'transition:', 'transform:',
+                'requestanimationframe', 'setinterval', 'settimeout'
+            ]
+            
+            for keyword in css_animation_keywords:
+                if keyword in content_lower:
+                    found_animation_elements = True
+                    break
+        
+        assert found_animation_elements, "HTML文件中未找到动画效果相关的元素或代码"
     
-    def test_html_contains_data_persistence_ui_elements(self, html_content):
-        """测试HTML文件是否包含数据持久化系统相关的UI元素"""
-        assert html_content is not None, "无法读取HTML文件内容"
+    def test_html_file_size_and_structure(self):
+        """测试HTML文件大小合理性和基本结构完整性"""
+        # 检查文件大小（性能优化项目应该注意文件大小）
+        file_size = self.html_file.stat().st_size
+        assert file_size > 100, "HTML文件过小，可能内容不完整"
+        assert file_size < 1024 * 1024, "HTML文件过大，可能影响加载性能"
         
-        soup = BeautifulSoup(html_content, 'html.parser')
+        # 检查文件内容结构
+        with open(self.html_file, 'r', encoding='utf-8') as f:
+            content = f.read()
         
-        # 检查是否包含表单元素（用于数据输入）
-        forms = soup.find_all('form')
-        inputs = soup.find_all('input')
-        buttons = soup.find_all('button')
-        
-        # 至少应该有一些交互元素
-        interactive_elements = len(forms) + len(inputs) + len(buttons)
-        assert interactive_elements > 0, "HTML文件缺少数据输入相关的交互元素（表单、输入框或按钮）"
-        
-        # 检查是否有用于显示数据的容器元素
-        containers = soup.find_all(['div', 'section', 'article', 'table'])
-        assert len(containers) > 0, "HTML文件缺少用于显示数据的容器元素"
-    
-    def test_html_has_valid_structure(self, html_content):
-        """测试HTML文件是否具有有效的文档结构"""
-        assert html_content is not None, "无法读取HTML文件内容"
-        
-        # 检查是否包含DOCTYPE声明
-        assert '<!DOCTYPE' in html_content.upper() or '<html' in html_content, "HTML文件缺少DOCTYPE声明或HTML标签"
-        
-        soup = BeautifulSoup(html_content, 'html.parser')
-        
-        # 检查title标签是否有内容
-        title = soup.find('title')
-        if title:
-            assert title.get_text().strip() != "", "title标签内容为空"
-        
-        # 检查是否有meta标签（字符编码等）
-        meta_tags = soup.find_all('meta')
-        charset_found = any('charset' in str(meta) for meta in meta_tags)
-        assert charset_found or 'charset' in html_content.lower(), "HTML文件缺少字符编码声明"
+        # 基本HTML结构检查
+        assert '<!DOCTYPE' in content or '<html' in content, "缺少HTML文档类型声明"
+        assert '<title>' in content, "缺少页面标题"
+        assert content.count('<html') == content.count('</html>'), "HTML标签不匹配"
+        assert content.count('<head') == content.count('</head>'), "HEAD标签不匹配"
+        assert content.count('<body') == content.count('</body>'), "BODY标签不匹配"
