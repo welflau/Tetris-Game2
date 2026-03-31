@@ -65,7 +65,7 @@
             color: var(--text-light);
             font-size: 1.8rem;
             font-weight: 600;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
         }
 
         /* 主要内容区域 */
@@ -75,7 +75,6 @@
             justify-content: center;
             align-items: center;
             padding: 2rem;
-            position: relative;
         }
 
         /* 游戏容器 */
@@ -84,191 +83,163 @@
             gap: 2rem;
             background: var(--bg-glass);
             backdrop-filter: blur(10px);
-            padding: 2rem;
             border-radius: var(--border-radius-large);
-            border: 1px solid var(--border-glass);
+            padding: 2rem;
             box-shadow: var(--shadow-heavy);
-            position: relative;
+            border: 1px solid var(--border-glass);
         }
 
-        /* 游戏面板 */
-        .game-board {
-            width: 300px;
-            height: 600px;
-            background: rgba(0, 0, 0, 0.8);
+        /* 游戏区域 */
+        .game-area {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* 游戏画布 */
+        #gameCanvas {
             border: 2px solid var(--border-glass);
             border-radius: var(--border-radius);
-            position: relative;
-            overflow: hidden;
+            background: rgba(0, 0, 0, 0.8);
+            box-shadow: var(--shadow-light);
         }
 
-        /* 游戏信息面板 */
-        .game-info {
+        /* 控制面板 */
+        .controls {
+            margin-top: 1rem;
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        /* 按钮样式 */
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: var(--border-radius);
+            background: var(--accent-color);
+            color: var(--text-light);
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: var(--shadow-light);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-heavy);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn.danger {
+            background: var(--danger-color);
+        }
+
+        .btn.warning {
+            background: var(--warning-color);
+        }
+
+        /* 信息面板 */
+        .info-panel {
             display: flex;
             flex-direction: column;
             gap: 1.5rem;
             min-width: 200px;
         }
 
-        /* 分数显示 */
-        .score-panel {
-            background: var(--bg-glass);
-            padding: 1.5rem;
-            border-radius: var(--border-radius);
-            border: 1px solid var(--border-glass);
-            text-align: center;
-        }
-
-        .score-panel h3 {
-            color: var(--text-light);
-            margin-bottom: 0.5rem;
-            font-size: 1.1rem;
-        }
-
-        .score-value {
-            color: var(--accent-color);
-            font-size: 1.5rem;
-            font-weight: bold;
-            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
-        }
-
-        /* 控制面板 */
-        .control-panel {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-        }
-
-        .control-btn {
-            padding: 0.8rem 1.5rem;
-            border: none;
-            border-radius: var(--border-radius);
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: var(--transition);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            box-shadow: var(--shadow-light);
-        }
-
-        .control-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-heavy);
-        }
-
-        .control-btn:active {
-            transform: translateY(0);
-        }
-
-        .btn-primary {
-            background: var(--accent-color);
-            color: var(--text-light);
-        }
-
-        .btn-primary:hover {
-            background: #45a049;
-        }
-
-        .btn-secondary {
-            background: var(--warning-color);
-            color: var(--text-light);
-        }
-
-        .btn-secondary:hover {
-            background: #e68900;
-        }
-
-        .btn-danger {
-            background: var(--danger-color);
-            color: var(--text-light);
-        }
-
-        .btn-danger:hover {
-            background: #da190b;
-        }
-
-        .btn-disabled {
-            background: #666;
-            color: #999;
-            cursor: not-allowed;
-            opacity: 0.6;
-        }
-
-        .btn-disabled:hover {
-            transform: none;
-            box-shadow: var(--shadow-light);
-            background: #666;
-        }
-
-        /* 暂停覆盖层 */
-        .pause-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(5px);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-        }
-
-        .pause-overlay.show {
-            display: flex;
-        }
-
-        .pause-menu {
+        .info-card {
             background: var(--bg-glass);
             backdrop-filter: blur(10px);
-            padding: 3rem;
-            border-radius: var(--border-radius-large);
-            border: 1px solid var(--border-glass);
-            box-shadow: var(--shadow-heavy);
-            text-align: center;
-            min-width: 300px;
-        }
-
-        .pause-menu h2 {
-            color: var(--text-light);
-            font-size: 2rem;
-            margin-bottom: 2rem;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-        }
-
-        .pause-menu .control-btn {
-            width: 100%;
-            margin-bottom: 1rem;
-        }
-
-        /* 游戏状态指示器 */
-        .game-status {
-            position: absolute;
-            top: 1rem;
-            right: 1rem;
-            padding: 0.5rem 1rem;
             border-radius: var(--border-radius);
-            font-size: 0.9rem;
-            font-weight: bold;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+            padding: 1.5rem;
+            border: 1px solid var(--border-glass);
+            box-shadow: var(--shadow-light);
         }
 
-        .status-running {
+        .info-card h3 {
+            color: var(--text-light);
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+            text-align: center;
+        }
+
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            color: var(--text-light);
+        }
+
+        .info-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .info-value {
+            font-weight: 600;
+            color: var(--accent-color);
+        }
+
+        /* 设置面板 */
+        .settings-panel {
+            background: var(--bg-glass);
+            backdrop-filter: blur(10px);
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            border: 1px solid var(--border-glass);
+            box-shadow: var(--shadow-light);
+        }
+
+        .setting-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            color: var(--text-light);
+        }
+
+        .setting-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .setting-control {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .toggle {
+            position: relative;
+            width: 50px;
+            height: 24px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .toggle.active {
             background: var(--accent-color);
-            color: var(--text-light);
         }
 
-        .status-paused {
-            background: var(--warning-color);
-            color: var(--text-light);
+        .toggle::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: 50%;
+            transition: var(--transition);
         }
 
-        .status-game-over {
-            background: var(--danger-color);
-            color: var(--text-light);
+        .toggle.active::after {
+            transform: translateX(26px);
         }
 
         /* 响应式设计 */
@@ -278,673 +249,731 @@
                 padding: 1rem;
             }
 
-            .game-board {
-                width: 250px;
-                height: 500px;
-            }
-
-            .game-info {
+            .info-panel {
                 min-width: auto;
             }
 
-            .control-panel {
-                flex-direction: row;
-                flex-wrap: wrap;
+            header h1 {
+                font-size: 1.5rem;
             }
 
-            .control-btn {
-                flex: 1;
-                min-width: 120px;
+            main {
+                padding: 1rem;
             }
         }
 
-        /* 动画效果 */
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: scale(0.9);
-            }
-            to {
-                opacity: 1;
-                transform: scale(1);
-            }
+        /* 加载动画 */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--accent-color);
+            animation: spin 1s ease-in-out infinite;
         }
 
-        .pause-menu {
-            animation: fadeIn 0.3s ease-out;
+        @keyframes spin {
+            to { transform: rotate(360deg); }
         }
 
-        /* 键盘提示 */
-        .keyboard-hints {
-            background: var(--bg-glass);
-            padding: 1rem;
-            border-radius: var(--border-radius);
-            border: 1px solid var(--border-glass);
-            font-size: 0.9rem;
+        /* 通知样式 */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--accent-color);
             color: var(--text-light);
+            padding: 1rem 1.5rem;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-heavy);
+            transform: translateX(100%);
+            transition: var(--transition);
+            z-index: 1000;
         }
 
-        .keyboard-hints h4 {
-            margin-bottom: 0.5rem;
-            color: var(--accent-color);
+        .notification.show {
+            transform: translateX(0);
         }
 
-        .keyboard-hints p {
-            margin-bottom: 0.3rem;
+        .notification.error {
+            background: var(--danger-color);
+        }
+
+        .notification.warning {
+            background: var(--warning-color);
         }
     </style>
 </head>
 <body>
     <header>
         <h1>俄罗斯方块</h1>
-        <div class="game-status status-running" id="gameStatus">运行中</div>
     </header>
 
     <main>
         <div class="game-container">
-            <div class="game-board" id="gameBoard">
-                <!-- 游戏画布将在这里渲染 -->
+            <div class="game-area">
+                <canvas id="gameCanvas" width="300" height="600"></canvas>
+                <div class="controls">
+                    <button class="btn" id="startBtn">开始游戏</button>
+                    <button class="btn" id="pauseBtn">暂停</button>
+                    <button class="btn danger" id="resetBtn">重置</button>
+                    <button class="btn warning" id="saveBtn">保存游戏</button>
+                    <button class="btn" id="loadBtn">加载游戏</button>
+                </div>
             </div>
 
-            <div class="game-info">
-                <div class="score-panel">
-                    <h3>分数</h3>
-                    <div class="score-value" id="score">0</div>
+            <div class="info-panel">
+                <div class="info-card">
+                    <h3>游戏信息</h3>
+                    <div class="info-item">
+                        <span>分数:</span>
+                        <span class="info-value" id="score">0</span>
+                    </div>
+                    <div class="info-item">
+                        <span>等级:</span>
+                        <span class="info-value" id="level">1</span>
+                    </div>
+                    <div class="info-item">
+                        <span>行数:</span>
+                        <span class="info-value" id="lines">0</span>
+                    </div>
+                    <div class="info-item">
+                        <span>最高分:</span>
+                        <span class="info-value" id="highScore">0</span>
+                    </div>
                 </div>
 
-                <div class="score-panel">
-                    <h3>等级</h3>
-                    <div class="score-value" id="level">1</div>
+                <div class="info-card">
+                    <h3>游戏统计</h3>
+                    <div class="info-item">
+                        <span>游戏次数:</span>
+                        <span class="info-value" id="gamesPlayed">0</span>
+                    </div>
+                    <div class="info-item">
+                        <span>总游戏时间:</span>
+                        <span class="info-value" id="totalTime">0分钟</span>
+                    </div>
+                    <div class="info-item">
+                        <span>平均分数:</span>
+                        <span class="info-value" id="avgScore">0</span>
+                    </div>
                 </div>
 
-                <div class="score-panel">
-                    <h3>行数</h3>
-                    <div class="score-value" id="lines">0</div>
-                </div>
-
-                <div class="control-panel" id="controlPanel">
-                    <button class="control-btn btn-primary" id="startBtn">开始游戏</button>
-                    <button class="control-btn btn-secondary btn-disabled" id="pauseBtn" disabled>暂停</button>
-                    <button class="control-btn btn-danger" id="restartBtn">重新开始</button>
-                </div>
-
-                <div class="keyboard-hints">
-                    <h4>键盘操作</h4>
-                    <p>← → : 左右移动</p>
-                    <p>↓ : 快速下降</p>
-                    <p>↑ : 旋转方块</p>
-                    <p>空格 : 暂停/继续</p>
-                    <p>R : 重新开始</p>
+                <div class="settings-panel">
+                    <h3 style="color: var(--text-light); margin-bottom: 1rem; text-align: center;">游戏设置</h3>
+                    <div class="setting-item">
+                        <span>音效:</span>
+                        <div class="setting-control">
+                            <div class="toggle active" id="soundToggle"></div>
+                        </div>
+                    </div>
+                    <div class="setting-item">
+                        <span>显示网格:</span>
+                        <div class="setting-control">
+                            <div class="toggle active" id="gridToggle"></div>
+                        </div>
+                    </div>
+                    <div class="setting-item">
+                        <span>显示阴影:</span>
+                        <div class="setting-control">
+                            <div class="toggle active" id="shadowToggle"></div>
+                        </div>
+                    </div>
+                    <div class="setting-item">
+                        <span>自动保存:</span>
+                        <div class="setting-control">
+                            <div class="toggle active" id="autoSaveToggle"></div>
+                        </div>
+                    </div>
+                    <div class="setting-item" style="margin-top: 1rem;">
+                        <button class="btn danger" id="resetSettingsBtn" style="width: 100%;">重置设置</button>
+                    </div>
                 </div>
             </div>
         </div>
     </main>
 
-    <!-- 暂停覆盖层 -->
-    <div class="pause-overlay" id="pauseOverlay">
-        <div class="pause-menu">
-            <h2>游戏暂停</h2>
-            <button class="control-btn btn-primary" id="resumeBtn">继续游戏</button>
-            <button class="control-btn btn-danger" id="restartFromPauseBtn">重新开始</button>
-            <button class="control-btn btn-secondary" id="exitBtn">退出游戏</button>
-        </div>
-    </div>
-
     <script>
-        // 游戏状态枚举
-        const GameStates = {
-            IDLE: 'idle',
-            RUNNING: 'running',
-            PAUSED: 'paused',
-            GAME_OVER: 'game_over'
-        };
-
-        // 游戏状态管理器
-        class GameStateManager {
+        // 数据持久化系统
+        class StorageManager {
             constructor() {
-                this.currentState = GameStates.IDLE;
-                this.previousState = null;
-                this.stateChangeCallbacks = [];
-                this.gameData = {
+                this.prefix = 'tetris_';
+            }
+
+            // 保存数据
+            save(key, data) {
+                try {
+                    const serializedData = JSON.stringify(data);
+                    localStorage.setItem(this.prefix + key, serializedData);
+                    return true;
+                } catch (error) {
+                    console.error('保存数据失败:', error);
+                    return false;
+                }
+            }
+
+            // 加载数据
+            load(key, defaultValue = null) {
+                try {
+                    const data = localStorage.getItem(this.prefix + key);
+                    return data ? JSON.parse(data) : defaultValue;
+                } catch (error) {
+                    console.error('加载数据失败:', error);
+                    return defaultValue;
+                }
+            }
+
+            // 删除数据
+            remove(key) {
+                try {
+                    localStorage.removeItem(this.prefix + key);
+                    return true;
+                } catch (error) {
+                    console.error('删除数据失败:', error);
+                    return false;
+                }
+            }
+
+            // 清空所有数据
+            clear() {
+                try {
+                    const keys = Object.keys(localStorage).filter(key => key.startsWith(this.prefix));
+                    keys.forEach(key => localStorage.removeItem(key));
+                    return true;
+                } catch (error) {
+                    console.error('清空数据失败:', error);
+                    return false;
+                }
+            }
+
+            // 检查数据是否存在
+            exists(key) {
+                return localStorage.getItem(this.prefix + key) !== null;
+            }
+        }
+
+        // 游戏数据存储管理
+        class GameDataStorage {
+            constructor() {
+                this.storage = new StorageManager();
+                this.gameDataKey = 'game_data';
+                this.highScoresKey = 'high_scores';
+                this.statsKey = 'game_stats';
+            }
+
+            // 保存游戏数据
+            saveGameData(gameData) {
+                const data = {
+                    score: gameData.score || 0,
+                    level: gameData.level || 1,
+                    lines: gameData.lines || 0,
+                    timestamp: Date.now()
+                };
+                return this.storage.save(this.gameDataKey, data);
+            }
+
+            // 加载游戏数据
+            loadGameData() {
+                return this.storage.load(this.gameDataKey, {
                     score: 0,
                     level: 1,
                     lines: 0,
-                    board: null,
-                    currentPiece: null
-                };
+                    timestamp: Date.now()
+                });
             }
 
-            // 获取当前状态
-            getCurrentState() {
-                return this.currentState;
-            }
-
-            // 设置状态
-            setState(newState) {
-                if (this.currentState === newState) return;
-                
-                this.previousState = this.currentState;
-                this.currentState = newState;
-                
-                // 触发状态变化回调
-                this.stateChangeCallbacks.forEach(callback => {
-                    callback(newState, this.previousState);
+            // 保存最高分
+            saveHighScore(score) {
+                const highScores = this.getHighScores();
+                highScores.push({
+                    score: score,
+                    date: new Date().toISOString(),
+                    timestamp: Date.now()
                 });
                 
-                console.log(`游戏状态变化: ${this.previousState} -> ${newState}`);
+                // 排序并保留前10名
+                highScores.sort((a, b) => b.score - a.score);
+                const topScores = highScores.slice(0, 10);
+                
+                return this.storage.save(this.highScoresKey, topScores);
             }
 
-            // 注册状态变化回调
-            onStateChange(callback) {
-                this.stateChangeCallbacks.push(callback);
+            // 获取最高分列表
+            getHighScores() {
+                return this.storage.load(this.highScoresKey, []);
             }
 
-            // 暂停游戏
-            pause() {
-                if (this.currentState === GameStates.RUNNING) {
-                    this.setState(GameStates.PAUSED);
-                    return true;
-                }
-                return false;
+            // 获取最高分
+            getHighScore() {
+                const highScores = this.getHighScores();
+                return highScores.length > 0 ? highScores[0].score : 0;
             }
 
-            // 继续游戏
-            resume() {
-                if (this.currentState === GameStates.PAUSED) {
-                    this.setState(GameStates.RUNNING);
-                    return true;
-                }
-                return false;
-            }
-
-            // 开始游戏
-            start() {
-                this.setState(GameStates.RUNNING);
-            }
-
-            // 重新开始游戏
-            restart() {
-                this.gameData = {
-                    score: 0,
-                    level: 1,
-                    lines: 0,
-                    board: null,
-                    currentPiece: null
+            // 保存游戏统计
+            saveGameStats(stats) {
+                const currentStats = this.loadGameStats();
+                const updatedStats = {
+                    gamesPlayed: (currentStats.gamesPlayed || 0) + (stats.gamesPlayed || 0),
+                    totalTime: (currentStats.totalTime || 0) + (stats.totalTime || 0),
+                    totalScore: (currentStats.totalScore || 0) + (stats.totalScore || 0),
+                    lastPlayed: Date.now()
                 };
-                this.setState(GameStates.RUNNING);
+                
+                // 计算平均分
+                updatedStats.avgScore = updatedStats.gamesPlayed > 0 ? 
+                    Math.round(updatedStats.totalScore / updatedStats.gamesPlayed) : 0;
+                
+                return this.storage.save(this.statsKey, updatedStats);
             }
 
-            // 游戏结束
-            gameOver() {
-                this.setState(GameStates.GAME_OVER);
+            // 加载游戏统计
+            loadGameStats() {
+                return this.storage.load(this.statsKey, {
+                    gamesPlayed: 0,
+                    totalTime: 0,
+                    totalScore: 0,
+                    avgScore: 0,
+                    lastPlayed: Date.now()
+                });
+            }
+        }
+
+        // 设置存储管理
+        class SettingsStorage {
+            constructor() {
+                this.storage = new StorageManager();
+                this.settingsKey = 'settings';
+                this.defaultSettings = {
+                    sound: true,
+                    showGrid: true,
+                    showShadow: true,
+                    autoSave: true,
+                    theme: 'default',
+                    controls: {
+                        left: 'ArrowLeft',
+                        right: 'ArrowRight',
+                        down: 'ArrowDown',
+                        rotate: 'ArrowUp',
+                        drop: 'Space',
+                        pause: 'KeyP'
+                    }
+                };
+            }
+
+            // 保存设置
+            saveSettings(settings) {
+                const mergedSettings = { ...this.defaultSettings, ...settings };
+                return this.storage.save(this.settingsKey, mergedSettings);
+            }
+
+            // 加载设置
+            loadSettings() {
+                return this.storage.load(this.settingsKey, this.defaultSettings);
+            }
+
+            // 更新单个设置
+            updateSetting(key, value) {
+                const settings = this.loadSettings();
+                if (key.includes('.')) {
+                    // 处理嵌套属性，如 'controls.left'
+                    const keys = key.split('.');
+                    let current = settings;
+                    for (let i = 0; i < keys.length - 1; i++) {
+                        if (!current[keys[i]]) current[keys[i]] = {};
+                        current = current[keys[i]];
+                    }
+                    current[keys[keys.length - 1]] = value;
+                } else {
+                    settings[key] = value;
+                }
+                return this.saveSettings(settings);
+            }
+
+            // 重置设置
+            resetSettings() {
+                return this.saveSettings(this.defaultSettings);
+            }
+        }
+
+        // 游戏存档管理
+        class SaveGameStorage {
+            constructor() {
+                this.storage = new StorageManager();
+                this.saveGameKey = 'saved_game';
             }
 
             // 保存游戏状态
-            saveGameState(gameData) {
-                this.gameData = { ...this.gameData, ...gameData };
-            }
-
-            // 获取游戏数据
-            getGameData() {
-                return { ...this.gameData };
-            }
-        }
-
-        // 暂停覆盖层管理
-        class PauseOverlay {
-            constructor(gameStateManager) {
-                this.gameStateManager = gameStateManager;
-                this.overlay = document.getElementById('pauseOverlay');
-                this.resumeBtn = document.getElementById('resumeBtn');
-                this.restartFromPauseBtn = document.getElementById('restartFromPauseBtn');
-                this.exitBtn = document.getElementById('exitBtn');
-                
-                this.bindEvents();
-            }
-
-            // 显示暂停覆盖层
-            show() {
-                this.overlay.classList.add('show');
-                document.body.style.overflow = 'hidden';
-            }
-
-            // 隐藏暂停覆盖层
-            hide() {
-                this.overlay.classList.remove('show');
-                document.body.style.overflow = 'auto';
-            }
-
-            // 渲染暂停菜单
-            renderPauseMenu() {
-                // 暂停菜单已在HTML中定义，这里可以动态更新内容
-                const gameData = this.gameStateManager.getGameData();
-                // 可以在这里添加更多暂停时的信息显示
-            }
-
-            // 绑定事件
-            bindEvents() {
-                // 继续游戏
-                this.resumeBtn.addEventListener('click', () => {
-                    this.gameStateManager.resume();
-                });
-
-                // 从暂停菜单重新开始
-                this.restartFromPauseBtn.addEventListener('click', () => {
-                    this.gameStateManager.restart();
-                });
-
-                // 退出游戏
-                this.exitBtn.addEventListener('click', () => {
-                    this.gameStateManager.setState(GameStates.IDLE);
-                });
-
-                // 点击覆盖层外部继续游戏
-                this.overlay.addEventListener('click', (e) => {
-                    if (e.target === this.overlay) {
-                        this.gameStateManager.resume();
-                    }
-                });
-
-                // ESC键继续游戏
-                document.addEventListener('keydown', (e) => {
-                    if (e.key === 'Escape' && this.gameStateManager.getCurrentState() === GameStates.PAUSED) {
-                        this.gameStateManager.resume();
-                    }
-                });
-            }
-        }
-
-        // 游戏控制面板
-        class GameControlPanel {
-            constructor(gameStateManager) {
-                this.gameStateManager = gameStateManager;
-                this.startBtn = document.getElementById('startBtn');
-                this.pauseBtn = document.getElementById('pauseBtn');
-                this.restartBtn = document.getElementById('restartBtn');
-                
-                this.bindControlEvents();
-                this.updateButtonStates();
-            }
-
-            // 渲染控制面板
-            render() {
-                this.updateButtonStates();
-            }
-
-            // 更新按钮状态
-            updateButtonStates() {
-                const currentState = this.gameStateManager.getCurrentState();
-                
-                switch (currentState) {
-                    case GameStates.IDLE:
-                        this.startBtn.textContent = '开始游戏';
-                        this.startBtn.disabled = false;
-                        this.startBtn.className = 'control-btn btn-primary';
-                        
-                        this.pauseBtn.textContent = '暂停';
-                        this.pauseBtn.disabled = true;
-                        this.pauseBtn.className = 'control-btn btn-secondary btn-disabled';
-                        
-                        this.restartBtn.disabled = false;
-                        this.restartBtn.className = 'control-btn btn-danger';
-                        break;
-                        
-                    case GameStates.RUNNING:
-                        this.startBtn.textContent = '游戏中';
-                        this.startBtn.disabled = true;
-                        this.startBtn.className = 'control-btn btn-primary btn-disabled';
-                        
-                        this.pauseBtn.textContent = '暂停';
-                        this.pauseBtn.disabled = false;
-                        this.pauseBtn.className = 'control-btn btn-secondary';
-                        
-                        this.restartBtn.disabled = false;
-                        this.restartBtn.className = 'control-btn btn-danger';
-                        break;
-                        
-                    case GameStates.PAUSED:
-                        this.startBtn.textContent = '游戏中';
-                        this.startBtn.disabled = true;
-                        this.startBtn.className = 'control-btn btn-primary btn-disabled';
-                        
-                        this.pauseBtn.textContent = '继续';
-                        this.pauseBtn.disabled = false;
-                        this.pauseBtn.className = 'control-btn btn-primary';
-                        
-                        this.restartBtn.disabled = false;
-                        this.restartBtn.className = 'control-btn btn-danger';
-                        break;
-                        
-                    case GameStates.GAME_OVER:
-                        this.startBtn.textContent = '重新开始';
-                        this.startBtn.disabled = false;
-                        this.startBtn.className = 'control-btn btn-primary';
-                        
-                        this.pauseBtn.textContent = '暂停';
-                        this.pauseBtn.disabled = true;
-                        this.pauseBtn.className = 'control-btn btn-secondary btn-disabled';
-                        
-                        this.restartBtn.disabled = false;
-                        this.restartBtn.className = 'control-btn btn-danger';
-                        break;
-                }
-            }
-
-            // 绑定控制事件
-            bindControlEvents() {
-                // 开始/重新开始按钮
-                this.startBtn.addEventListener('click', () => {
-                    const currentState = this.gameStateManager.getCurrentState();
-                    if (currentState === GameStates.IDLE || currentState === GameStates.GAME_OVER) {
-                        if (currentState === GameStates.GAME_OVER) {
-                            this.gameStateManager.restart();
-                        } else {
-                            this.gameStateManager.start();
-                        }
-                    }
-                });
-
-                // 暂停/继续按钮
-                this.pauseBtn.addEventListener('click', () => {
-                    const currentState = this.gameStateManager.getCurrentState();
-                    if (currentState === GameStates.RUNNING) {
-                        this.gameStateManager.pause();
-                    } else if (currentState === GameStates.PAUSED) {
-                        this.gameStateManager.resume();
-                    }
-                });
-
-                // 重新开始按钮
-                this.restartBtn.addEventListener('click', () => {
-                    if (confirm('确定要重新开始游戏吗？当前进度将会丢失。')) {
-                        this.gameStateManager.restart();
-                    }
-                });
-            }
-        }
-
-        // 状态转换处理器
-        class StateTransitionHandler {
-            constructor(gameStateManager) {
-                this.gameStateManager = gameStateManager;
-                this.gameLoop = null;
-                this.gameData = {
-                    score: 0,
-                    level: 1,
-                    lines: 0
+            saveGameState(gameState) {
+                const saveData = {
+                    ...gameState,
+                    timestamp: Date.now(),
+                    version: '1.0'
                 };
-                
-                // 监听状态变化
-                this.gameStateManager.onStateChange((newState, oldState) => {
-                    this.handleStateTransition(newState, oldState);
-                });
+                return this.storage.save(this.saveGameKey, saveData);
             }
 
-            // 处理状态转换
-            handleStateTransition(newState, oldState) {
-                console.log(`处理状态转换: ${oldState} -> ${newState}`);
-                
-                switch (newState) {
-                    case GameStates.RUNNING:
-                        if (oldState === GameStates.PAUSED) {
-                            this.handleResume();
-                        } else {
-                            this.handleStart();
-                        }
-                        break;
-                        
-                    case GameStates.PAUSED:
-                        this.handlePause();
-                        break;
-                        
-                    case GameStates.GAME_OVER:
-                        this.handleGameOver();
-                        break;
-                        
-                    case GameStates.IDLE:
-                        this.handleStop();
-                        break;
-                }
-                
-                // 更新UI状态
-                this.updateGameStatus(newState);
+            // 加载游戏状态
+            loadGameState() {
+                return this.storage.load(this.saveGameKey, null);
             }
 
-            // 处理游戏开始
-            handleStart() {
-                console.log('开始游戏');
-                this.startGameLoop();
-                this.updateScore();
+            // 清除存档
+            clearSavedGame() {
+                return this.storage.remove(this.saveGameKey);
             }
 
-            // 处理暂停
-            handlePause() {
-                console.log('暂停游戏');
-                this.saveGameState();
-                this.stopGameLoop();
-                // 显示暂停覆盖层将由PauseOverlay处理
-            }
-
-            // 处理继续
-            handleResume() {
-                console.log('继续游戏');
-                this.restoreGameState();
-                this.startGameLoop();
-            }
-
-            // 处理重新开始
-            handleRestart() {
-                console.log('重新开始游戏');
-                this.resetGameData();
-                this.startGameLoop();
-                this.updateScore();
-            }
-
-            // 处理游戏结束
-            handleGameOver() {
-                console.log('游戏结束');
-                this.stopGameLoop();
-                alert(`游戏结束！\n最终分数: ${this.gameData.score}\n消除行数: ${this.gameData.lines}\n达到等级: ${this.gameData.level}`);
-            }
-
-            // 处理停止
-            handleStop() {
-                console.log('停止游戏');
-                this.stopGameLoop();
-                this.resetGameData();
-                this.updateScore();
-            }
-
-            // 开始游戏循环
-            startGameLoop() {
-                if (this.gameLoop) {
-                    clearInterval(this.gameLoop);
-                }
-                
-                this.gameLoop = setInterval(() => {
-                    if (this.gameStateManager.getCurrentState() === GameStates.RUNNING) {
-                        this.gameStep();
-                    }
-                }, 1000 / this.gameData.level); // 根据等级调整速度
-            }
-
-            // 停止游戏循环
-            stopGameLoop() {
-                if (this.gameLoop) {
-                    clearInterval(this.gameLoop);
-                    this.gameLoop = null;
-                }
-            }
-
-            // 游戏步骤（简化版本）
-            gameStep() {
-                // 这里应该包含实际的游戏逻辑
-                // 为了演示，我们只是简单地增加分数
-                this.gameData.score += 10;
-                this.gameData.lines += Math.random() < 0.1 ? 1 : 0;
-                this.gameData.level = Math.floor(this.gameData.lines / 10) + 1;
-                
-                this.updateScore();
-                
-                // 模拟游戏结束条件
-                if (this.gameData.score > 5000) {
-                    this.gameStateManager.gameOver();
-                }
-            }
-
-            // 保存游戏状态
-            saveGameState() {
-                this.gameStateManager.saveGameState(this.gameData);
-                localStorage.setItem('tetris_save', JSON.stringify(this.gameData));
-            }
-
-            // 恢复游戏状态
-            restoreGameState() {
-                const savedData = this.gameStateManager.getGameData();
-                if (savedData.score !== undefined) {
-                    this.gameData = { ...savedData };
-                }
-            }
-
-            // 重置游戏数据
-            resetGameData() {
-                this.gameData = {
-                    score: 0,
-                    level: 1,
-                    lines: 0
-                };
-                localStorage.removeItem('tetris_save');
-            }
-
-            // 更新分数显示
-            updateScore() {
-                document.getElementById('score').textContent = this.gameData.score;
-                document.getElementById('level').textContent = this.gameData.level;
-                document.getElementById('lines').textContent = this.gameData.lines;
-            }
-
-            // 更新游戏状态显示
-            updateGameStatus(state) {
-                const statusElement = document.getElementById('gameStatus');
-                statusElement.className = 'game-status';
-                
-                switch (state) {
-                    case GameStates.IDLE:
-                        statusElement.textContent = '待机';
-                        statusElement.classList.add('status-running');
-                        break;
-                    case GameStates.RUNNING:
-                        statusElement.textContent = '运行中';
-                        statusElement.classList.add('status-running');
-                        break;
-                    case GameStates.PAUSED:
-                        statusElement.textContent = '已暂停';
-                        statusElement.classList.add('status-paused');
-                        break;
-                    case GameStates.GAME_OVER:
-                        statusElement.textContent = '游戏结束';
-                        statusElement.classList.add('status-game-over');
-                        break;
-                }
+            // 检查是否有存档
+            hasSavedGame() {
+                return this.storage.exists(this.saveGameKey);
             }
         }
 
-        // 主游戏类
+        // 通知系统
+        class NotificationManager {
+            constructor() {
+                this.container = this.createContainer();
+            }
+
+            createContainer() {
+                const container = document.createElement('div');
+                container.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    z-index: 1000;
+                    pointer-events: none;
+                `;
+                document.body.appendChild(container);
+                return container;
+            }
+
+            show(message, type = 'success', duration = 3000) {
+                const notification = document.createElement('div');
+                notification.className = `notification ${type}`;
+                notification.textContent = message;
+                notification.style.pointerEvents = 'auto';
+                
+                this.container.appendChild(notification);
+                
+                // 显示动画
+                setTimeout(() => notification.classList.add('show'), 100);
+                
+                // 自动隐藏
+                setTimeout(() => {
+                    notification.classList.remove('show');
+                    setTimeout(() => {
+                        if (notification.parentNode) {
+                            notification.parentNode.removeChild(notification);
+                        }
+                    }, 300);
+                }, duration);
+            }
+        }
+
+        // 游戏主类
         class TetrisGame {
             constructor() {
-                this.gameStateManager = new GameStateManager();
-                this.pauseOverlay = new PauseOverlay(this.gameStateManager);
-                this.controlPanel = new GameControlPanel(this.gameStateManager);
-                this.stateHandler = new StateTransitionHandler(this.gameStateManager);
+                this.canvas = document.getElementById('gameCanvas');
+                this.ctx = this.canvas.getContext('2d');
                 
-                this.initializeGame();
-                this.bindGlobalEvents();
-            }
-
-            // 初始化游戏
-            initializeGame() {
-                // 监听状态变化来控制暂停覆盖层
-                this.gameStateManager.onStateChange((newState, oldState) => {
-                    if (newState === GameStates.PAUSED) {
-                        this.pauseOverlay.show();
-                    } else if (oldState === GameStates.PAUSED) {
-                        this.pauseOverlay.hide();
-                    }
-                    
-                    // 更新控制面板
-                    this.controlPanel.updateButtonStates();
-                });
-            }
-
-            // 绑定全局事件
-            bindGlobalEvents() {
-                // 键盘事件
-                document.addEventListener('keydown', (e) => {
-                    this.handleKeyPress(e);
-                });
-
-                // 防止页面刷新时丢失游戏状态
-                window.addEventListener('beforeunload', (e) => {
-                    if (this.gameStateManager.getCurrentState() === GameStates.RUNNING) {
-                        e.preventDefault();
-                        e.returnValue = '游戏正在进行中，确定要离开吗？';
-                    }
-                });
-
-                // 页面失去焦点时自动暂停
-                window.addEventListener('blur', () => {
-                    if (this.gameStateManager.getCurrentState() === GameStates.RUNNING) {
-                        this.gameStateManager.pause();
-                    }
-                });
-            }
-
-            // 处理键盘按键
-            handleKeyPress(e) {
-                const currentState = this.gameStateManager.getCurrentState();
+                // 初始化存储管理器
+                this.gameDataStorage = new GameDataStorage();
+                this.settingsStorage = new SettingsStorage();
+                this.saveGameStorage = new SaveGameStorage();
+                this.notificationManager = new NotificationManager();
                 
-                switch (e.key) {
-                    case ' ': // 空格键暂停/继续
-                        e.preventDefault();
-                        if (currentState === GameStates.RUNNING) {
-                            this.gameStateManager.pause();
-                        } else if (currentState === GameStates.PAUSED) {
-                            this.gameStateManager.resume();
-                        }
-                        break;
-                        
-                    case 'r':
-                    case 'R': // R键重新开始
-                        if (confirm('确定要重新开始游戏吗？')) {
-                            this.gameStateManager.restart();
-                        }
-                        break;
-                        
-                    case 'ArrowLeft':
-                    case 'ArrowRight':
-                    case 'ArrowDown':
-                    case 'ArrowUp':
-                        // 游戏控制键（只在运行状态下有效）
-                        if (currentState === GameStates.RUNNING) {
-                            e.preventDefault();
-                            this.handleGameControl(e.key);
-                        }
-                        break;
+                // 游戏状态
+                this.gameState = {
+                    score: 0,
+                    level: 1,
+                    lines: 0,
+                    isPlaying: false,
+                    isPaused: false
+                };
+                
+                // 游戏统计
+                this.gameStats = {
+                    startTime: null,
+                    playTime: 0
+                };
+                
+                this.init();
+            }
+
+            init() {
+                this.loadSettings();
+                this.loadGameData();
+                this.loadGameStats();
+                this.setupEventListeners();
+                this.updateDisplay();
+                
+                // 检查是否有存档
+                if (this.saveGameStorage.hasSavedGame()) {
+                    document.getElementById('loadBtn').style.display = 'inline-block';
+                } else {
+                    document.getElementById('loadBtn').style.display = 'none';
                 }
             }
 
-            // 处理游戏控制
-            handleGameControl(key) {
-                // 这里应该包含实际的游戏控制逻辑
-                console.log(`游戏控制: ${key}`);
-                // 例如：移动方块、旋转方块等
+            loadSettings() {
+                this.settings = this.settingsStorage.loadSettings();
+                this.updateSettingsDisplay();
+            }
+
+            loadGameData() {
+                const gameData = this.gameDataStorage.loadGameData();
+                // 不自动加载游戏数据到当前游戏状态，只用于显示历史记录
+            }
+
+            loadGameStats() {
+                this.stats = this.gameDataStorage.loadGameStats();
+                this.updateStatsDisplay();
+            }
+
+            setupEventListeners() {
+                // 游戏控制按钮
+                document.getElementById('startBtn').addEventListener('click', () => this.startGame());
+                document.getElementById('pauseBtn').addEventListener('click', () => this.togglePause());
+                document.getElementById('resetBtn').addEventListener('click', () => this.resetGame());
+                document.getElementById('saveBtn').addEventListener('click', () => this.saveGame());
+                document.getElementById('loadBtn').addEventListener('click', () => this.loadGame());
+                
+                // 设置控制
+                document.getElementById('soundToggle').addEventListener('click', (e) => {
+                    this.toggleSetting('sound', e.target);
+                });
+                document.getElementById('gridToggle').addEventListener('click', (e) => {
+                    this.toggleSetting('showGrid', e.target);
+                });
+                document.getElementById('shadowToggle').addEventListener('click', (e) => {
+                    this.toggleSetting('showShadow', e.target);
+                });
+                document.getElementById('autoSaveToggle').addEventListener('click', (e) => {
+                    this.toggleSetting('autoSave', e.target);
+                });
+                document.getElementById('resetSettingsBtn').addEventListener('click', () => {
+                    this.resetSettings();
+                });
+                
+                // 键盘控制
+                document.addEventListener('keydown', (e) => this.handleKeyPress(e));
+                
+                // 页面关闭前自动保存
+                window.addEventListener('beforeunload', () => {
+                    if (this.settings.autoSave && this.gameState.isPlaying) {
+                        this.saveGame();
+                    }
+                });
+            }
+
+            startGame() {
+                this.gameState.isPlaying = true;
+                this.gameState.isPaused = false;
+                this.gameStats.startTime = Date.now();
+                
+                document.getElementById('startBtn').textContent = '游戏中...';
+                document.getElementById('startBtn').disabled = true;
+                document.getElementById('pauseBtn').disabled = false;
+                
+                this.notificationManager.show('游戏开始！', 'success');
+                
+                // 模拟游戏循环
+                this.gameLoop();
+            }
+
+            gameLoop() {
+                if (!this.gameState.isPlaying || this.gameState.isPaused) return;
+                
+                // 模拟游戏逻辑
+                this.gameState.score += Math.floor(Math.random() * 10) + 1;
+                if (this.gameState.score > 0 && this.gameState.score % 1000 === 0) {
+                    this.gameState.level++;
+                    this.gameState.lines += 10;
+                }
+                
+                this.updateDisplay();
+                
+                // 自动保存
+                if (this.settings.autoSave && this.gameState.score % 500 === 0) {
+                    this.saveGameData();
+                }
+                
+                setTimeout(() => this.gameLoop(), 1000);
+            }
+
+            togglePause() {
+                if (!this.gameState.isPlaying) return;
+                
+                this.gameState.isPaused = !this.gameState.isPaused;
+                document.getElementById('pauseBtn').textContent = this.gameState.isPaused ? '继续' : '暂停';
+                
+                if (this.gameState.isPaused) {
+                    this.notificationManager.show('游戏已暂停', 'warning');
+                } else {
+                    this.notificationManager.show('游戏继续', 'success');
+                    this.gameLoop();
+                }
+            }
+
+            resetGame() {
+                this.gameState = {
+                    score: 0,
+                    level: 1,
+                    lines: 0,
+                    isPlaying: false,
+                    isPaused: false
+                };
+                
+                // 保存游戏统计
+                if (this.gameStats.startTime) {
+                    const playTime = Math.floor((Date.now() - this.gameStats.startTime) / 1000 / 60); // 分钟
+                    this.gameDataStorage.saveGameStats({
+                        gamesPlayed: 1,
+                        totalTime: playTime,
+                        totalScore: this.gameState.score
+                    });
+                    this.loadGameStats();
+                }
+                
+                document.getElementById('startBtn').textContent = '开始游戏';
+                document.getElementById('startBtn').disabled = false;
+                document.getElementById('pauseBtn').disabled = true;
+                document.getElementById('pauseBtn').textContent = '暂停';
+                
+                this.updateDisplay();
+                this.notificationManager.show('游戏已重置', 'warning');
+            }
+
+            saveGame() {
+                if (!this.gameState.isPlaying) {
+                    this.notificationManager.show('没有正在进行的游戏', 'error');
+                    return;
+                }
+                
+                const gameState = {
+                    ...this.gameState,
+                    playTime: this.gameStats.startTime ? Date.now() - this.gameStats.startTime : 0
+                };
+                
+                if (this.saveGameStorage.saveGameState(gameState)) {
+                    document.getElementById('loadBtn').style.display = 'inline-block';
+                    this.notificationManager.show('游戏已保存', 'success');
+                } else {
+                    this.notificationManager.show('保存失败', 'error');
+                }
+            }
+
+            loadGame() {
+                const savedGame = this.saveGameStorage.loadGameState();
+                if (!savedGame) {
+                    this.notificationManager.show('没有找到存档', 'error');
+                    return;
+                }
+                
+                this.gameState = {
+                    score: savedGame.score || 0,
+                    level: savedGame.level || 1,
+                    lines: savedGame.lines || 0,
+                    isPlaying: true,
+                    isPaused: false
+                };
+                
+                this.gameStats.startTime = Date.now() - (savedGame.playTime || 0);
+                
+                document.getElementById('startBtn').textContent = '游戏中...';
+                document.getElementById('startBtn').disabled = true;
+                document.getElementById('pauseBtn').disabled = false;
+                
+                this.updateDisplay();
+                this.gameLoop();
+                this.notificationManager.show('游戏已加载', 'success');
+            }
+
+            saveGameData() {
+                // 保存当前游戏数据
+                this.gameDataStorage.saveGameData(this.gameState);
+                
+                // 检查并保存最高分
+                const currentHighScore = this.gameDataStorage.getHighScore();
+                if (this.gameState.score > currentHighScore) {
+                    this.gameDataStorage.saveHighScore(this.gameState.score);
+                    this.notificationManager.show('新的最高分！', 'success');
+                }
+            }
+
+            toggleSetting(key, element) {
+                const newValue = !this.settings[key];
+                this.settings[key] = newValue;
+                this.settingsStorage.updateSetting(key, newValue);
+                
+                element.classList.toggle('active', newValue);
+                this.notificationManager.show(`${this.getSettingName(key)}已${newValue ? '开启' : '关闭'}`, 'success');
+            }
+
+            getSettingName(key) {
+                const names = {
+                    sound: '音效',
+                    showGrid: '网格显示',
+                    showShadow: '阴影显示',
+                    autoSave: '自动保存'
+                };
+                return names[key] || key;
+            }
+
+            resetSettings() {
+                if (confirm('确定要重置所有设置吗？')) {
+                    this.settingsStorage.resetSettings();
+                    this.loadSettings();
+                    this.notificationManager.show('设置已重置', 'success');
+                }
+            }
+
+            updateSettingsDisplay() {
+                document.getElementById('soundToggle').classList.toggle('active', this.settings.sound);
+                document.getElementById('gridToggle').classList.toggle('active', this.settings.showGrid);
+                document.getElementById('shadowToggle').classList.toggle('active', this.settings.showShadow);
+                document.getElementById('autoSaveToggle').classList.toggle('active', this.settings.autoSave);
+            }
+
+            updateDisplay() {
+                // 更新游戏信息
+                document.getElementById('score').textContent = this.gameState.score;
+                document.getElementById('level').textContent = this.gameState.level;
+                document.getElementById('lines').textContent = this.gameState.lines;
+                document.getElementById('highScore').textContent = this.gameDataStorage.getHighScore();
+            }
+
+            updateStatsDisplay() {
+                document.getElementById('gamesPlayed').textContent = this.stats.gamesPlayed;
+                document.getElementById('totalTime').textContent = this.stats.totalTime + '分钟';
+                document.getElementById('avgScore').textContent = this.stats.avgScore;
+            }
+
+            handleKeyPress(e) {
+                if (!this.gameState.isPlaying) return;
+                
+                const controls = this.settings.controls;
+                switch (e.code) {
+                    case controls.pause:
+                        e.preventDefault();
+                        this.togglePause();
+                        break;
+                    case controls.left:
+                    case controls.right:
+                    case controls.down:
+                    case controls.rotate:
+                    case controls.drop:
+                        e.preventDefault();
+                        // 这里可以添加具体的游戏控制逻辑
+                        break;
+                }
             }
         }
 
-        // 页面加载完成后初始化游戏
+        // 初始化游戏
         document.addEventListener('DOMContentLoaded', () => {
-            const game = new TetrisGame();
-            console.log('俄罗斯方块游戏初始化完成');
+            window.tetrisGame = new TetrisGame();
         });
     </script>
 </body>
