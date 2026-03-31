@@ -1,103 +1,71 @@
 import pytest
 from pathlib import Path
-from bs4 import BeautifulSoup
+import re
 
-class TestFrontendPerformanceOptimization:
+class TestLeaderboardFrontend:
     
     def test_index_html_file_exists(self):
-        """测试 index.html 文件是否存在"""
-        index_file = Path("frontend/index.html")
-        assert index_file.exists(), "index.html 文件不存在"
-        assert index_file.is_file(), "index.html 不是一个有效的文件"
+        """测试排行榜首页HTML文件是否存在"""
+        frontend_dir = Path("frontend")
+        index_file = frontend_dir / "index.html"
+        assert index_file.exists(), f"排行榜首页文件 {index_file} 不存在"
+        assert index_file.is_file(), f"{index_file} 不是一个有效的文件"
     
-    def test_index_html_contains_performance_elements(self):
-        """测试 index.html 是否包含性能优化相关的关键元素"""
-        index_file = Path("frontend/index.html")
-        assert index_file.exists(), "index.html 文件不存在"
-        
-        with open(index_file, 'r', encoding='utf-8') as f:
-            content = f.read()
-            soup = BeautifulSoup(content, 'html.parser')
-        
-        # 检查是否包含基本的HTML结构
-        assert soup.find('html'), "HTML文件缺少html标签"
-        assert soup.find('head'), "HTML文件缺少head标签"
-        assert soup.find('body'), "HTML文件缺少body标签"
-        
-        # 检查性能优化相关元素
-        meta_viewport = soup.find('meta', attrs={'name': 'viewport'})
-        assert meta_viewport is not None, "缺少viewport meta标签，影响移动端性能"
-        
-        # 检查是否有CSS或JS引用（性能优化项目应该有样式和脚本）
-        has_css = soup.find('link', rel='stylesheet') or soup.find('style')
-        has_js = soup.find('script')
-        assert has_css or has_js, "HTML文件应包含CSS样式或JavaScript脚本"
-    
-    def test_index_html_contains_animation_elements(self):
-        """测试 index.html 是否包含动画效果相关的元素或属性"""
-        index_file = Path("frontend/index.html")
-        assert index_file.exists(), "index.html 文件不存在"
+    def test_index_html_contains_leaderboard_elements(self):
+        """测试首页HTML包含排行榜必要的页面元素"""
+        frontend_dir = Path("frontend")
+        index_file = frontend_dir / "index.html"
         
         with open(index_file, 'r', encoding='utf-8') as f:
             content = f.read().lower()
         
-        # 检查动画相关的关键词
-        animation_keywords = [
-            'animation', 'transition', 'transform', 'keyframes',
-            'animate', 'fade', 'slide', 'rotate', 'scale'
-        ]
+        # 检查基本HTML结构
+        assert '<html' in content, "HTML文件缺少html标签"
+        assert '<head>' in content, "HTML文件缺少head标签"
+        assert '<body>' in content, "HTML文件缺少body标签"
         
-        has_animation = any(keyword in content for keyword in animation_keywords)
-        assert has_animation, "HTML文件应包含动画效果相关的CSS类名、属性或JavaScript代码"
+        # 检查排行榜相关元素
+        leaderboard_keywords = ['排行榜', 'leaderboard', 'ranking', '排名']
+        has_leaderboard_keyword = any(keyword in content for keyword in leaderboard_keywords)
+        assert has_leaderboard_keyword, "HTML文件缺少排行榜相关关键词"
+    
+    def test_index_html_has_valid_structure(self):
+        """测试首页HTML具有有效的表格或列表结构用于显示排行数据"""
+        frontend_dir = Path("frontend")
+        index_file = frontend_dir / "index.html"
+        
+        with open(index_file, 'r', encoding='utf-8') as f:
+            content = f.read().lower()
+        
+        # 检查是否包含表格或列表结构
+        has_table = '<table' in content and '</table>' in content
+        has_list = ('<ul' in content and '</ul>' in content) or ('<ol' in content and '</ol>' in content)
+        has_div_structure = '<div' in content and 'class' in content
+        
+        assert has_table or has_list or has_div_structure, "HTML文件缺少用于显示排行数据的结构元素（表格、列表或div容器）"
     
     def test_dev_notes_file_exists_and_readable(self):
-        """测试开发文档文件是否存在且可读"""
-        dev_notes_file = Path("docs/f1bc12/7fc47c/dev-notes.md")
-        assert dev_notes_file.exists(), "开发文档 dev-notes.md 文件不存在"
-        assert dev_notes_file.is_file(), "dev-notes.md 不是一个有效的文件"
+        """测试开发文档文件是否存在且可读取"""
+        docs_path = Path("docs/f1bc12/4734db/dev-notes.md")
+        assert docs_path.exists(), f"开发文档文件 {docs_path} 不存在"
+        assert docs_path.is_file(), f"{docs_path} 不是一个有效的文件"
         
-        # 检查文件是否可读且不为空
-        with open(dev_notes_file, 'r', encoding='utf-8') as f:
-            content = f.read().strip()
-        
-        assert len(content) > 0, "开发文档文件不应为空"
-        assert len(content) > 50, "开发文档内容过少，应包含更详细的说明"
+        # 测试文件是否可读
+        try:
+            with open(docs_path, 'r', encoding='utf-8') as f:
+                content = f.read()
+            assert len(content) > 0, "开发文档文件为空"
+        except Exception as e:
+            pytest.fail(f"无法读取开发文档文件: {e}")
     
-    def test_dev_notes_contains_project_info(self):
-        """测试开发文档是否包含项目相关信息"""
-        dev_notes_file = Path("docs/f1bc12/7fc47c/dev-notes.md")
-        assert dev_notes_file.exists(), "开发文档文件不存在"
-        
-        with open(dev_notes_file, 'r', encoding='utf-8') as f:
-            content = f.read().lower()
-        
-        # 检查是否包含性能优化或动画相关的关键词
-        project_keywords = [
-            '性能', 'performance', '优化', 'optimization',
-            '动画', 'animation', '效果', 'effect',
-            'frontend', '前端'
-        ]
-        
-        keyword_found = any(keyword in content for keyword in project_keywords)
-        assert keyword_found, "开发文档应包含项目相关的关键词说明"
-    
-    def test_project_structure_integrity(self):
-        """测试项目结构的完整性"""
-        # 检查frontend目录存在
+    def test_frontend_directory_structure(self):
+        """测试前端目录结构是否完整"""
         frontend_dir = Path("frontend")
-        assert frontend_dir.exists(), "frontend 目录不存在"
-        assert frontend_dir.is_dir(), "frontend 应该是一个目录"
+        assert frontend_dir.exists(), "frontend目录不存在"
+        assert frontend_dir.is_dir(), "frontend不是一个目录"
         
-        # 检查docs目录结构存在
-        docs_dir = Path("docs/f1bc12/7fc47c")
-        assert docs_dir.exists(), "文档目录结构不完整"
-        assert docs_dir.is_dir(), "docs/f1bc12/7fc47c 应该是一个目录"
-        
-        # 检查关键文件都存在
-        key_files = [
-            Path("frontend/index.html"),
-            Path("docs/f1bc12/7fc47c/dev-notes.md")
-        ]
-        
-        for file_path in key_files:
-            assert file_path.exists(), f"关键文件 {file_path} 不存在"
+        # 检查前端项目常见文件
+        common_files = ["index.html"]
+        for file_name in common_files:
+            file_path = frontend_dir / file_name
+            assert file_path.exists(), f"前端项目缺少必要文件: {file_name}"
