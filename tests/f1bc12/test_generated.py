@@ -1,98 +1,95 @@
 import pytest
 from pathlib import Path
-from bs4 import BeautifulSoup
+import re
 
-class TestIndexHTML:
+class TestFrontendFiles:
     
-    def setup_method(self):
-        """测试前的准备工作，定位HTML文件路径"""
-        self.project_root = Path(__file__).parent.parent
-        self.html_file = self.project_root / "frontend" / "index.html"
+    def test_index_html_exists(self):
+        """测试前端入口文件index.html是否存在"""
+        index_path = Path("frontend/index.html")
+        assert index_path.exists(), f"前端入口文件不存在: {index_path}"
+        assert index_path.is_file(), f"路径不是文件: {index_path}"
     
-    def test_html_file_exists(self):
-        """测试HTML文件是否存在"""
-        assert self.html_file.exists(), f"HTML文件不存在: {self.html_file}"
-        assert self.html_file.is_file(), f"路径不是文件: {self.html_file}"
-    
-    def test_html_contains_performance_elements(self):
-        """测试HTML文件是否包含性能优化相关的关键元素"""
-        with open(self.html_file, 'r', encoding='utf-8') as f:
-            content = f.read()
-            soup = BeautifulSoup(content, 'html.parser')
+    def test_index_html_contains_essential_elements(self):
+        """测试index.html包含必要的HTML元素和数据持久化相关内容"""
+        index_path = Path("frontend/index.html")
         
-        # 检查是否有基本的HTML结构
-        assert soup.find('html'), "HTML文件缺少html标签"
-        assert soup.find('head'), "HTML文件缺少head标签"
-        assert soup.find('body'), "HTML文件缺少body标签"
-        
-        # 检查性能优化相关元素
-        meta_viewport = soup.find('meta', attrs={'name': 'viewport'})
-        assert meta_viewport, "缺少viewport meta标签，影响移动端性能"
-        
-        # 检查是否有CSS或JS引用（性能优化项目应该有）
-        css_links = soup.find_all('link', rel='stylesheet')
-        script_tags = soup.find_all('script')
-        assert len(css_links) > 0 or len(script_tags) > 0, "缺少CSS或JavaScript引用"
-    
-    def test_html_contains_animation_elements(self):
-        """测试HTML文件是否包含动画效果相关的元素或属性"""
-        with open(self.html_file, 'r', encoding='utf-8') as f:
-            content = f.read()
-            soup = BeautifulSoup(content, 'html.parser')
-        
-        # 检查是否有动画相关的class或id
-        animation_indicators = [
-            'animation', 'animate', 'transition', 'transform',
-            'fade', 'slide', 'bounce', 'rotate', 'scale'
-        ]
-        
-        found_animation_elements = False
-        
-        # 检查所有元素的class和id属性
-        for element in soup.find_all():
-            classes = element.get('class', [])
-            element_id = element.get('id', '')
-            
-            for indicator in animation_indicators:
-                if any(indicator.lower() in str(cls).lower() for cls in classes):
-                    found_animation_elements = True
-                    break
-                if indicator.lower() in element_id.lower():
-                    found_animation_elements = True
-                    break
-            
-            if found_animation_elements:
-                break
-        
-        # 如果没有找到class/id中的动画标识，检查CSS或JS中是否有动画相关代码
-        if not found_animation_elements:
-            content_lower = content.lower()
-            css_animation_keywords = [
-                '@keyframes', 'animation:', 'transition:', 'transform:',
-                'requestanimationframe', 'setinterval', 'settimeout'
-            ]
-            
-            for keyword in css_animation_keywords:
-                if keyword in content_lower:
-                    found_animation_elements = True
-                    break
-        
-        assert found_animation_elements, "HTML文件中未找到动画效果相关的元素或代码"
-    
-    def test_html_file_size_and_structure(self):
-        """测试HTML文件大小合理性和基本结构完整性"""
-        # 检查文件大小（性能优化项目应该注意文件大小）
-        file_size = self.html_file.stat().st_size
-        assert file_size > 100, "HTML文件过小，可能内容不完整"
-        assert file_size < 1024 * 1024, "HTML文件过大，可能影响加载性能"
-        
-        # 检查文件内容结构
-        with open(self.html_file, 'r', encoding='utf-8') as f:
+        with open(index_path, 'r', encoding='utf-8') as f:
             content = f.read()
         
-        # 基本HTML结构检查
-        assert '<!DOCTYPE' in content or '<html' in content, "缺少HTML文档类型声明"
-        assert '<title>' in content, "缺少页面标题"
-        assert content.count('<html') == content.count('</html>'), "HTML标签不匹配"
-        assert content.count('<head') == content.count('</head>'), "HEAD标签不匹配"
-        assert content.count('<body') == content.count('</body>'), "BODY标签不匹配"
+        # 检查基本HTML结构
+        assert '<html' in content.lower(), "HTML文件缺少html标签"
+        assert '<head>' in content.lower(), "HTML文件缺少head标签"
+        assert '<body>' in content.lower(), "HTML文件缺少body标签"
+        assert '<title>' in content.lower(), "HTML文件缺少title标签"
+        
+        # 检查数据持久化系统相关元素
+        content_lower = content.lower()
+        persistence_keywords = ['data', 'save', 'load', 'storage', 'database', 'persist']
+        has_persistence_content = any(keyword in content_lower for keyword in persistence_keywords)
+        assert has_persistence_content, "HTML文件应包含数据持久化相关内容"
+    
+    def test_dev_notes_file_exists_and_valid(self):
+        """测试开发文档dev-notes.md文件存在且包含有效内容"""
+        notes_path = Path("docs/f1bc12/46aaab/dev-notes.md")
+        
+        assert notes_path.exists(), f"开发文档不存在: {notes_path}"
+        assert notes_path.is_file(), f"路径不是文件: {notes_path}"
+        
+        with open(notes_path, 'r', encoding='utf-8') as f:
+            content = f.read()
+        
+        # 检查文件不为空
+        assert len(content.strip()) > 0, "开发文档不能为空"
+        
+        # 检查是否包含开发相关内容
+        dev_keywords = ['开发', 'development', 'todo', 'note', '笔记', '文档', 'api', 'feature']
+        content_lower = content.lower()
+        has_dev_content = any(keyword in content_lower for keyword in dev_keywords)
+        assert has_dev_content, "开发文档应包含开发相关内容"
+    
+    def test_frontend_directory_structure(self):
+        """测试前端目录结构完整性"""
+        frontend_dir = Path("frontend")
+        docs_dir = Path("docs/f1bc12/46aaab")
+        
+        assert frontend_dir.exists(), "frontend目录不存在"
+        assert frontend_dir.is_dir(), "frontend路径不是目录"
+        
+        assert docs_dir.exists(), "docs子目录不存在"
+        assert docs_dir.is_dir(), "docs路径不是目录"
+        
+        # 检查目录下至少有指定的文件
+        frontend_files = list(frontend_dir.glob("*"))
+        assert len(frontend_files) > 0, "frontend目录为空"
+        
+        docs_files = list(docs_dir.glob("*"))
+        assert len(docs_files) > 0, "docs目录为空"
+    
+    def test_html_syntax_basic_validation(self):
+        """测试HTML文件基本语法正确性"""
+        index_path = Path("frontend/index.html")
+        
+        with open(index_path, 'r', encoding='utf-8') as f:
+            content = f.read()
+        
+        # 检查HTML标签配对
+        html_tags = re.findall(r'<(/?)(\w+)[^>]*>', content)
+        tag_stack = []
+        
+        for is_closing, tag_name in html_tags:
+            tag_name = tag_name.lower()
+            # 跳过自闭合标签
+            if tag_name in ['br', 'hr', 'img', 'input', 'meta', 'link']:
+                continue
+                
+            if is_closing == '/':
+                assert len(tag_stack) > 0, f"发现未匹配的闭合标签: {tag_name}"
+                last_tag = tag_stack.pop()
+                assert last_tag == tag_name, f"标签不匹配: 期望 {last_tag}, 实际 {tag_name}"
+            else:
+                tag_stack.append(tag_name)
+        
+        # 允许一些标签不闭合（如html, body等在简单页面中）
+        remaining_tags = [tag for tag in tag_stack if tag not in ['html', 'head', 'body']]
+        assert len(remaining_tags) == 0, f"存在未闭合的标签: {remaining_tags}"
