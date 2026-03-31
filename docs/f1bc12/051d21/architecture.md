@@ -1,62 +1,40 @@
 # 架构设计 - 用户控制系统开发
 
 ## 架构模式
-MVC模式 + 事件驱动架构
+事件驱动架构
 
 ## 技术栈
 
 - **language**: JavaScript ES6+
-- **framework**: 原生JavaScript（无框架）
-- **database**: LocalStorage
-- **others**: HTML5 Canvas, CSS3, Web Audio API, requestAnimationFrame
+- **framework**: 原生JavaScript
 
 ## 模块设计
 
 ### InputController
-职责: 统一管理所有键盘输入事件，提供标准化的输入接口
-- bindEvents()
-- unbindEvents()
-- setKeyMapping()
-- enableInput()
-- disableInput()
+职责: 键盘输入事件监听和处理，支持WASD和方向键
+- addEventListener()
+- handleKeyDown()
+- handleKeyUp()
+- mapKeyToAction()
 
-### KeyMapper
-职责: 处理键盘映射配置，支持WASD和方向键的双重绑定
-- mapKey(keyCode, action)
-- getAction(keyCode)
-- setDefaultMapping()
-- customizeMapping()
+### DebounceManager
+职责: 事件防抖处理，防止按键过于频繁触发
+- debounce()
+- throttle()
+- clearDebounce()
 
-### InputDebouncer
-职责: 实现按键防抖和连续按键处理，优化用户体验
-- debounce(callback, delay)
-- handleContinuousPress()
-- resetDebounce()
-
-### ActionDispatcher
-职责: 将输入事件转换为游戏动作并分发给相应的游戏模块
-- dispatch(action, params)
-- registerHandler(action, handler)
-- unregisterHandler()
-
-### InputValidator
-职责: 验证输入的有效性，防止在不合适的游戏状态下执行操作
-- validateInput(action, gameState)
-- isActionAllowed()
-- getValidActions()
+### GameControlBridge
+职责: 连接输入控制器与游戏逻辑，转换输入为游戏动作
+- bindGameActions()
+- executeAction()
+- validateAction()
 
 ## 数据流
-用户按键 -> InputController捕获事件 -> KeyMapper解析按键映射 -> InputDebouncer处理防抖 -> InputValidator验证有效性 -> ActionDispatcher分发到游戏逻辑模块 -> 游戏状态更新 -> 视图重新渲染
-
-## 风险点
-- 不同浏览器的键盘事件兼容性问题
-- 高频按键可能导致性能问题
-- 移动端触控支持的扩展性考虑
-- 游戏暂停状态下的输入处理逻辑复杂性
+键盘事件 -> InputController捕获 -> DebounceManager防抖处理 -> GameControlBridge转换为游戏动作 -> 触发游戏逻辑更新 -> Canvas重新渲染
 
 ## 关键决策
-- 采用事件委托模式统一管理键盘事件，避免重复绑定
-- 使用Map数据结构存储键盘映射，提高查找效率
-- 实现可配置的防抖延迟，平衡响应性和稳定性
-- 设计状态机模式处理不同游戏状态下的输入响应
-- 预留接口支持未来的手柄和触控输入扩展
+- 采用事件委托模式，在document级别监听键盘事件，避免焦点丢失问题
+- 使用Map数据结构存储键位映射，支持WASD和方向键双重绑定
+- 实现防抖和节流两种策略，移动操作使用节流，旋转操作使用防抖
+- 设计可配置的按键映射系统，为后续自定义按键功能预留接口
+- 集成到现有的frontend模块结构中，与Canvas渲染系统和游戏逻辑系统协同工作
