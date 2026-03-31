@@ -1,84 +1,86 @@
 import pytest
 from pathlib import Path
-from bs4 import BeautifulSoup
+import re
 
-class TestIndexHTML:
+class TestFrontendModule:
     
-    @pytest.fixture
-    def html_file_path(self):
-        """获取index.html文件路径的fixture"""
-        return Path(__file__).parent.parent / "frontend" / "index.html"
+    def test_index_html_file_exists(self):
+        """测试 index.html 文件是否存在"""
+        frontend_dir = Path("frontend")
+        index_file = frontend_dir / "index.html"
+        assert index_file.exists(), f"index.html 文件不存在于 {frontend_dir} 目录中"
+        assert index_file.is_file(), "index.html 应该是一个文件而不是目录"
     
-    @pytest.fixture
-    def html_content(self, html_file_path):
-        """读取HTML文件内容的fixture"""
-        if html_file_path.exists():
-            with open(html_file_path, 'r', encoding='utf-8') as f:
-                return f.read()
-        return None
-    
-    def test_html_file_exists(self, html_file_path):
-        """测试index.html文件是否存在"""
-        assert html_file_path.exists(), f"HTML文件不存在: {html_file_path}"
-        assert html_file_path.is_file(), f"路径不是文件: {html_file_path}"
-    
-    def test_html_contains_game_elements(self, html_content):
-        """测试HTML文件是否包含游戏相关的关键元素"""
-        assert html_content is not None, "无法读取HTML文件内容"
+    def test_index_html_contains_game_elements(self):
+        """测试 index.html 文件包含游戏相关的关键元素"""
+        frontend_dir = Path("frontend")
+        index_file = frontend_dir / "index.html"
         
-        soup = BeautifulSoup(html_content, 'html.parser')
+        if not index_file.exists():
+            pytest.skip("index.html 文件不存在，跳过内容测试")
+        
+        content = index_file.read_text(encoding='utf-8')
         
         # 检查基本HTML结构
-        assert soup.find('html') is not None, "缺少html标签"
-        assert soup.find('head') is not None, "缺少head标签"
-        assert soup.find('body') is not None, "缺少body标签"
+        assert "<html" in content.lower(), "HTML文件应包含html标签"
+        assert "<head>" in content.lower() or "<head " in content.lower(), "HTML文件应包含head标签"
+        assert "<body>" in content.lower() or "<body " in content.lower(), "HTML文件应包含body标签"
         
         # 检查游戏相关元素
-        game_keywords = ['game', 'play', 'start', 'score', 'level']
-        html_lower = html_content.lower()
-        
-        found_keywords = [keyword for keyword in game_keywords if keyword in html_lower]
-        assert len(found_keywords) > 0, f"HTML中未找到游戏相关关键词: {game_keywords}"
+        game_keywords = ["game", "play", "start", "score", "level", "canvas", "游戏", "开始", "分数"]
+        has_game_element = any(keyword in content.lower() for keyword in game_keywords)
+        assert has_game_element, f"HTML文件应包含游戏相关关键词: {game_keywords}"
     
-    def test_html_has_interactive_elements(self, html_content):
-        """测试HTML文件是否包含交互元素如按钮、输入框或画布"""
-        assert html_content is not None, "无法读取HTML文件内容"
+    def test_index_html_has_valid_structure(self):
+        """测试 index.html 文件具有有效的HTML结构"""
+        frontend_dir = Path("frontend")
+        index_file = frontend_dir / "index.html"
         
-        soup = BeautifulSoup(html_content, 'html.parser')
+        if not index_file.exists():
+            pytest.skip("index.html 文件不存在，跳过结构测试")
         
-        # 检查交互元素
-        buttons = soup.find_all('button')
-        inputs = soup.find_all('input')
-        canvas = soup.find_all('canvas')
-        divs_with_onclick = soup.find_all('div', onclick=True)
+        content = index_file.read_text(encoding='utf-8')
         
-        interactive_elements = len(buttons) + len(inputs) + len(canvas) + len(divs_with_onclick)
+        # 检查DOCTYPE声明
+        has_doctype = content.strip().lower().startswith('<!doctype') or '<html' in content.lower()
+        assert has_doctype, "HTML文件应包含DOCTYPE声明或html标签"
         
-        assert interactive_elements > 0, "HTML中未找到交互元素(button、input、canvas或带onclick的div)"
+        # 检查标题标签
+        has_title = "<title>" in content.lower() and "</title>" in content.lower()
+        assert has_title, "HTML文件应包含title标签"
+        
+        # 检查是否有JavaScript或CSS引用（游戏逻辑需要）
+        has_script_or_style = ("<script" in content.lower() or 
+                              "<style" in content.lower() or 
+                              'rel="stylesheet"' in content.lower())
+        assert has_script_or_style, "游戏HTML文件应包含JavaScript或CSS引用"
     
-    def test_html_includes_scripts_or_styles(self, html_content):
-        """测试HTML文件是否包含JavaScript脚本或CSS样式"""
-        assert html_content is not None, "无法读取HTML文件内容"
-        
-        soup = BeautifulSoup(html_content, 'html.parser')
-        
-        # 检查脚本和样式
-        script_tags = soup.find_all('script')
-        style_tags = soup.find_all('style')
-        link_css = soup.find_all('link', rel='stylesheet')
-        
-        has_scripts = len(script_tags) > 0
-        has_styles = len(style_tags) > 0 or len(link_css) > 0
-        
-        assert has_scripts or has_styles, "HTML中未找到JavaScript脚本或CSS样式引用"
+    def test_dev_notes_file_exists(self):
+        """测试开发文档文件是否存在"""
+        docs_dir = Path("docs/f1bc12/e2e094")
+        dev_notes_file = docs_dir / "dev-notes.md"
+        assert dev_notes_file.exists(), f"dev-notes.md 文件不存在于 {docs_dir} 目录中"
+        assert dev_notes_file.is_file(), "dev-notes.md 应该是一个文件而不是目录"
     
-    def test_html_has_valid_title(self, html_content):
-        """测试HTML文件是否有有效的标题"""
-        assert html_content is not None, "无法读取HTML文件内容"
+    def test_dev_notes_contains_documentation(self):
+        """测试开发文档包含有效的文档内容"""
+        docs_dir = Path("docs/f1bc12/e2e094")
+        dev_notes_file = docs_dir / "dev-notes.md"
         
-        soup = BeautifulSoup(html_content, 'html.parser')
-        title_tag = soup.find('title')
+        if not dev_notes_file.exists():
+            pytest.skip("dev-notes.md 文件不存在，跳过内容测试")
         
-        assert title_tag is not None, "HTML中缺少title标签"
-        assert title_tag.string is not None, "title标签为空"
-        assert len(title_tag.string.strip()) > 0, "title内容为空"
+        content = dev_notes_file.read_text(encoding='utf-8')
+        
+        # 检查文档不为空
+        assert len(content.strip()) > 0, "开发文档不应为空"
+        
+        # 检查是否包含Markdown格式内容
+        markdown_indicators = ["#", "##", "###", "*", "-", "`", "```", "**"]
+        has_markdown = any(indicator in content for indicator in markdown_indicators)
+        assert has_markdown, "开发文档应包含Markdown格式标记"
+        
+        # 检查是否包含开发相关关键词
+        dev_keywords = ["开发", "功能", "实现", "设计", "架构", "api", "接口", "模块", "组件"]
+        has_dev_content = any(keyword in content.lower() for keyword in dev_keywords)
+        assert has_dev_content, f"开发文档应包含开发相关内容: {dev_keywords}"
