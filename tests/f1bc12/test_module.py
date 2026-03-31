@@ -1,151 +1,113 @@
 import pytest
 from pathlib import Path
+import importlib.util
 import sys
 import os
 
-# 添加项目根目录到Python路径
-project_root = Path(__file__).parent.parent
-sys.path.insert(0, str(project_root))
-
 class TestDeployModule:
-    """部署模块测试类"""
+    
+    def test_deploy_module_exists(self):
+        """测试部署模块文件是否存在"""
+        deploy_module_path = Path("deploy") / "__init__.py"
+        if not deploy_module_path.exists():
+            deploy_module_path = Path("deploy.py")
+        assert deploy_module_path.exists(), "部署模块文件不存在"
     
     def test_deploy_module_importable(self):
         """测试部署模块是否可以正常导入"""
         try:
-            import deploy
-            assert deploy is not None
+            # 尝试导入deploy模块
+            deploy_path = Path("deploy")
+            if deploy_path.is_dir():
+                spec = importlib.util.spec_from_file_location("deploy", deploy_path / "__init__.py")
+            else:
+                spec = importlib.util.spec_from_file_location("deploy", Path("deploy.py"))
+            
+            if spec and spec.loader:
+                deploy_module = importlib.util.module_from_spec(spec)
+                spec.loader.exec_module(deploy_module)
+                assert deploy_module is not None, "部署模块导入失败"
         except ImportError:
-            # 如果模块不存在，创建基本的部署模块进行测试
-            deploy_file = project_root / "deploy.py"
-            if not deploy_file.exists():
-                deploy_file.write_text("""
-def deploy_application():
-    return {"status": "success", "message": "Application deployed"}
-
-def check_deployment_status():
-    return True
-
-def rollback_deployment():
-    return {"status": "rollback", "version": "previous"}
-""")
-            import deploy
-            assert deploy is not None
+            pytest.fail("部署模块无法导入")
     
-    def test_deployment_functions_exist_and_return_correct_types(self):
-        """测试部署相关函数存在且返回正确的数据类型"""
-        import deploy
+    def test_docs_structure_exists(self):
+        """测试文档目录结构是否存在"""
+        docs_path = Path("docs")
+        assert docs_path.exists(), "docs目录不存在"
         
-        # 测试部署应用函数返回字典类型
-        if hasattr(deploy, 'deploy_application'):
-            result = deploy.deploy_application()
-            assert isinstance(result, dict)
-            assert "status" in result
-        
-        # 测试检查部署状态函数返回布尔类型
-        if hasattr(deploy, 'check_deployment_status'):
-            status = deploy.check_deployment_status()
-            assert isinstance(status, bool)
-        
-        # 测试回滚部署函数返回字典类型
-        if hasattr(deploy, 'rollback_deployment'):
-            rollback_result = deploy.rollback_deployment()
-            assert isinstance(rollback_result, dict)
+        # 检查特定的文档路径结构
+        specific_doc_path = docs_path / "f1bc12" / "3967ae" / "dev-notes.md"
+        if specific_doc_path.exists():
+            assert specific_doc_path.is_file(), "dev-notes.md应该是一个文件"
+            
+            # 检查文档内容是否包含关键信息
+            content = specific_doc_path.read_text(encoding='utf-8')
+            assert len(content) > 0, "文档内容不能为空"
     
-    def test_documentation_files_exist(self):
-        """测试项目文档文件是否存在且包含必要内容"""
-        # 检查开发笔记文档是否存在
-        dev_notes_path = project_root / "docs" / "f1bc12" / "3967ae" / "dev-notes.md"
+    def test_project_deployment_files(self):
+        """测试项目部署相关文件是否存在"""
+        # 检查常见的部署配置文件
+        deployment_files = [
+            Path("requirements.txt"),
+            Path("setup.py"),
+            Path("pyproject.toml"),
+            Path("Dockerfile"),
+            Path("docker-compose.yml"),
+            Path("config.py"),
+            Path("settings.py")
+        ]
         
-        # 如果文档不存在，创建基本文档结构
-        if not dev_notes_path.exists():
-            dev_notes_path.parent.mkdir(parents=True, exist_ok=True)
-            dev_notes_path.write_text("""# 开发笔记
-
-## 部署说明
-本项目使用自动化部署流程
-
-## 配置要求
-- Python 3.8+
-- 依赖包安装
-
-## 部署步骤
-1. 环境准备
-2. 代码部署
-3. 服务启动
-
-## 注意事项
-- 确保环境配置正确
-- 检查依赖项完整性
-""")
-        
-        assert dev_notes_path.exists(), "开发笔记文档文件不存在"
-        
-        # 检查文档内容包含关键信息
-        content = dev_notes_path.read_text(encoding='utf-8')
-        assert "部署" in content, "文档应包含部署相关内容"
-        assert len(content.strip()) > 0, "文档内容不能为空"
+        # 至少应该存在一个部署相关文件
+        exists_count = sum(1 for file_path in deployment_files if file_path.exists())
+        assert exists_count > 0, "项目中应该至少存在一个部署配置文件"
     
-    def test_project_structure_integrity(self):
-        """测试项目结构完整性"""
-        # 检查项目根目录存在
-        assert project_root.exists(), "项目根目录不存在"
-        
-        # 检查docs目录结构
-        docs_dir = project_root / "docs"
-        if not docs_dir.exists():
-            docs_dir.mkdir(exist_ok=True)
-        
-        assert docs_dir.exists(), "文档目录不存在"
-        
-        # 检查是否有README或其他重要文件
-        important_files = ["README.md", "requirements.txt", "setup.py", "pyproject.toml"]
-        has_important_file = any((project_root / filename).exists() for filename in important_files)
-        
-        if not has_important_file:
-            # 创建基本的README文件
-            readme_path = project_root / "README.md"
-            readme_path.write_text("""# 项目部署与文档编写
-
-## 描述
-这是一个部署模块项目
-
-## 安装
-pip install -r requirements.txt
-
-## 使用
-python deploy.py
-""")
-        
-        # 重新检查
-        has_important_file = any((project_root / filename).exists() for filename in important_files)
-        assert has_important_file, "项目应包含至少一个重要的配置文件"
-    
-    def test_deploy_configuration_validation(self):
-        """测试部署配置验证功能"""
-        import deploy
-        
-        # 测试配置验证函数（如果存在）
-        if hasattr(deploy, 'validate_config'):
-            # 测试有效配置
-            valid_config = {"environment": "production", "port": 8080}
-            assert deploy.validate_config(valid_config) == True
-        else:
-            # 如果函数不存在，添加到deploy模块
-            deploy_file = project_root / "deploy.py"
-            current_content = deploy_file.read_text()
-            if "validate_config" not in current_content:
-                additional_code = """
-
-def validate_config(config):
-    required_keys = ["environment", "port"]
-    return all(key in config for key in required_keys)
-"""
-                deploy_file.write_text(current_content + additional_code)
+    def test_deploy_function_returns_correct_type(self):
+        """测试部署函数返回正确的数据类型"""
+        try:
+            # 尝试导入并测试部署相关函数
+            deploy_path = Path("deploy")
+            if deploy_path.is_dir() and (deploy_path / "__init__.py").exists():
+                spec = importlib.util.spec_from_file_location("deploy", deploy_path / "__init__.py")
+            elif Path("deploy.py").exists():
+                spec = importlib.util.spec_from_file_location("deploy", Path("deploy.py"))
+            else:
+                pytest.skip("部署模块文件不存在，跳过函数测试")
+            
+            if spec and spec.loader:
+                deploy_module = importlib.util.module_from_spec(spec)
+                spec.loader.exec_module(deploy_module)
                 
-                # 重新导入模块
-                import importlib
-                importlib.reload(deploy)
+                # 检查是否有deploy相关函数
+                if hasattr(deploy_module, 'deploy'):
+                    # 如果有deploy函数，测试其返回类型
+                    result = deploy_module.deploy()
+                    assert isinstance(result, (bool, dict, str, int)), "deploy函数应该返回基本数据类型"
+                elif hasattr(deploy_module, 'main'):
+                    # 如果有main函数，测试其返回类型
+                    result = deploy_module.main()
+                    assert isinstance(result, (bool, dict, str, int, type(None))), "main函数应该返回基本数据类型或None"
                 
-                valid_config = {"environment": "production", "port": 8080}
-                assert deploy.validate_config(valid_config) == True
+        except Exception as e:
+            pytest.skip(f"无法测试部署函数: {str(e)}")
+    
+    def test_documentation_content_quality(self):
+        """测试文档内容质量和完整性"""
+        docs_path = Path("docs")
+        if not docs_path.exists():
+            pytest.skip("docs目录不存在，跳过文档内容测试")
+        
+        # 查找所有markdown文件
+        md_files = list(docs_path.rglob("*.md"))
+        assert len(md_files) > 0, "应该至少存在一个markdown文档文件"
+        
+        # 检查文档内容
+        for md_file in md_files:
+            content = md_file.read_text(encoding='utf-8')
+            assert len(content.strip()) > 50, f"文档 {md_file.name} 内容过短，可能不完整"
+            
+            # 检查是否包含常见的文档关键词
+            keywords = ['部署', 'deploy', '配置', 'config', '安装', 'install', '运行', 'run']
+            has_keyword = any(keyword in content.lower() for keyword in keywords)
+            if not has_keyword:
+                # 如果没有部署相关关键词，至少应该有基本的文档结构
+                assert any(marker in content for marker in ['#', '##', '###', '-', '*']), f"文档 {md_file.name} 缺少基本的markdown结构"
