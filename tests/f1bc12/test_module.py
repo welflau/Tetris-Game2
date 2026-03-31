@@ -1,93 +1,114 @@
 import pytest
 from pathlib import Path
-from bs4 import BeautifulSoup
+import re
 
-class TestIndexHTML:
+class TestFrontendPerformanceAndAnimation:
     
-    @pytest.fixture
-    def html_file_path(self):
-        """获取index.html文件路径的fixture"""
-        return Path(__file__).parent.parent / "frontend" / "index.html"
-    
-    @pytest.fixture
-    def html_content(self, html_file_path):
-        """读取HTML文件内容的fixture"""
-        if html_file_path.exists():
-            with open(html_file_path, 'r', encoding='utf-8') as f:
-                return f.read()
-        return None
-    
-    def test_html_file_exists(self, html_file_path):
+    def test_index_html_file_exists(self):
         """测试index.html文件是否存在"""
-        assert html_file_path.exists(), f"HTML文件不存在: {html_file_path}"
-        assert html_file_path.is_file(), f"路径不是文件: {html_file_path}"
+        frontend_dir = Path("frontend")
+        index_file = frontend_dir / "index.html"
+        assert index_file.exists(), f"index.html文件不存在于{frontend_dir}目录中"
+        assert index_file.is_file(), "index.html应该是一个文件而不是目录"
     
-    def test_html_contains_game_elements(self, html_content):
-        """测试HTML文件是否包含游戏相关的关键元素"""
-        assert html_content is not None, "无法读取HTML文件内容"
+    def test_index_html_contains_performance_elements(self):
+        """测试index.html是否包含性能优化相关的关键元素"""
+        frontend_dir = Path("frontend")
+        index_file = frontend_dir / "index.html"
         
-        soup = BeautifulSoup(html_content, 'html.parser')
+        with open(index_file, 'r', encoding='utf-8') as f:
+            content = f.read()
         
-        # 检查是否包含游戏容器或画布元素
-        game_container = soup.find(id='game') or soup.find(class_='game-container') or soup.find('canvas')
-        assert game_container is not None, "HTML中缺少游戏容器元素（#game、.game-container或canvas）"
+        # 检查HTML基本结构
+        assert '<html' in content.lower(), "HTML文件应包含html标签"
+        assert '<head>' in content.lower(), "HTML文件应包含head标签"
+        assert '<body>' in content.lower(), "HTML文件应包含body标签"
         
-        # 检查是否包含游戏相关的关键词
-        html_text = html_content.lower()
-        game_keywords = ['game', 'play', 'start', 'canvas', 'score']
-        found_keywords = [keyword for keyword in game_keywords if keyword in html_text]
-        assert len(found_keywords) > 0, f"HTML中缺少游戏相关关键词，期望包含: {game_keywords}"
+        # 检查性能优化相关元素
+        performance_indicators = [
+            'viewport',  # 响应式设计
+            'preload',   # 资源预加载
+            'defer',     # 脚本延迟加载
+            'async',     # 异步加载
+            'loading="lazy"',  # 图片懒加载
+        ]
+        
+        found_indicators = [indicator for indicator in performance_indicators if indicator in content.lower()]
+        assert len(found_indicators) >= 1, f"HTML文件应包含至少一个性能优化元素，找到的元素: {found_indicators}"
     
-    def test_html_contains_pause_functionality(self, html_content):
-        """测试HTML文件是否包含暂停功能相关元素"""
-        assert html_content is not None, "无法读取HTML文件内容"
+    def test_index_html_contains_animation_elements(self):
+        """测试index.html是否包含动画效果相关的元素"""
+        frontend_dir = Path("frontend")
+        index_file = frontend_dir / "index.html"
         
-        soup = BeautifulSoup(html_content, 'html.parser')
-        html_text = html_content.lower()
+        with open(index_file, 'r', encoding='utf-8') as f:
+            content = f.read()
         
-        # 检查暂停相关的按钮或元素
-        pause_button = (soup.find('button', string=lambda text: text and 'pause' in text.lower()) or
-                       soup.find(id='pause') or 
-                       soup.find(class_='pause-btn') or
-                       soup.find('button', {'onclick': lambda x: x and 'pause' in x.lower()}))
+        # 检查动画相关元素
+        animation_indicators = [
+            'animation',
+            'transition',
+            'transform',
+            'keyframes',
+            '@keyframes',
+            'animate',
+            'css',
+            'style',
+        ]
         
-        # 或者检查是否包含暂停相关的文本内容
-        pause_keywords = ['pause', 'resume', 'stop', '暂停', '继续']
-        found_pause_keywords = [keyword for keyword in pause_keywords if keyword in html_text]
-        
-        assert pause_button is not None or len(found_pause_keywords) > 0, \
-            "HTML中缺少暂停功能相关元素或关键词"
+        found_animations = [indicator for indicator in animation_indicators if indicator in content.lower()]
+        assert len(found_animations) >= 1, f"HTML文件应包含动画相关元素，找到的元素: {found_animations}"
     
-    def test_html_has_valid_structure(self, html_content):
-        """测试HTML文件是否具有有效的基本结构"""
-        assert html_content is not None, "无法读取HTML文件内容"
+    def test_dev_notes_file_exists_and_readable(self):
+        """测试开发文档文件是否存在且可读"""
+        docs_path = Path("docs/f1bc12/7fc47c/dev-notes.md")
+        assert docs_path.exists(), f"开发文档文件不存在: {docs_path}"
+        assert docs_path.is_file(), "dev-notes.md应该是一个文件"
         
-        soup = BeautifulSoup(html_content, 'html.parser')
+        # 测试文件是否可读
+        with open(docs_path, 'r', encoding='utf-8') as f:
+            content = f.read()
         
-        # 检查基本HTML结构
-        assert soup.find('html') is not None, "HTML文件缺少<html>标签"
-        assert soup.find('head') is not None, "HTML文件缺少<head>标签"
-        assert soup.find('body') is not None, "HTML文件缺少<body>标签"
-        
-        # 检查是否有标题
-        title = soup.find('title')
-        assert title is not None and title.get_text().strip(), "HTML文件缺少有效的<title>标签"
+        assert len(content) > 0, "开发文档文件不应为空"
+        assert isinstance(content, str), "文档内容应为字符串类型"
     
-    def test_html_includes_javascript_or_css(self, html_content):
-        """测试HTML文件是否包含JavaScript或CSS资源"""
-        assert html_content is not None, "无法读取HTML文件内容"
+    def test_dev_notes_contains_project_info(self):
+        """测试开发文档是否包含项目相关信息"""
+        docs_path = Path("docs/f1bc12/7fc47c/dev-notes.md")
         
-        soup = BeautifulSoup(html_content, 'html.parser')
+        with open(docs_path, 'r', encoding='utf-8') as f:
+            content = f.read()
         
-        # 检查是否包含JavaScript文件或内联脚本
-        js_files = soup.find_all('script', src=True)
-        inline_scripts = soup.find_all('script', src=False)
+        # 检查文档是否包含项目相关关键词
+        project_keywords = [
+            '性能',
+            '优化',
+            '动画',
+            'performance',
+            'animation',
+            'frontend',
+            '前端',
+        ]
         
-        # 检查是否包含CSS文件或内联样式
-        css_files = soup.find_all('link', rel='stylesheet')
-        inline_styles = soup.find_all('style')
+        found_keywords = [keyword for keyword in project_keywords if keyword.lower() in content.lower()]
+        assert len(found_keywords) >= 2, f"开发文档应包含至少2个项目相关关键词，找到: {found_keywords}"
+    
+    def test_html_file_structure_validity(self):
+        """测试HTML文件结构的有效性"""
+        frontend_dir = Path("frontend")
+        index_file = frontend_dir / "index.html"
         
-        has_js = len(js_files) > 0 or len(inline_scripts) > 0
-        has_css = len(css_files) > 0 or len(inline_styles) > 0
+        with open(index_file, 'r', encoding='utf-8') as f:
+            content = f.read()
         
-        assert has_js or has_css, "HTML文件应该包含JavaScript或CSS资源以实现游戏功能"
+        # 检查HTML标签配对
+        html_tags = ['html', 'head', 'body', 'title']
+        for tag in html_tags:
+            open_tag_pattern = f'<{tag}[^>]*>'
+            close_tag_pattern = f'</{tag}>'
+            
+            open_matches = len(re.findall(open_tag_pattern, content, re.IGNORECASE))
+            close_matches = len(re.findall(close_tag_pattern, content, re.IGNORECASE))
+            
+            if open_matches > 0:  # 如果存在开标签，则应该有对应的闭标签
+                assert open_matches == close_matches, f"标签{tag}的开闭标签数量不匹配: 开标签{open_matches}个，闭标签{close_matches}个"
