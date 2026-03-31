@@ -64,7 +64,7 @@
         header h1 {
             color: var(--text-light);
             font-size: 1.8rem;
-            font-weight: 600;
+            font-weight: 700;
             text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
         }
 
@@ -75,144 +75,180 @@
             justify-content: center;
             align-items: center;
             padding: 2rem;
-            gap: 2rem;
         }
 
         /* 游戏容器 */
         .game-container {
             display: flex;
             gap: 2rem;
-            align-items: flex-start;
+            background: var(--bg-glass);
+            backdrop-filter: blur(10px);
+            padding: 2rem;
+            border-radius: var(--border-radius-large);
+            border: 1px solid var(--border-glass);
+            box-shadow: var(--shadow-heavy);
         }
 
         /* 游戏面板 */
         .game-board {
-            background: var(--bg-glass);
-            backdrop-filter: blur(10px);
-            border: 2px solid var(--border-glass);
-            border-radius: var(--border-radius);
-            padding: 1rem;
-            box-shadow: var(--shadow-heavy);
-        }
-
-        /* 游戏画布 */
-        #gameCanvas {
-            display: block;
-            border: 2px solid var(--border-glass);
-            border-radius: var(--border-radius);
+            width: 300px;
+            height: 600px;
             background: rgba(0, 0, 0, 0.8);
+            border: 2px solid var(--border-glass);
+            border-radius: var(--border-radius);
+            position: relative;
+            overflow: hidden;
         }
 
-        /* 侧边栏 */
-        .sidebar {
+        /* 控制面板 */
+        .control-panel {
             display: flex;
             flex-direction: column;
             gap: 1rem;
-        }
-
-        /* 信息面板 */
-        .info-panel {
-            background: var(--bg-glass);
-            backdrop-filter: blur(10px);
-            border: 1px solid var(--border-glass);
-            border-radius: var(--border-radius);
-            padding: 1rem;
-            color: var(--text-light);
             min-width: 200px;
         }
 
-        .info-panel h3 {
+        /* 分数显示 */
+        .score-display {
+            background: var(--bg-glass);
+            padding: 1rem;
+            border-radius: var(--border-radius);
+            border: 1px solid var(--border-glass);
+            text-align: center;
+        }
+
+        .score-display h3 {
+            color: var(--text-light);
             margin-bottom: 0.5rem;
-            color: var(--accent-color);
             font-size: 1.1rem;
         }
 
-        .info-item {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 0.5rem;
-            font-size: 0.9rem;
+        .score-value {
+            color: var(--accent-color);
+            font-size: 1.5rem;
+            font-weight: bold;
         }
 
         /* 控制按钮 */
-        .controls {
-            background: var(--bg-glass);
-            backdrop-filter: blur(10px);
-            border: 1px solid var(--border-glass);
-            border-radius: var(--border-radius);
-            padding: 1rem;
+        .control-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
         }
 
-        .control-btn {
-            width: 100%;
-            padding: 0.8rem;
-            margin-bottom: 0.5rem;
+        .btn {
+            padding: 0.8rem 1.5rem;
             border: none;
             border-radius: var(--border-radius);
             background: var(--accent-color);
             color: var(--text-light);
             font-size: 1rem;
+            font-weight: 600;
             cursor: pointer;
             transition: var(--transition);
-        }
-
-        .control-btn:hover {
-            background: #45a049;
-            transform: translateY(-2px);
             box-shadow: var(--shadow-light);
         }
 
-        .control-btn:active {
+        .btn:hover {
+            background: #45a049;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-heavy);
+        }
+
+        .btn:active {
             transform: translateY(0);
         }
 
-        .control-btn.danger {
+        .btn.danger {
             background: var(--danger-color);
         }
 
-        .control-btn.danger:hover {
-            background: #d32f2f;
+        .btn.danger:hover {
+            background: #da190b;
         }
 
-        /* 游戏状态指示 */
-        .game-status {
-            text-align: center;
-            padding: 0.5rem;
+        /* 键盘控制提示 */
+        .keyboard-hints {
+            background: var(--bg-glass);
+            padding: 1rem;
             border-radius: var(--border-radius);
-            margin-bottom: 1rem;
+            border: 1px solid var(--border-glass);
+        }
+
+        .keyboard-hints h4 {
+            color: var(--text-light);
+            margin-bottom: 0.5rem;
+            font-size: 1rem;
+        }
+
+        .hint-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.3rem;
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        .key {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-family: monospace;
             font-weight: bold;
         }
 
-        .game-status.playing {
-            background: var(--accent-color);
-            color: var(--text-light);
+        /* 输入状态指示器 */
+        .input-status {
+            background: var(--bg-glass);
+            padding: 1rem;
+            border-radius: var(--border-radius);
+            border: 1px solid var(--border-glass);
+            text-align: center;
         }
 
-        .game-status.paused {
-            background: var(--warning-color);
+        .input-status h4 {
             color: var(--text-light);
+            margin-bottom: 0.5rem;
         }
 
-        .game-status.game-over {
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
             background: var(--danger-color);
+            margin-right: 0.5rem;
+            transition: var(--transition);
+        }
+
+        .status-indicator.active {
+            background: var(--accent-color);
+            box-shadow: 0 0 10px var(--accent-color);
+        }
+
+        .active-keys {
             color: var(--text-light);
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
         }
 
         /* 响应式设计 */
         @media (max-width: 768px) {
-            main {
-                flex-direction: column;
-                padding: 1rem;
-            }
-
             .game-container {
                 flex-direction: column;
                 align-items: center;
+                padding: 1rem;
             }
 
-            #gameCanvas {
-                width: 300px;
-                height: 600px;
+            .game-board {
+                width: 250px;
+                height: 500px;
+            }
+
+            .control-panel {
+                width: 100%;
+                max-width: 300px;
             }
         }
     </style>
@@ -224,43 +260,53 @@
 
     <main>
         <div class="game-container">
-            <div class="game-board">
-                <canvas id="gameCanvas" width="400" height="800"></canvas>
+            <div class="game-board" id="gameBoard">
+                <!-- 游戏画布将在这里渲染 -->
             </div>
 
-            <div class="sidebar">
-                <div class="game-status playing" id="gameStatus">游戏进行中</div>
-
-                <div class="info-panel">
-                    <h3>游戏信息</h3>
-                    <div class="info-item">
-                        <span>得分:</span>
-                        <span id="score">0</span>
-                    </div>
-                    <div class="info-item">
-                        <span>等级:</span>
-                        <span id="level">1</span>
-                    </div>
-                    <div class="info-item">
-                        <span>消除行数:</span>
-                        <span id="lines">0</span>
-                    </div>
+            <div class="control-panel">
+                <div class="score-display">
+                    <h3>分数</h3>
+                    <div class="score-value" id="scoreValue">0</div>
                 </div>
 
-                <div class="controls">
-                    <button class="control-btn" id="startBtn">开始游戏</button>
-                    <button class="control-btn" id="pauseBtn">暂停</button>
-                    <button class="control-btn danger" id="restartBtn">重新开始</button>
+                <div class="score-display">
+                    <h3>等级</h3>
+                    <div class="score-value" id="levelValue">1</div>
                 </div>
 
-                <div class="info-panel">
-                    <h3>操作说明</h3>
-                    <div style="font-size: 0.8rem; line-height: 1.4;">
-                        <p>← → : 左右移动</p>
-                        <p>↓ : 软下降</p>
-                        <p>空格 : 硬下降</p>
-                        <p>↑ : 旋转</p>
-                        <p>P : 暂停/继续</p>
+                <div class="control-buttons">
+                    <button class="btn" id="startBtn">开始游戏</button>
+                    <button class="btn" id="pauseBtn">暂停</button>
+                    <button class="btn danger" id="resetBtn">重置</button>
+                </div>
+
+                <div class="input-status">
+                    <h4>输入状态</h4>
+                    <div>
+                        <span class="status-indicator" id="inputIndicator"></span>
+                        <span>键盘控制</span>
+                    </div>
+                    <div class="active-keys" id="activeKeys">无按键</div>
+                </div>
+
+                <div class="keyboard-hints">
+                    <h4>键盘控制</h4>
+                    <div class="hint-item">
+                        <span>移动</span>
+                        <span><span class="key">A/D</span> 或 <span class="key">←/→</span></span>
+                    </div>
+                    <div class="hint-item">
+                        <span>下降</span>
+                        <span><span class="key">S</span> 或 <span class="key">↓</span></span>
+                    </div>
+                    <div class="hint-item">
+                        <span>旋转</span>
+                        <span><span class="key">W</span> 或 <span class="key">↑</span></span>
+                    </div>
+                    <div class="hint-item">
+                        <span>快速下降</span>
+                        <span><span class="key">Space</span></span>
                     </div>
                 </div>
             </div>
@@ -268,684 +314,545 @@
     </main>
 
     <script>
-        // 游戏常量
-        const BOARD_WIDTH = 10;
-        const BOARD_HEIGHT = 20;
-        const CELL_SIZE = 20;
-        const COLORS = {
-            I: '#00f0f0',
-            O: '#f0f000',
-            T: '#a000f0',
-            S: '#00f000',
-            Z: '#f00000',
-            J: '#0000f0',
-            L: '#f0a000',
-            empty: '#000000',
-            ghost: 'rgba(255, 255, 255, 0.3)'
-        };
-
-        // 方块形状定义
-        const TETROMINOES = {
-            I: {
-                shape: [
-                    [0, 0, 0, 0],
-                    [1, 1, 1, 1],
-                    [0, 0, 0, 0],
-                    [0, 0, 0, 0]
-                ],
-                color: 'I'
-            },
-            O: {
-                shape: [
-                    [1, 1],
-                    [1, 1]
-                ],
-                color: 'O'
-            },
-            T: {
-                shape: [
-                    [0, 1, 0],
-                    [1, 1, 1],
-                    [0, 0, 0]
-                ],
-                color: 'T'
-            },
-            S: {
-                shape: [
-                    [0, 1, 1],
-                    [1, 1, 0],
-                    [0, 0, 0]
-                ],
-                color: 'S'
-            },
-            Z: {
-                shape: [
-                    [1, 1, 0],
-                    [0, 1, 1],
-                    [0, 0, 0]
-                ],
-                color: 'Z'
-            },
-            J: {
-                shape: [
-                    [1, 0, 0],
-                    [1, 1, 1],
-                    [0, 0, 0]
-                ],
-                color: 'J'
-            },
-            L: {
-                shape: [
-                    [0, 0, 1],
-                    [1, 1, 1],
-                    [0, 0, 0]
-                ],
-                color: 'L'
-            }
-        };
-
-        // 游戏状态管理器
-        class GameStateManager {
+        // 防抖管理器
+        class DebounceManager {
             constructor() {
-                this.state = 'stopped'; // stopped, playing, paused, game-over
-                this.callbacks = {};
+                this.timers = new Map();
             }
 
-            setState(newState) {
-                const oldState = this.state;
-                this.state = newState;
+            // 防抖函数
+            debounce(key, func, delay = 300) {
+                if (this.timers.has(key)) {
+                    clearTimeout(this.timers.get(key));
+                }
+
+                const timer = setTimeout(() => {
+                    func();
+                    this.timers.delete(key);
+                }, delay);
+
+                this.timers.set(key, timer);
+            }
+
+            // 节流函数
+            throttle(key, func, delay = 100) {
+                if (this.timers.has(key)) {
+                    return false;
+                }
+
+                func();
+                const timer = setTimeout(() => {
+                    this.timers.delete(key);
+                }, delay);
+
+                this.timers.set(key, timer);
+                return true;
+            }
+
+            // 清除防抖
+            clearDebounce(key) {
+                if (this.timers.has(key)) {
+                    clearTimeout(this.timers.get(key));
+                    this.timers.delete(key);
+                }
+            }
+
+            // 清除所有防抖
+            clearAll() {
+                this.timers.forEach(timer => clearTimeout(timer));
+                this.timers.clear();
+            }
+        }
+
+        // 输入控制器
+        class InputController {
+            constructor() {
+                this.keyMap = {
+                    // WASD 控制
+                    'KeyW': 'rotate',
+                    'KeyA': 'moveLeft',
+                    'KeyS': 'moveDown',
+                    'KeyD': 'moveRight',
+                    // 方向键控制
+                    'ArrowUp': 'rotate',
+                    'ArrowLeft': 'moveLeft',
+                    'ArrowDown': 'moveDown',
+                    'ArrowRight': 'moveRight',
+                    // 其他控制键
+                    'Space': 'hardDrop',
+                    'Enter': 'pause',
+                    'Escape': 'pause'
+                };
+
+                this.activeKeys = new Set();
+                this.listeners = new Map();
+                this.isEnabled = true;
+                this.debounceManager = new DebounceManager();
+
+                this.init();
+            }
+
+            // 初始化事件监听
+            init() {
+                this.addEventListener();
                 this.updateUI();
-                if (this.callbacks[newState]) {
-                    this.callbacks[newState](oldState);
+            }
+
+            // 添加事件监听器
+            addEventListener() {
+                document.addEventListener('keydown', (e) => this.handleKeyDown(e));
+                document.addEventListener('keyup', (e) => this.handleKeyUp(e));
+                
+                // 防止页面滚动
+                document.addEventListener('keydown', (e) => {
+                    if (this.keyMap[e.code]) {
+                        e.preventDefault();
+                    }
+                });
+
+                // 窗口失焦时清除所有按键状态
+                window.addEventListener('blur', () => {
+                    this.activeKeys.clear();
+                    this.updateUI();
+                });
+            }
+
+            // 处理按键按下
+            handleKeyDown(event) {
+                if (!this.isEnabled) return;
+
+                const action = this.mapKeyToAction(event.code);
+                if (!action) return;
+
+                // 防止重复触发
+                if (this.activeKeys.has(event.code)) return;
+
+                this.activeKeys.add(event.code);
+                this.updateUI();
+
+                // 根据动作类型选择防抖或节流
+                if (action === 'moveLeft' || action === 'moveRight' || action === 'moveDown') {
+                    // 移动操作使用节流，允许连续移动
+                    this.debounceManager.throttle(`move_${action}`, () => {
+                        this.executeAction(action, event);
+                    }, 150);
+                } else if (action === 'rotate') {
+                    // 旋转操作使用防抖，防止误操作
+                    this.debounceManager.debounce('rotate', () => {
+                        this.executeAction(action, event);
+                    }, 100);
+                } else {
+                    // 其他操作直接执行
+                    this.executeAction(action, event);
                 }
             }
 
-            getState() {
-                return this.state;
-            }
+            // 处理按键释放
+            handleKeyUp(event) {
+                if (!this.isEnabled) return;
 
-            pause() {
-                if (this.state === 'playing') {
-                    this.setState('paused');
+                this.activeKeys.delete(event.code);
+                this.updateUI();
+
+                // 清除对应的防抖/节流
+                const action = this.mapKeyToAction(event.code);
+                if (action === 'moveLeft' || action === 'moveRight' || action === 'moveDown') {
+                    this.debounceManager.clearDebounce(`move_${action}`);
                 }
             }
 
-            resume() {
-                if (this.state === 'paused') {
-                    this.setState('playing');
+            // 映射按键到动作
+            mapKeyToAction(keyCode) {
+                return this.keyMap[keyCode] || null;
+            }
+
+            // 执行动作
+            executeAction(action, event) {
+                console.log(`执行动作: ${action}`, event);
+                
+                // 触发自定义事件
+                const customEvent = new CustomEvent('gameAction', {
+                    detail: {
+                        action: action,
+                        originalEvent: event,
+                        timestamp: Date.now()
+                    }
+                });
+                document.dispatchEvent(customEvent);
+
+                // 通知注册的监听器
+                if (this.listeners.has(action)) {
+                    this.listeners.get(action).forEach(callback => {
+                        try {
+                            callback(action, event);
+                        } catch (error) {
+                            console.error(`执行动作回调时出错: ${action}`, error);
+                        }
+                    });
                 }
             }
 
-            gameOver() {
-                this.setState('game-over');
+            // 注册动作监听器
+            onAction(action, callback) {
+                if (!this.listeners.has(action)) {
+                    this.listeners.set(action, []);
+                }
+                this.listeners.get(action).push(callback);
             }
 
-            restart() {
-                this.setState('playing');
+            // 移除动作监听器
+            offAction(action, callback) {
+                if (this.listeners.has(action)) {
+                    const callbacks = this.listeners.get(action);
+                    const index = callbacks.indexOf(callback);
+                    if (index > -1) {
+                        callbacks.splice(index, 1);
+                    }
+                }
             }
 
+            // 启用/禁用输入
+            setEnabled(enabled) {
+                this.isEnabled = enabled;
+                if (!enabled) {
+                    this.activeKeys.clear();
+                    this.debounceManager.clearAll();
+                }
+                this.updateUI();
+            }
+
+            // 获取当前活跃的按键
+            getActiveKeys() {
+                return Array.from(this.activeKeys);
+            }
+
+            // 更新UI显示
             updateUI() {
-                const statusElement = document.getElementById('gameStatus');
-                statusElement.className = 'game-status ' + this.state.replace('-', '-');
-                
-                switch (this.state) {
-                    case 'playing':
-                        statusElement.textContent = '游戏进行中';
-                        break;
-                    case 'paused':
-                        statusElement.textContent = '游戏暂停';
-                        break;
-                    case 'game-over':
-                        statusElement.textContent = '游戏结束';
-                        break;
-                    case 'stopped':
-                        statusElement.textContent = '准备开始';
-                        break;
+                const indicator = document.getElementById('inputIndicator');
+                const activeKeysElement = document.getElementById('activeKeys');
+
+                if (indicator) {
+                    if (this.isEnabled && this.activeKeys.size > 0) {
+                        indicator.classList.add('active');
+                    } else {
+                        indicator.classList.remove('active');
+                    }
+                }
+
+                if (activeKeysElement) {
+                    if (this.activeKeys.size === 0) {
+                        activeKeysElement.textContent = '无按键';
+                    } else {
+                        const keyNames = Array.from(this.activeKeys).map(code => {
+                            const action = this.mapKeyToAction(code);
+                            return this.getKeyDisplayName(code) + (action ? ` (${this.getActionDisplayName(action)})` : '');
+                        });
+                        activeKeysElement.textContent = keyNames.join(', ');
+                    }
                 }
             }
 
-            onStateChange(state, callback) {
-                this.callbacks[state] = callback;
+            // 获取按键显示名称
+            getKeyDisplayName(keyCode) {
+                const displayNames = {
+                    'KeyW': 'W',
+                    'KeyA': 'A',
+                    'KeyS': 'S',
+                    'KeyD': 'D',
+                    'ArrowUp': '↑',
+                    'ArrowLeft': '←',
+                    'ArrowDown': '↓',
+                    'ArrowRight': '→',
+                    'Space': 'Space',
+                    'Enter': 'Enter',
+                    'Escape': 'Esc'
+                };
+                return displayNames[keyCode] || keyCode;
+            }
+
+            // 获取动作显示名称
+            getActionDisplayName(action) {
+                const actionNames = {
+                    'moveLeft': '左移',
+                    'moveRight': '右移',
+                    'moveDown': '下移',
+                    'rotate': '旋转',
+                    'hardDrop': '快速下降',
+                    'pause': '暂停'
+                };
+                return actionNames[action] || action;
             }
         }
 
-        // 碰撞检测器
-        class CollisionDetector {
-            constructor(board) {
-                this.board = board;
+        // 游戏控制桥接器
+        class GameControlBridge {
+            constructor(inputController) {
+                this.inputController = inputController;
+                this.gameActions = new Map();
+                this.actionValidators = new Map();
+                this.isGameActive = false;
+
+                this.bindGameActions();
             }
 
-            checkBoundaryCollision(block, x, y) {
-                for (let row = 0; row < block.shape.length; row++) {
-                    for (let col = 0; col < block.shape[row].length; col++) {
-                        if (block.shape[row][col]) {
-                            const newX = x + col;
-                            const newY = y + row;
-                            
-                            if (newX < 0 || newX >= BOARD_WIDTH || newY >= BOARD_HEIGHT) {
-                                return true;
-                            }
-                        }
+            // 绑定游戏动作
+            bindGameActions() {
+                // 绑定移动动作
+                this.inputController.onAction('moveLeft', (action, event) => {
+                    this.executeAction('moveLeft', { direction: 'left' });
+                });
+
+                this.inputController.onAction('moveRight', (action, event) => {
+                    this.executeAction('moveRight', { direction: 'right' });
+                });
+
+                this.inputController.onAction('moveDown', (action, event) => {
+                    this.executeAction('moveDown', { direction: 'down' });
+                });
+
+                this.inputController.onAction('rotate', (action, event) => {
+                    this.executeAction('rotate', { direction: 'clockwise' });
+                });
+
+                this.inputController.onAction('hardDrop', (action, event) => {
+                    this.executeAction('hardDrop', {});
+                });
+
+                this.inputController.onAction('pause', (action, event) => {
+                    this.executeAction('pause', {});
+                });
+            }
+
+            // 执行游戏动作
+            executeAction(actionType, params) {
+                // 验证动作是否有效
+                if (!this.validateAction(actionType, params)) {
+                    console.log(`动作验证失败: ${actionType}`);
+                    return false;
+                }
+
+                console.log(`执行游戏动作: ${actionType}`, params);
+
+                // 执行注册的动作处理器
+                if (this.gameActions.has(actionType)) {
+                    const handler = this.gameActions.get(actionType);
+                    try {
+                        return handler(params);
+                    } catch (error) {
+                        console.error(`执行游戏动作时出错: ${actionType}`, error);
+                        return false;
                     }
+                } else {
+                    console.log(`未找到动作处理器: ${actionType}`);
+                    return false;
                 }
-                return false;
             }
 
-            checkBlockCollision(block, x, y) {
-                for (let row = 0; row < block.shape.length; row++) {
-                    for (let col = 0; col < block.shape[row].length; col++) {
-                        if (block.shape[row][col]) {
-                            const newX = x + col;
-                            const newY = y + row;
-                            
-                            if (newY >= 0 && this.board[newY] && this.board[newY][newX]) {
-                                return true;
-                            }
-                        }
-                    }
+            // 验证动作
+            validateAction(actionType, params) {
+                // 检查游戏是否激活
+                if (!this.isGameActive && actionType !== 'pause') {
+                    return false;
                 }
-                return false;
+
+                // 执行自定义验证器
+                if (this.actionValidators.has(actionType)) {
+                    const validator = this.actionValidators.get(actionType);
+                    return validator(params);
+                }
+
+                return true;
             }
 
-            isPositionValid(x, y, shape) {
-                return !this.checkBoundaryCollision({shape}, x, y) && 
-                       !this.checkBlockCollision({shape}, x, y);
+            // 注册游戏动作处理器
+            registerAction(actionType, handler) {
+                this.gameActions.set(actionType, handler);
             }
 
-            getCollisionType(block, x, y) {
-                if (this.checkBoundaryCollision(block, x, y)) {
-                    return 'boundary';
-                }
-                if (this.checkBlockCollision(block, x, y)) {
-                    return 'block';
-                }
-                return 'none';
+            // 注册动作验证器
+            registerValidator(actionType, validator) {
+                this.actionValidators.set(actionType, validator);
+            }
+
+            // 设置游戏状态
+            setGameActive(active) {
+                this.isGameActive = active;
+                this.inputController.setEnabled(active);
+            }
+
+            // 获取输入控制器
+            getInputController() {
+                return this.inputController;
             }
         }
 
-        // 下落系统
-        class FallSystem {
+        // 初始化系统
+        class GameSystem {
             constructor() {
-                this.fallTimer = 0;
-                this.fallSpeed = 1000; // 毫秒
-                this.isActive = false;
-            }
-
-            startFall() {
-                this.isActive = true;
-                this.resetFallTimer();
-            }
-
-            stopFall() {
-                this.isActive = false;
-            }
-
-            updateFallSpeed(level) {
-                this.fallSpeed = Math.max(100, 1000 - (level - 1) * 100);
-            }
-
-            resetFallTimer() {
-                this.fallTimer = Date.now();
-            }
-
-            shouldFall() {
-                if (!this.isActive) return false;
-                return Date.now() - this.fallTimer >= this.fallSpeed;
-            }
-        }
-
-        // 移动控制器
-        class MovementController {
-            constructor(collisionDetector) {
-                this.collisionDetector = collisionDetector;
-            }
-
-            moveLeft(block, x, y) {
-                const newX = x - 1;
-                if (this.isValidMove(block, newX, y)) {
-                    return { x: newX, y, moved: true };
-                }
-                return { x, y, moved: false };
-            }
-
-            moveRight(block, x, y) {
-                const newX = x + 1;
-                if (this.isValidMove(block, newX, y)) {
-                    return { x: newX, y, moved: true };
-                }
-                return { x, y, moved: false };
-            }
-
-            moveDown(block, x, y) {
-                const newY = y + 1;
-                if (this.isValidMove(block, x, newY)) {
-                    return { x, y: newY, moved: true };
-                }
-                return { x, y, moved: false };
-            }
-
-            rotate(block, x, y) {
-                const rotatedShape = this.rotateMatrix(block.shape);
-                const rotatedBlock = { ...block, shape: rotatedShape };
-                
-                if (this.isValidMove(rotatedBlock, x, y)) {
-                    return { block: rotatedBlock, rotated: true };
-                }
-                
-                // 尝试墙踢
-                const kicks = this.getWallKicks(x, y, rotatedBlock);
-                for (const kick of kicks) {
-                    if (this.isValidMove(rotatedBlock, x + kick.x, y + kick.y)) {
-                        return { 
-                            block: rotatedBlock, 
-                            x: x + kick.x, 
-                            y: y + kick.y, 
-                            rotated: true 
-                        };
-                    }
-                }
-                
-                return { block, rotated: false };
-            }
-
-            softDrop(block, x, y) {
-                return this.moveDown(block, x, y);
-            }
-
-            hardDrop(block, x, y) {
-                let dropY = y;
-                while (this.isValidMove(block, x, dropY + 1)) {
-                    dropY++;
-                }
-                return { x, y: dropY, dropped: dropY - y };
-            }
-
-            isValidMove(block, x, y) {
-                return this.collisionDetector.isPositionValid(x, y, block.shape);
-            }
-
-            rotateMatrix(matrix) {
-                const rows = matrix.length;
-                const cols = matrix[0].length;
-                const rotated = Array(cols).fill().map(() => Array(rows).fill(0));
-                
-                for (let row = 0; row < rows; row++) {
-                    for (let col = 0; col < cols; col++) {
-                        rotated[col][rows - 1 - row] = matrix[row][col];
-                    }
-                }
-                
-                return rotated;
-            }
-
-            getWallKicks(x, y, block) {
-                // 简单的墙踢逻辑
-                return [
-                    { x: -1, y: 0 },
-                    { x: 1, y: 0 },
-                    { x: 0, y: -1 },
-                    { x: -2, y: 0 },
-                    { x: 2, y: 0 }
-                ];
-            }
-        }
-
-        // 游戏逻辑核心
-        class GameLogic {
-            constructor() {
-                this.board = this.createBoard();
-                this.currentBlock = null;
-                this.currentX = 0;
-                this.currentY = 0;
+                this.inputController = new InputController();
+                this.gameControlBridge = new GameControlBridge(this.inputController);
                 this.score = 0;
                 this.level = 1;
-                this.lines = 0;
-                this.nextBlock = null;
-                
-                this.collisionDetector = new CollisionDetector(this.board);
-                this.movementController = new MovementController(this.collisionDetector);
-                this.fallSystem = new FallSystem();
-                this.stateManager = new GameStateManager();
-                
-                this.setupEventListeners();
+                this.isGameRunning = false;
+                this.isPaused = false;
+
+                this.init();
             }
 
             init() {
-                this.board = this.createBoard();
+                this.setupGameActions();
+                this.setupUI();
+                console.log('游戏系统初始化完成');
+            }
+
+            // 设置游戏动作处理器
+            setupGameActions() {
+                // 注册移动动作
+                this.gameControlBridge.registerAction('moveLeft', (params) => {
+                    console.log('方块左移');
+                    return true;
+                });
+
+                this.gameControlBridge.registerAction('moveRight', (params) => {
+                    console.log('方块右移');
+                    return true;
+                });
+
+                this.gameControlBridge.registerAction('moveDown', (params) => {
+                    console.log('方块下移');
+                    return true;
+                });
+
+                this.gameControlBridge.registerAction('rotate', (params) => {
+                    console.log('方块旋转');
+                    return true;
+                });
+
+                this.gameControlBridge.registerAction('hardDrop', (params) => {
+                    console.log('方块快速下降');
+                    return true;
+                });
+
+                this.gameControlBridge.registerAction('pause', (params) => {
+                    this.togglePause();
+                    return true;
+                });
+
+                // 注册验证器
+                this.gameControlBridge.registerValidator('moveLeft', () => {
+                    return this.isGameRunning && !this.isPaused;
+                });
+
+                this.gameControlBridge.registerValidator('moveRight', () => {
+                    return this.isGameRunning && !this.isPaused;
+                });
+
+                this.gameControlBridge.registerValidator('moveDown', () => {
+                    return this.isGameRunning && !this.isPaused;
+                });
+
+                this.gameControlBridge.registerValidator('rotate', () => {
+                    return this.isGameRunning && !this.isPaused;
+                });
+
+                this.gameControlBridge.registerValidator('hardDrop', () => {
+                    return this.isGameRunning && !this.isPaused;
+                });
+            }
+
+            // 设置UI事件
+            setupUI() {
+                const startBtn = document.getElementById('startBtn');
+                const pauseBtn = document.getElementById('pauseBtn');
+                const resetBtn = document.getElementById('resetBtn');
+
+                if (startBtn) {
+                    startBtn.addEventListener('click', () => this.startGame());
+                }
+
+                if (pauseBtn) {
+                    pauseBtn.addEventListener('click', () => this.togglePause());
+                }
+
+                if (resetBtn) {
+                    resetBtn.addEventListener('click', () => this.resetGame());
+                }
+            }
+
+            // 开始游戏
+            startGame() {
+                this.isGameRunning = true;
+                this.isPaused = false;
+                this.gameControlBridge.setGameActive(true);
+                
+                const startBtn = document.getElementById('startBtn');
+                if (startBtn) {
+                    startBtn.textContent = '游戏中';
+                    startBtn.disabled = true;
+                }
+
+                console.log('游戏开始');
+            }
+
+            // 切换暂停
+            togglePause() {
+                if (!this.isGameRunning) return;
+
+                this.isPaused = !this.isPaused;
+                this.gameControlBridge.setGameActive(!this.isPaused);
+
+                const pauseBtn = document.getElementById('pauseBtn');
+                if (pauseBtn) {
+                    pauseBtn.textContent = this.isPaused ? '继续' : '暂停';
+                }
+
+                console.log(this.isPaused ? '游戏暂停' : '游戏继续');
+            }
+
+            // 重置游戏
+            resetGame() {
+                this.isGameRunning = false;
+                this.isPaused = false;
                 this.score = 0;
                 this.level = 1;
-                this.lines = 0;
-                this.spawnNewBlock();
-                this.fallSystem.startFall();
-                this.stateManager.setState('playing');
-                this.updateUI();
-            }
+                this.gameControlBridge.setGameActive(false);
 
-            createBoard() {
-                return Array(BOARD_HEIGHT).fill().map(() => Array(BOARD_WIDTH).fill(null));
-            }
+                // 更新UI
+                const startBtn = document.getElementById('startBtn');
+                const pauseBtn = document.getElementById('pauseBtn');
+                const scoreValue = document.getElementById('scoreValue');
+                const levelValue = document.getElementById('levelValue');
 
-            spawnNewBlock() {
-                const types = Object.keys(TETROMINOES);
-                const randomType = types[Math.floor(Math.random() * types.length)];
-                this.currentBlock = { ...TETROMINOES[randomType] };
-                this.currentX = Math.floor(BOARD_WIDTH / 2) - Math.floor(this.currentBlock.shape[0].length / 2);
-                this.currentY = 0;
-                
-                // 检查游戏结束
-                if (!this.movementController.isValidMove(this.currentBlock, this.currentX, this.currentY)) {
-                    this.stateManager.gameOver();
-                    this.fallSystem.stopFall();
-                }
-            }
-
-            update(deltaTime) {
-                if (this.stateManager.getState() !== 'playing') {
-                    return;
+                if (startBtn) {
+                    startBtn.textContent = '开始游戏';
+                    startBtn.disabled = false;
                 }
 
-                if (this.fallSystem.shouldFall()) {
-                    this.moveBlock('down');
-                    this.fallSystem.resetFallTimer();
-                }
-            }
-
-            moveBlock(direction) {
-                if (this.stateManager.getState() !== 'playing' || !this.currentBlock) {
-                    return false;
+                if (pauseBtn) {
+                    pauseBtn.textContent = '暂停';
                 }
 
-                let result;
-                switch (direction) {
-                    case 'left':
-                        result = this.movementController.moveLeft(this.currentBlock, this.currentX, this.currentY);
-                        if (result.moved) {
-                            this.currentX = result.x;
-                        }
-                        return result.moved;
-                    
-                    case 'right':
-                        result = this.movementController.moveRight(this.currentBlock, this.currentX, this.currentY);
-                        if (result.moved) {
-                            this.currentX = result.x;
-                        }
-                        return result.moved;
-                    
-                    case 'down':
-                        result = this.movementController.moveDown(this.currentBlock, this.currentX, this.currentY);
-                        if (result.moved) {
-                            this.currentY = result.y;
-                        } else {
-                            this.lockBlock();
-                        }
-                        return result.moved;
-                }
-                return false;
-            }
-
-            rotateBlock() {
-                if (this.stateManager.getState() !== 'playing' || !this.currentBlock) {
-                    return false;
+                if (scoreValue) {
+                    scoreValue.textContent = '0';
                 }
 
-                const result = this.movementController.rotate(this.currentBlock, this.currentX, this.currentY);
-                if (result.rotated) {
-                    this.currentBlock = result.block;
-                    if (result.x !== undefined) this.currentX = result.x;
-                    if (result.y !== undefined) this.currentY = result.y;
-                }
-                return result.rotated;
-            }
-
-            dropBlock() {
-                if (this.stateManager.getState() !== 'playing' || !this.currentBlock) {
-                    return 0;
+                if (levelValue) {
+                    levelValue.textContent = '1';
                 }
 
-                const result = this.movementController.hardDrop(this.currentBlock, this.currentX, this.currentY);
-                this.currentY = result.y;
-                this.lockBlock();
-                return result.dropped;
-            }
-
-            lockBlock() {
-                if (!this.currentBlock) return;
-
-                // 将方块固定到游戏板上
-                for (let row = 0; row < this.currentBlock.shape.length; row++) {
-                    for (let col = 0; col < this.currentBlock.shape[row].length; col++) {
-                        if (this.currentBlock.shape[row][col]) {
-                            const boardX = this.currentX + col;
-                            const boardY = this.currentY + row;
-                            if (boardY >= 0) {
-                                this.board[boardY][boardX] = this.currentBlock.color;
-                            }
-                        }
-                    }
-                }
-
-                // 检查并清除完整的行
-                this.clearLines();
-                
-                // 生成新方块
-                this.spawnNewBlock();
-            }
-
-            clearLines() {
-                let linesCleared = 0;
-                
-                for (let row = BOARD_HEIGHT - 1; row >= 0; row--) {
-                    if (this.board[row].every(cell => cell !== null)) {
-                        this.board.splice(row, 1);
-                        this.board.unshift(Array(BOARD_WIDTH).fill(null));
-                        linesCleared++;
-                        row++; // 重新检查同一行
-                    }
-                }
-
-                if (linesCleared > 0) {
-                    this.lines += linesCleared;
-                    this.score += this.calculateScore(linesCleared);
-                    this.level = Math.floor(this.lines / 10) + 1;
-                    this.fallSystem.updateFallSpeed(this.level);
-                    this.updateUI();
-                }
-            }
-
-            calculateScore(linesCleared) {
-                const baseScores = [0, 100, 300, 500, 800];
-                return baseScores[linesCleared] * this.level;
-            }
-
-            checkCollision(block, x, y) {
-                return this.collisionDetector.getCollisionType(block, x, y);
-            }
-
-            getGameState() {
-                return {
-                    board: this.board,
-                    currentBlock: this.currentBlock,
-                    currentX: this.currentX,
-                    currentY: this.currentY,
-                    score: this.score,
-                    level: this.level,
-                    lines: this.lines,
-                    state: this.stateManager.getState()
-                };
-            }
-
-            setupEventListeners() {
-                document.addEventListener('keydown', (e) => {
-                    switch (e.key) {
-                        case 'ArrowLeft':
-                            e.preventDefault();
-                            this.moveBlock('left');
-                            break;
-                        case 'ArrowRight':
-                            e.preventDefault();
-                            this.moveBlock('right');
-                            break;
-                        case 'ArrowDown':
-                            e.preventDefault();
-                            this.moveBlock('down');
-                            break;
-                        case 'ArrowUp':
-                            e.preventDefault();
-                            this.rotateBlock();
-                            break;
-                        case ' ':
-                            e.preventDefault();
-                            this.dropBlock();
-                            break;
-                        case 'p':
-                        case 'P':
-                            e.preventDefault();
-                            this.togglePause();
-                            break;
-                    }
-                });
-
-                document.getElementById('startBtn').addEventListener('click', () => {
-                    this.init();
-                });
-
-                document.getElementById('pauseBtn').addEventListener('click', () => {
-                    this.togglePause();
-                });
-
-                document.getElementById('restartBtn').addEventListener('click', () => {
-                    this.init();
-                });
-            }
-
-            togglePause() {
-                if (this.stateManager.getState() === 'playing') {
-                    this.stateManager.pause();
-                    this.fallSystem.stopFall();
-                } else if (this.stateManager.getState() === 'paused') {
-                    this.stateManager.resume();
-                    this.fallSystem.startFall();
-                }
-            }
-
-            updateUI() {
-                document.getElementById('score').textContent = this.score;
-                document.getElementById('level').textContent = this.level;
-                document.getElementById('lines').textContent = this.lines;
+                console.log('游戏重置');
             }
         }
 
-        // 渲染器
-        class GameRenderer {
-            constructor(canvas, gameLogic) {
-                this.canvas = canvas;
-                this.ctx = canvas.getContext('2d');
-                this.gameLogic = gameLogic;
-            }
-
-            render() {
-                this.clearCanvas();
-                const gameState = this.gameLogic.getGameState();
-                
-                this.drawBoard(gameState.board);
-                
-                if (gameState.currentBlock) {
-                    this.drawGhost(gameState.currentBlock, gameState.currentX, gameState.currentY);
-                    this.drawBlock(gameState.currentBlock, gameState.currentX, gameState.currentY);
-                }
-            }
-
-            clearCanvas() {
-                this.ctx.fillStyle = '#000000';
-                this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
-            }
-
-            drawBoard(board) {
-                for (let row = 0; row < BOARD_HEIGHT; row++) {
-                    for (let col = 0; col < BOARD_WIDTH; col++) {
-                        if (board[row][col]) {
-                            this.drawCell(col, row, COLORS[board[row][col]]);
-                        }
-                    }
-                }
-            }
-
-            drawBlock(block, x, y) {
-                for (let row = 0; row < block.shape.length; row++) {
-                    for (let col = 0; col < block.shape[row].length; col++) {
-                        if (block.shape[row][col]) {
-                            this.drawCell(x + col, y + row, COLORS[block.color]);
-                        }
-                    }
-                }
-            }
-
-            drawGhost(block, x, y) {
-                const result = this.gameLogic.movementController.hardDrop(block, x, y);
-                const ghostY = result.y;
-                
-                for (let row = 0; row < block.shape.length; row++) {
-                    for (let col = 0; col < block.shape[row].length; col++) {
-                        if (block.shape[row][col]) {
-                            this.drawCell(x + col, ghostY + row, COLORS.ghost, true);
-                        }
-                    }
-                }
-            }
-
-            drawCell(x, y, color, isGhost = false) {
-                const pixelX = x * CELL_SIZE;
-                const pixelY = y * CELL_SIZE;
-                
-                this.ctx.fillStyle = color;
-                this.ctx.fillRect(pixelX, pixelY, CELL_SIZE, CELL_SIZE);
-                
-                if (!isGhost) {
-                    this.ctx.strokeStyle = '#333333';
-                    this.ctx.lineWidth = 1;
-                    this.ctx.strokeRect(pixelX, pixelY, CELL_SIZE, CELL_SIZE);
-                }
-            }
-        }
-
-        // 游戏主循环
-        class Game {
-            constructor() {
-                this.canvas = document.getElementById('gameCanvas');
-                this.gameLogic = new GameLogic();
-                this.renderer = new GameRenderer(this.canvas, this.gameLogic);
-                this.lastTime = 0;
-                this.isRunning = false;
-            }
-
-            start() {
-                this.isRunning = true;
-                this.gameLoop();
-            }
-
-            stop() {
-                this.isRunning = false;
-            }
-
-            gameLoop(currentTime = 0) {
-                if (!this.isRunning) return;
-                
-                const deltaTime = currentTime - this.lastTime;
-                this.lastTime = currentTime;
-                
-                this.gameLogic.update(deltaTime);
-                this.renderer.render();
-                
-                requestAnimationFrame((time) => this.gameLoop(time));
-            }
-        }
-
-        // 初始化游戏
-        let game;
-        
+        // 页面加载完成后初始化
         document.addEventListener('DOMContentLoaded', () => {
-            game = new Game();
-            game.start();
+            window.gameSystem = new GameSystem();
+            console.log('用户控制系统加载完成');
+        });
+
+        // 全局事件监听器（用于调试）
+        document.addEventListener('gameAction', (event) => {
+            console.log('游戏动作事件:', event.detail);
         });
     </script>
 </body>
