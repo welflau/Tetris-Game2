@@ -1,86 +1,76 @@
 import pytest
 from pathlib import Path
-import re
+from bs4 import BeautifulSoup
 
-class TestFrontendModule:
+class TestUserControlSystemFrontend:
     
     def test_index_html_file_exists(self):
         """测试 index.html 文件是否存在"""
-        frontend_dir = Path("frontend")
-        index_file = frontend_dir / "index.html"
-        assert index_file.exists(), f"index.html 文件不存在于 {frontend_dir} 目录中"
-        assert index_file.is_file(), "index.html 应该是一个文件而不是目录"
+        index_file = Path("frontend/index.html")
+        assert index_file.exists(), "index.html 文件不存在"
+        assert index_file.is_file(), "index.html 不是一个有效的文件"
     
-    def test_index_html_contains_game_elements(self):
-        """测试 index.html 文件包含游戏相关的关键元素"""
-        frontend_dir = Path("frontend")
-        index_file = frontend_dir / "index.html"
+    def test_index_html_contains_essential_elements(self):
+        """测试 index.html 文件包含用户控制系统的基本HTML元素"""
+        index_file = Path("frontend/index.html")
         
-        if not index_file.exists():
-            pytest.skip("index.html 文件不存在，跳过内容测试")
-        
-        content = index_file.read_text(encoding='utf-8')
+        with open(index_file, 'r', encoding='utf-8') as f:
+            content = f.read()
+            soup = BeautifulSoup(content, 'html.parser')
         
         # 检查基本HTML结构
-        assert "<html" in content.lower(), "HTML文件应包含html标签"
-        assert "<head>" in content.lower() or "<head " in content.lower(), "HTML文件应包含head标签"
-        assert "<body>" in content.lower() or "<body " in content.lower(), "HTML文件应包含body标签"
+        assert soup.find('html') is not None, "缺少 html 标签"
+        assert soup.find('head') is not None, "缺少 head 标签"
+        assert soup.find('body') is not None, "缺少 body 标签"
         
-        # 检查游戏相关元素
-        game_keywords = ["game", "play", "start", "score", "level", "canvas", "游戏", "开始", "分数"]
-        has_game_element = any(keyword in content.lower() for keyword in game_keywords)
-        assert has_game_element, f"HTML文件应包含游戏相关关键词: {game_keywords}"
+        # 检查用户控制系统相关元素
+        title = soup.find('title')
+        assert title is not None, "缺少 title 标签"
+        
+        # 检查是否包含用户控制相关的关键词
+        page_text = content.lower()
+        user_control_keywords = ['user', 'login', 'control', 'system', '用户', '登录', '控制', '系统']
+        has_keywords = any(keyword in page_text for keyword in user_control_keywords)
+        assert has_keywords, "页面内容缺少用户控制系统相关关键词"
     
-    def test_index_html_has_valid_structure(self):
-        """测试 index.html 文件具有有效的HTML结构"""
+    def test_index_html_has_form_elements(self):
+        """测试 index.html 包含用户交互表单元素"""
+        index_file = Path("frontend/index.html")
+        
+        with open(index_file, 'r', encoding='utf-8') as f:
+            content = f.read()
+            soup = BeautifulSoup(content, 'html.parser')
+        
+        # 检查是否有表单或输入元素（用户控制系统通常需要）
+        forms = soup.find_all('form')
+        inputs = soup.find_all('input')
+        buttons = soup.find_all('button')
+        
+        # 至少应该有输入框或按钮等交互元素
+        interactive_elements = len(forms) + len(inputs) + len(buttons)
+        assert interactive_elements > 0, "页面缺少用户交互元素（表单、输入框或按钮）"
+    
+    def test_dev_notes_file_exists_and_readable(self):
+        """测试开发文档文件是否存在且可读"""
+        dev_notes_file = Path("docs/f1bc12/051d21/dev-notes.md")
+        assert dev_notes_file.exists(), "开发文档 dev-notes.md 不存在"
+        assert dev_notes_file.is_file(), "dev-notes.md 不是一个有效的文件"
+        
+        # 检查文件是否可读且不为空
+        with open(dev_notes_file, 'r', encoding='utf-8') as f:
+            content = f.read().strip()
+            assert len(content) > 0, "开发文档文件为空"
+    
+    def test_project_structure_integrity(self):
+        """测试项目结构完整性"""
+        # 检查前端目录存在
         frontend_dir = Path("frontend")
-        index_file = frontend_dir / "index.html"
+        assert frontend_dir.exists(), "frontend 目录不存在"
+        assert frontend_dir.is_dir(), "frontend 不是一个目录"
         
-        if not index_file.exists():
-            pytest.skip("index.html 文件不存在，跳过结构测试")
+        # 检查文档目录结构存在
+        docs_dir = Path("docs")
+        assert docs_dir.exists(), "docs 目录不存在"
         
-        content = index_file.read_text(encoding='utf-8')
-        
-        # 检查DOCTYPE声明
-        has_doctype = content.strip().lower().startswith('<!doctype') or '<html' in content.lower()
-        assert has_doctype, "HTML文件应包含DOCTYPE声明或html标签"
-        
-        # 检查标题标签
-        has_title = "<title>" in content.lower() and "</title>" in content.lower()
-        assert has_title, "HTML文件应包含title标签"
-        
-        # 检查是否有JavaScript或CSS引用（游戏逻辑需要）
-        has_script_or_style = ("<script" in content.lower() or 
-                              "<style" in content.lower() or 
-                              'rel="stylesheet"' in content.lower())
-        assert has_script_or_style, "游戏HTML文件应包含JavaScript或CSS引用"
-    
-    def test_dev_notes_file_exists(self):
-        """测试开发文档文件是否存在"""
-        docs_dir = Path("docs/f1bc12/e2e094")
-        dev_notes_file = docs_dir / "dev-notes.md"
-        assert dev_notes_file.exists(), f"dev-notes.md 文件不存在于 {docs_dir} 目录中"
-        assert dev_notes_file.is_file(), "dev-notes.md 应该是一个文件而不是目录"
-    
-    def test_dev_notes_contains_documentation(self):
-        """测试开发文档包含有效的文档内容"""
-        docs_dir = Path("docs/f1bc12/e2e094")
-        dev_notes_file = docs_dir / "dev-notes.md"
-        
-        if not dev_notes_file.exists():
-            pytest.skip("dev-notes.md 文件不存在，跳过内容测试")
-        
-        content = dev_notes_file.read_text(encoding='utf-8')
-        
-        # 检查文档不为空
-        assert len(content.strip()) > 0, "开发文档不应为空"
-        
-        # 检查是否包含Markdown格式内容
-        markdown_indicators = ["#", "##", "###", "*", "-", "`", "```", "**"]
-        has_markdown = any(indicator in content for indicator in markdown_indicators)
-        assert has_markdown, "开发文档应包含Markdown格式标记"
-        
-        # 检查是否包含开发相关关键词
-        dev_keywords = ["开发", "功能", "实现", "设计", "架构", "api", "接口", "模块", "组件"]
-        has_dev_content = any(keyword in content.lower() for keyword in dev_keywords)
-        assert has_dev_content, f"开发文档应包含开发相关内容: {dev_keywords}"
+        nested_docs_dir = Path("docs/f1bc12/051d21")
+        assert nested_docs_dir.exists(), "嵌套文档目录结构不完整"
