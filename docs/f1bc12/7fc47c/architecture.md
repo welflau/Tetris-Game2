@@ -1,74 +1,50 @@
 # 架构设计 - 性能优化与动画效果
 
 ## 架构模式
-MVC + 组件化架构
+性能优化层架构
 
 ## 技术栈
 
 - **language**: JavaScript ES6+
-- **framework**: 原生JavaScript + Canvas API
-- **database**: LocalStorage
-- **others**: HTML5 Canvas, CSS3, Web Audio API, requestAnimationFrame
+- **framework**: 原生Canvas + requestAnimationFrame
 
 ## 模块设计
 
-### RenderEngine
-职责: Canvas渲染引擎，负责高性能绘制和动画管理
-- render(gameState): void - 渲染游戏画面
-- clearCanvas(): void - 清空画布
-- drawBlock(x, y, color): void - 绘制单个方块
-- drawGrid(): void - 绘制网格
-- setRenderMode(mode): void - 设置渲染模式
-
-### AnimationManager
-职责: 动画效果管理，包括方块下落、消行动画等
-- startAnimation(type, params): void - 开始动画
-- updateAnimations(deltaTime): void - 更新动画状态
-- stopAnimation(id): void - 停止指定动画
-- registerEasing(name, func): void - 注册缓动函数
-
 ### PerformanceOptimizer
-职责: 性能优化管理，包括渲染优化和内存管理
-- enableDirtyRectangle(): void - 启用脏矩形优化
-- optimizeCanvas(): void - Canvas优化设置
-- poolManager(): ObjectPool - 对象池管理
-- measurePerformance(): PerformanceMetrics - 性能监控
+职责: Canvas渲染性能优化管理，包括脏区域检测、渲染缓存、帧率控制
+- optimizeRender()
+- enableDirtyRectangles()
+- cacheStaticElements()
+- monitorPerformance()
 
-### FrameController
-职责: 帧率控制和游戏循环管理
-- startGameLoop(): void - 启动游戏循环
-- pauseGameLoop(): void - 暂停游戏循环
-- setTargetFPS(fps): void - 设置目标帧率
-- getDeltaTime(): number - 获取帧间隔时间
+### AnimationEngine
+职责: 流畅动画效果实现，包括方块下落、消行、旋转等动画
+- animateBlockFall()
+- animateLineClear()
+- animateBlockRotation()
+- interpolateMovement()
 
-### EffectSystem
-职责: 特效系统，管理粒子效果和视觉反馈
-- createParticleEffect(type, position): void - 创建粒子效果
-- updateEffects(deltaTime): void - 更新特效
-- addScreenShake(intensity): void - 添加屏幕震动
-- flashEffect(color, duration): void - 闪烁效果
+### RenderOptimizer
+职责: Canvas渲染优化，包括双缓冲、批量绘制、图像缓存
+- setupDoubleBuffering()
+- batchDrawOperations()
+- cacheImages()
+- optimizeDrawCalls()
 
-### AssetManager
-职责: 资源管理，包括图片、音频等资源的预加载和缓存
-- preloadAssets(): Promise - 预加载资源
-- getTexture(name): ImageData - 获取纹理
-- cacheSprite(name, canvas): void - 缓存精灵图
-- clearCache(): void - 清理缓存
+### FrameManager
+职责: 帧率管理和动画循环控制，确保60FPS流畅体验
+- startAnimationLoop()
+- controlFrameRate()
+- pauseAnimation()
+- resumeAnimation()
 
 ## 数据流
-游戏主循环通过FrameController管理，每帧调用AnimationManager更新动画状态，RenderEngine根据游戏状态和动画数据进行渲染。PerformanceOptimizer监控性能并应用优化策略，EffectSystem处理特效渲染，AssetManager提供资源支持。所有渲染操作通过脏矩形检测避免不必要的重绘。
-
-## 风险点
-- Canvas在低端设备上的性能瓶颈
-- 复杂动画可能导致帧率下降
-- 内存泄漏风险，特别是动画对象的清理
-- 不同浏览器的Canvas性能差异
-- 移动设备触摸事件的性能优化挑战
+FrameManager控制动画循环 -> PerformanceOptimizer检测需要更新的区域 -> AnimationEngine计算动画状态 -> RenderOptimizer优化绘制操作 -> Canvas高效渲染 -> 性能监控反馈优化
 
 ## 关键决策
 - 使用requestAnimationFrame替代setInterval确保流畅动画
-- 实现脏矩形渲染减少不必要的Canvas重绘
-- 采用对象池模式管理动画对象，避免频繁创建销毁
-- 使用离屏Canvas预渲染静态元素提升性能
-- 实现自适应帧率控制，根据设备性能调整渲染质量
-- 使用Web Workers处理复杂计算避免主线程阻塞
+- 实现脏区域检测避免全屏重绘提升性能
+- 采用双缓冲技术消除闪烁现象
+- 使用图像缓存减少重复绘制操作
+- 实现动画插值算法使方块移动更平滑
+- 添加性能监控工具实时优化渲染效率
